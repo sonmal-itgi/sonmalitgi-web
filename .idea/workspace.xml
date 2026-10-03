@@ -6,13 +6,27 @@
   <component name="ChangeListManager">
     <list default="true" id="dde220f6-de45-4844-b29d-d42fa41c8475" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Learn.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Learn.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Learn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Learn.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Lesson.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Lesson.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Lesson.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Lesson.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LevelSelect.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LevelSelect.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LevelSelect.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LevelSelect.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Auth.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/auth/Auth.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Home.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/home/Home.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/home/Home.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Learn.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/learn/Learn.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Learn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/learn/Learn.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Lesson.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/lesson/Lesson.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Lesson.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/lesson/Lesson.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LevelSelect.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/levelselect/LevelSelect.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LevelSelect.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/levelselect/LevelSelect.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Login.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/auth/Login.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Quiz.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Quiz.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Result.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/result/Result.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Result.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/result/Result.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Signup.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Signup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/auth/Signup.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/WrongNote.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/WrongNote.jsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +60,15 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/frontend/src/pages/result" />
+      <recent name="$PROJECT_DIR$/frontend/src/pages/levelselect" />
+      <recent name="$PROJECT_DIR$/frontend/src/pages/lesson" />
+      <recent name="$PROJECT_DIR$/frontend/src/pages/learn" />
+      <recent name="$PROJECT_DIR$/frontend/src/pages/home" />
+    </key>
+  </component>
   <component name="RunManager" selected="npm.Next.js: 서버 측">
     <configuration name="Next.js: 클라이언트 측에서 디버그" type="JavascriptDebugType" uri="http://localhost:3000/">
       <method v="2" />
@@ -79,7 +102,7 @@
       <workItem from="1789637074530" duration="142000" />
       <workItem from="1789637534053" duration="6259000" />
       <workItem from="1790243555773" duration="7000" />
-      <workItem from="1791025897378" duration="1200000" />
+      <workItem from="1791025897378" duration="1884000" />
     </task>
     <servers />
   </component>
