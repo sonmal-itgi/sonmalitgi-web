@@ -1,0 +1,208 @@
+.level-page {
+    min-height: 100vh;
+    width: 100%;
+    background: #f7f8fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 24px;
+    box-sizing: border-box;
+}
+
+.level-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.auth-logo {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eaf8f1;
+    border-radius: 28px;
+
+    font-size: 44px;
+}
+
+.level-header {
+    margin-bottom: 42px;
+}
+
+.level-header h1 {
+    margin: 0 0 16px;
+
+    color: #222;
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+}
+
+.level-header p {
+    margin: 0;
+
+    color: #777;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.level-list {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+
+    text-align: left;
+}
+
+.level-select-card {
+    width: 100%;
+    min-height: 300px;
+
+    padding: 30px 26px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+
+    background: white;
+
+    display: flex;
+    flex-direction: column;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+}
+
+.level-select-card:hover {
+    transform: translateY(-5px);
+
+    border-color: #cfd8e3;
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.level-emoji {
+    width: 56px;
+    height: 56px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f4f6f8;
+    border-radius: 16px;
+
+    font-size: 28px;
+
+    margin-bottom: 28px;
+}
+
+.level-info {
+    flex: 1;
+}
+
+.level-info h2 {
+    margin: 0 0 12px;
+
+    color: #222;
+
+    font-size: 25px;
+    font-weight: 700;
+
+    letter-spacing: -0.5px;
+}
+
+.level-info p {
+    margin: 0 0 14px;
+
+    color: #555;
+
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.level-info small {
+    color: #999;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.level-arrow {
+    margin-top: 28px;
+
+    color: #222;
+
+    font-size: 25px;
+
+    transition: transform 0.2s ease;
+}
+
+.level-select-card:hover .level-arrow {
+    transform: translateX(5px);
+}
+
+/* 태블릿 */
+@media (max-width: 900px) {
+
+    .level-list {
+        grid-template-columns: 1fr;
+    }
+
+    .level-select-card {
+        min-height: auto;
+    }
+
+    .level-emoji {
+        margin-bottom: 20px;
+    }
+
+}
+
+
+/* 모바일 */
+@media (max-width: 600px) {
+
+    .level-page {
+        padding: 40px 18px;
+    }
+
+    .auth-logo {
+        width: 75px;
+        height: 75px;
+
+        font-size: 36px;
+
+        margin-bottom: 24px;
+    }
+
+    .level-header h1 {
+        font-size: 28px;
+    }
+
+    .level-header p {
+        font-size: 15px;
+    }
+
+    .level-list {
+        gap: 14px;
+    }
+
+    .level-select-card {
+        padding: 24px;
+    }
+
+}

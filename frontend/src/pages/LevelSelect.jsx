@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import "./LevelSelect.css";
 
 function LevelSelect() {
   const navigate = useNavigate();
@@ -28,49 +29,73 @@ function LevelSelect() {
   ];
 
   return (
-    <div className="level-page">
-      <div className="level-container">
+      <div className="level-page">
 
-        <div className="auth-logo">🤟</div>
+        <div className="level-container">
 
-        <h1>어디서부터 시작할까요?</h1>
+          <div className="auth-logo">
+            🤟
+          </div>
 
-        <p>
-          현재 나의 한국수어 수준에 맞는
-          <br />
-          학습 단계를 선택해주세요.
-        </p>
+          <div className="level-header">
 
-        <div className="level-list">
-          {levels.map((level) => (
-            <button
-              key={level.id}
-              className="level-select-card"
-              onClick={() =>
-                navigate(`/learn?level=${level.id}`)
-              }
-            >
-              <div className="level-emoji">
-                {level.emoji}
-              </div>
+            <h1>
+              어디서부터 시작할까요?
+            </h1>
 
-              <div className="level-info">
-                <h2>{level.title}</h2>
+            <p>
+              현재 나의 한국수어 수준에 맞는
+              <br />
+              학습 단계를 선택해주세요.
+            </p>
 
-                <p>{level.description}</p>
+          </div>
 
-                <small>{level.detail}</small>
-              </div>
+          <div className="level-list">
 
-              <span className="level-arrow">
+            {levels.map((level) => (
+
+                <button
+                    key={level.id}
+                    className="level-select-card"
+                    onClick={() =>
+                        navigate(`/learn?level=${level.id}`)
+                    }
+                >
+
+                  <div className="level-emoji">
+                    {level.emoji}
+                  </div>
+
+                  <div className="level-info">
+
+                    <h2>
+                      {level.title}
+                    </h2>
+
+                    <p>
+                      {level.description}
+                    </p>
+
+                    <small>
+                      {level.detail}
+                    </small>
+
+                  </div>
+
+                  <span className="level-arrow">
                 →
               </span>
-            </button>
-          ))}
+
+                </button>
+
+            ))}
+
+          </div>
+
         </div>
 
       </div>
-    </div>
   );
 }
 

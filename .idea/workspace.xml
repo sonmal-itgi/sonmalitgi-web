@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dde220f6-de45-4844-b29d-d42fa41c8475" name="변경" comment="" />
+    <list default="true" id="dde220f6-de45-4844-b29d-d42fa41c8475" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Learn.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Learn.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Learn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Learn.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Lesson.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Lesson.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Lesson.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Lesson.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LevelSelect.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LevelSelect.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LevelSelect.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LevelSelect.jsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,23 +29,23 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "js.debugger.nextJs.config.created.client": "true",
-    "js.debugger.nextJs.config.created.server": "true",
-    "last_opened_file_path": "/Users/choeyugyeong/Desktop/sonmal-itgi",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;js.debugger.nextJs.config.created.client&quot;: &quot;true&quot;,
+    &quot;js.debugger.nextJs.config.created.server&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/choeyugyeong/Desktop/sonmalitgi-web&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="npm.Next.js: 서버 측">
     <configuration name="Next.js: 클라이언트 측에서 디버그" type="JavascriptDebugType" uri="http://localhost:3000/">
       <method v="2" />
@@ -69,6 +78,8 @@
       <updated>1789637073092</updated>
       <workItem from="1789637074530" duration="142000" />
       <workItem from="1789637534053" duration="6259000" />
+      <workItem from="1790243555773" duration="7000" />
+      <workItem from="1791025897378" duration="1200000" />
     </task>
     <servers />
   </component>
