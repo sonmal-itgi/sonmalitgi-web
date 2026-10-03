@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import LevelSelect from "./pages/LevelSelect";
-import Learn from "./pages/Learn";
-import Lesson from "./pages/Lesson";
+import Home from "./pages/home/Home.jsx";
+import Login from "./pages/auth/Login.jsx";
+import Signup from "./pages/auth/Signup.jsx";
+import LevelSelect from "./pages/levelselect/LevelSelect.jsx";
+import Learn from "./pages/learn/Learn.jsx";
+import Lesson from "./pages/lesson/Lesson.jsx";
 
 import "./App.css";
 
