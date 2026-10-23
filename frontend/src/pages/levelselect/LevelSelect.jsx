@@ -7,21 +7,21 @@ function LevelSelect() {
   const levels = [
     {
       id: "beginner",
-      icon: "/icons/levels/beginner.png",
+      icon: "/icons/levels/beginner.svg",
       title: "초급",
       description: "한국수어를 처음 배우는 분",
       detail: "숫자 기초 · 숫자 응용",
     },
     {
       id: "intermediate",
-      icon: "/icons/levels/intermediate.png",
+      icon: "/icons/levels/intermediate.svg",
       title: "중급",
       description: "기본적인 수어 표현을 알고 있는 분",
       detail: "인사 · 기본 표현 · 방향 · 이동",
     },
     {
       id: "advanced",
-      icon: "/icons/levels/advanced.png",
+      icon: "/icons/levels/advanced.svg",
       title: "고급",
       description: "자연스러운 수어 표현을 연습하는 분",
       detail: "이동 · 속도 · 시간 · 택시 이용 · 요금",
