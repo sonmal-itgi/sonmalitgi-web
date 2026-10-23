@@ -24,7 +24,7 @@ function LevelSelect() {
       emoji: "🔥",
       title: "고급",
       description: "자연스러운 수어 표현을 연습하는 분",
-      detail: "상황별 대화 · 긴 문장 · 실전 회화",
+      detail: "이동 · 속도 · 시간 · 택시 이용 · 요금",
     },
   ];
 
