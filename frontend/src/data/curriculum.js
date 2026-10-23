@@ -1,185 +1,177 @@
-// Unit metadata and expressions are shared by the list and the lesson screen.
-const beginnerLessons = {
-    1: {
-        title: "숫자",
-        description: "한국수어 숫자의 기본 표현을 학습합니다.",
-        expressions: [
-            {
-                word: "1",
-                description: "숫자 1을 나타내는 한국수어입니다.",
-            },
-            {
-                word: "2",
-                description: "숫자 2를 나타내는 한국수어입니다.",
-            },
-            {
-                word: "3",
-                description: "숫자 3을 나타내는 한국수어입니다.",
-            },
-            {
-                word: "4",
-                description: "숫자 4를 나타내는 한국수어입니다.",
-            },
-        ],
-    },
-
-    2: {
-        title: "모음 · 자음",
-        description: "한국수어의 기본 문자 표현을 학습합니다.",
-        expressions: [
-            {
-                word: "ㄱ",
-                description: "자음 ㄱ을 나타내는 한국수어입니다.",
-            },
-            {
-                word: "ㄴ",
-                description: "자음 ㄴ을 나타내는 한국수어입니다.",
-            },
-            {
-                word: "ㅏ",
-                description: "모음 ㅏ를 나타내는 한국수어입니다.",
-            },
-            {
-                word: "ㅓ",
-                description: "모음 ㅓ를 나타내는 한국수어입니다.",
-            },
-        ],
-    },
-
-    3: {
-        title: "쉬운 단어",
-        description: "일상에서 자주 사용하는 익숙한 단어를 학습합니다.",
-        expressions: [
-            {
-                word: "안녕",
-                description: "인사를 할 때 사용하는 한국수어입니다.",
-            },
-            {
-                word: "엄마",
-                description: "어머니를 나타내는 한국수어입니다.",
-            },
-            {
-                word: "아빠",
-                description: "아버지를 나타내는 한국수어입니다.",
-            },
-            {
-                word: "친구",
-                description: "친구를 나타내는 한국수어입니다.",
-            },
-        ],
-    },
-};
-const extraExpressions = {
-  "4": [
+// Unit metadata, supplied content IDs and expressions are shared by list and lesson screens.
+// A null contentId means no source ID has been supplied yet.
+const expressions = {
+  "1": [
     {
-      "word": "저는 민수입니다",
-      "description": "자신의 이름을 소개하는 표현을 연습해요."
+      "word": "1",
+      "contentId": "FS0801",
+      "description": "숫자 1 표현을 연습해요."
     },
     {
-      "word": "만나서 반갑습니다",
-      "description": "처음 만난 사람에게 인사하는 상황이에요."
+      "word": "2",
+      "contentId": "FS0802",
+      "description": "숫자 2 표현을 연습해요."
     },
     {
-      "word": "이름이 무엇인가요?",
-      "description": "상대방의 이름을 묻는 표현을 연습해요."
+      "word": "3",
+      "contentId": "FS0803",
+      "description": "숫자 3 표현을 연습해요."
     },
     {
-      "word": "저는 학생입니다",
-      "description": "자신의 신분을 소개하는 상황이에요."
+      "word": "4",
+      "contentId": "FS0804",
+      "description": "숫자 4 표현을 연습해요."
     },
     {
-      "word": "저는 서울에 살아요",
-      "description": "살고 있는 지역을 소개해요."
+      "word": "5",
+      "contentId": "FS0805",
+      "description": "숫자 5 표현을 연습해요."
     },
     {
-      "word": "취미는 독서예요",
-      "description": "좋아하는 활동을 소개해요."
+      "word": "6",
+      "contentId": "FS0806",
+      "description": "숫자 6 표현을 연습해요."
     },
     {
-      "word": "가족을 소개할게요",
-      "description": "가족에 관한 대화를 시작해요."
+      "word": "7",
+      "contentId": "FS0807",
+      "description": "숫자 7 표현을 연습해요."
     },
     {
-      "word": "우리 가족은 네 명이에요",
-      "description": "가족 구성원 수를 이야기해요."
+      "word": "8",
+      "contentId": "FS0808",
+      "description": "숫자 8 표현을 연습해요."
     },
     {
-      "word": "이분은 제 어머니예요",
-      "description": "어머니를 소개하는 상황이에요."
+      "word": "9",
+      "contentId": "FS0809",
+      "description": "숫자 9 표현을 연습해요."
     },
     {
-      "word": "이분은 제 아버지예요",
-      "description": "아버지를 소개하는 상황이에요."
+      "word": "10",
+      "contentId": "FS0810",
+      "description": "숫자 10 표현을 연습해요."
     },
     {
-      "word": "형제가 있나요?",
-      "description": "상대방의 가족에 대해 질문해요."
+      "word": "11",
+      "contentId": null,
+      "description": "숫자 11 표현을 연습해요."
     },
     {
-      "word": "저에게는 동생이 있어요",
-      "description": "형제자매에 대해 이야기해요."
+      "word": "12",
+      "contentId": null,
+      "description": "숫자 12 표현을 연습해요."
     }
   ],
-  "5": [
+  "2": [
     {
-      "word": "오늘 기분이 어때요?",
-      "description": "상대방의 기분을 묻는 상황이에요."
+      "word": "1명",
+      "contentId": "FS0822",
+      "description": "1명을 나타내는 표현을 연습해요."
     },
     {
-      "word": "오늘 기분이 좋아요",
-      "description": "자신의 기분을 전해요."
+      "word": "2명",
+      "contentId": "FS0823",
+      "description": "2명을 나타내는 표현을 연습해요."
     },
     {
-      "word": "지금 몇 시인가요?",
-      "description": "현재 시간을 질문해요."
+      "word": "3명",
+      "contentId": "FS0824",
+      "description": "3명을 나타내는 표현을 연습해요."
     },
     {
-      "word": "내일 만나요",
-      "description": "다음 만남을 약속해요."
+      "word": "4명",
+      "contentId": "FS0825",
+      "description": "4명을 나타내는 표현을 연습해요."
     },
     {
-      "word": "어디에 가나요?",
-      "description": "상대방의 목적지를 질문해요."
+      "word": "5명",
+      "contentId": "FS0826",
+      "description": "5명을 나타내는 표현을 연습해요."
     },
     {
-      "word": "학교에 가요",
-      "description": "자신의 목적지를 이야기해요."
+      "word": "6명",
+      "contentId": "FS0827",
+      "description": "6명을 나타내는 표현을 연습해요."
     },
     {
-      "word": "함께 점심 먹을까요?",
-      "description": "함께 식사하자고 제안해요."
+      "word": "7명",
+      "contentId": "FS0828",
+      "description": "7명을 나타내는 표현을 연습해요."
     },
     {
-      "word": "무엇을 먹고 싶어요?",
-      "description": "먹고 싶은 음식을 질문해요."
+      "word": "8명",
+      "contentId": "FS0829",
+      "description": "8명을 나타내는 표현을 연습해요."
     },
     {
-      "word": "물을 마시고 싶어요",
-      "description": "원하는 것을 전달해요."
+      "word": "9명",
+      "contentId": "FS0830",
+      "description": "9명을 나타내는 표현을 연습해요."
     },
     {
-      "word": "오늘 날씨가 좋아요",
-      "description": "날씨에 관한 대화를 나눠요."
+      "word": "10명",
+      "contentId": "FS0831",
+      "description": "10명을 나타내는 표현을 연습해요."
+    }
+  ],
+  "3": [
+    {
+      "word": "감사",
+      "contentId": "WORD1290",
+      "description": "‘감사’ 표현을 연습해요."
     },
     {
-      "word": "비가 와요",
-      "description": "비가 오는 상황을 이야기해요."
+      "word": "죄송",
+      "contentId": "WORD1201",
+      "description": "‘죄송’ 표현을 연습해요."
     },
     {
-      "word": "조금 기다려주세요",
-      "description": "상대방에게 기다려달라고 요청해요."
+      "word": "부탁",
+      "contentId": "WORD1589",
+      "description": "‘부탁’ 표현을 연습해요."
     },
     {
-      "word": "다시 이야기해주세요",
-      "description": "내용을 다시 전달해달라고 요청해요."
+      "word": "좋다",
+      "contentId": "WORD1191",
+      "description": "‘좋다’ 표현을 연습해요."
     },
     {
-      "word": "도와주셔서 감사합니다",
-      "description": "도움을 받은 뒤 감사 인사를 전해요."
+      "word": "알다",
+      "contentId": "WORD1185",
+      "description": "‘알다’ 표현을 연습해요."
+    }
+  ],
+  "4": [
+    {
+      "word": "왼쪽",
+      "contentId": "WORD1342",
+      "description": "‘왼쪽’ 표현을 연습해요."
     },
     {
-      "word": "다음에 또 만나요",
-      "description": "대화를 마치며 인사해요."
+      "word": "오른쪽",
+      "contentId": "WORD1343",
+      "description": "‘오른쪽’ 표현을 연습해요."
+    },
+    {
+      "word": "가다",
+      "contentId": "WORD1345",
+      "description": "‘가다’ 표현을 연습해요."
+    },
+    {
+      "word": "오다",
+      "contentId": "WORD1149",
+      "description": "‘오다’ 표현을 연습해요."
+    },
+    {
+      "word": "걷다",
+      "contentId": "WORD1295",
+      "description": "‘걷다’ 표현을 연습해요."
+    },
+    {
+      "word": "달리다",
+      "contentId": "WORD1274",
+      "description": "‘달리다’ 표현을 연습해요."
     }
   ],
   "6": [
@@ -348,76 +340,67 @@ const extraExpressions = {
   ]
 };
 const levelDefinitions = {
-    beginner: {
-        name: "초급",
-        cefr: "A1",
-        description: "한국수어의 기본 표현부터 차근차근 학습합니다.",
-        units: [
-            {
-                id: 1,
-                title: "숫자",
-                description: "한국수어 숫자의 기본 표현을 학습합니다.",
-            },
-            {
-                id: 2,
-                title: "모음 · 자음",
-                description: "한국수어의 기본 문자 표현을 학습합니다.",
-            },
-            {
-                id: 3,
-                title: "쉬운 단어",
-                description: "일상에서 자주 사용하는 익숙한 단어를 학습합니다.",
-            },
-        ],
-    },
-
-    intermediate: {
-        name: "중급",
-        cefr: "A2~B1",
-        description: "기본 표현을 바탕으로 일상적인 의사소통을 학습합니다.",
-        units: [
-            {
-                id: 4,
-                title: "자기소개 · 가족",
-                description: "자신과 가족을 소개하는 표현을 학습합니다.",
-            },
-            {
-                id: 5,
-                title: "일상 회화",
-                description: "일상생활에서 사용하는 간단한 대화를 학습합니다.",
-            },
-        ],
-    },
-
-    advanced: {
-        name: "고급",
-        cefr: "B2",
-        description: "실제 상황에서 자연스럽게 의사소통하는 표현을 학습합니다.",
-        units: [
-            {
-                id: 6,
-                title: "상황별 의사소통",
-                description: "병원, 학교, 음식점 등 다양한 상황의 표현을 학습합니다.",
-            },
-            {
-                id: 7,
-                title: "길찾기 · 경로 · 주소",
-                description: "위치를 묻고 길을 설명하는 표현을 학습합니다.",
-            },
-        ],
-    },
+  "beginner": {
+    "name": "초급",
+    "cefr": "A1",
+    "description": "숫자와 사람 수를 나타내는 기본 표현을 학습합니다.",
+    "units": [
+      {
+        "id": 1,
+        "title": "숫자 기초",
+        "description": "1부터 12까지 숫자 표현을 학습합니다."
+      },
+      {
+        "id": 2,
+        "title": "숫자 응용",
+        "description": "1명부터 10명까지 사람 수를 나타내는 표현을 학습합니다."
+      }
+    ]
+  },
+  "intermediate": {
+    "name": "중급",
+    "cefr": "A2~B1",
+    "description": "인사와 기본 표현, 방향과 이동 표현을 학습합니다.",
+    "units": [
+      {
+        "id": 3,
+        "title": "인사·기본 표현",
+        "description": "감사, 죄송, 부탁, 좋다, 알다 표현을 학습합니다."
+      },
+      {
+        "id": 4,
+        "title": "방향·이동",
+        "description": "방향과 이동을 나타내는 표현을 학습합니다."
+      }
+    ]
+  },
+  "advanced": {
+    "name": "고급",
+    "cefr": "B2",
+    "description": "실제 상황에서 자연스럽게 의사소통하는 표현을 학습합니다.",
+    "units": [
+      {
+        "id": 6,
+        "title": "상황별 의사소통",
+        "description": "병원, 학교, 음식점 등 다양한 상황의 표현을 학습합니다.",
+        "count": 20
+      },
+      {
+        "id": 7,
+        "title": "길찾기 · 경로 · 주소",
+        "description": "위치를 묻고 길을 설명하는 표현을 학습합니다.",
+        "count": 20
+      }
+    ]
+  }
 };
 
 export const levels = Object.fromEntries(Object.entries(levelDefinitions).map(([key, level]) => [
-  key, { ...level, units: level.units.map((unit) => ({
-    ...unit, count: (beginnerLessons[unit.id]?.expressions || extraExpressions[unit.id]).length,
-  })) },
+  key, { ...level, units: level.units.map((unit) => ({ ...unit, count: expressions[unit.id].length })) },
 ]));
 
 export const lessons = Object.fromEntries(Object.entries(levels).flatMap(([levelId, level]) =>
-  level.units.map((unit) => [unit.id, {
-    ...unit, levelId, expressions: beginnerLessons[unit.id]?.expressions || extraExpressions[unit.id],
-  }]),
+  level.units.map((unit) => [unit.id, { ...unit, levelId, expressions: expressions[unit.id] }]),
 ));
 
 export function getLevelId(value) {

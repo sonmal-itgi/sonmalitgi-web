@@ -10,14 +10,14 @@ function LevelSelect() {
       emoji: "🐣",
       title: "초보자",
       description: "한국수어를 처음 배우는 분",
-      detail: "인사 · 숫자 · 가족 · 음식 · 감정",
+      detail: "숫자 기초 · 숫자 응용",
     },
     {
       id: "intermediate",
       emoji: "🌱",
       title: "중급",
       description: "기본적인 수어 표현을 알고 있는 분",
-      detail: "자기소개 · 일상 · 시간 · 질문과 대답",
+      detail: "인사 · 기본 표현 · 방향 · 이동",
     },
     {
       id: "advanced",
