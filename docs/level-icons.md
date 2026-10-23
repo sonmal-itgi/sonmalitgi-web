@@ -10,7 +10,7 @@
 
 ## 공통 프롬프트
 
-Create one polished transparent-background square UI icon for Sonmalitgi, a Korean sign-language learning app. Reference image is the existing brand logo, used ONLY for style and visual identity. Match its rounded interlocking hand motif, flowing soft green gradients from deep jade to mint and pale lime, friendly clean organic silhouettes. No lettering, no words, no numbers, no watermark, no border or card background. Centered generous padding, crisp legible small-size silhouette, isolated on real transparency. Keep a clean cohesive family appearance with subtle dimensional shading, not photorealistic. 
+Create one polished transparent-background square UI icon for Sonmalitgi, a Korean sign-language learning app. Reference image is the existing brand logo, used ONLY for style and visual identity. Match its rounded interlocking hand motif, flowing soft green gradients from deep jade to mint and pale lime, friendly clean organic silhouettes. No lettering, no words, no numbers, no watermark, no border or card background. Centered generous padding, crisp legible small-size silhouette, isolated on real transparency. Keep a clean cohesive family appearance with subtle dimensional shading, not photorealistic.
 
 ## 초급 프롬프트
 
