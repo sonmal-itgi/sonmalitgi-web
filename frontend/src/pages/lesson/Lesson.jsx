@@ -1,85 +1,17 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { lessons, getLevelId } from "../../data/curriculum.js";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import "./Lesson.css";
-
-const lessonData = {
-    1: {
-        title: "숫자",
-        description: "한국수어 숫자의 기본 표현을 학습합니다.",
-        expressions: [
-            {
-                word: "1",
-                description: "숫자 1을 나타내는 한국수어입니다.",
-            },
-            {
-                word: "2",
-                description: "숫자 2를 나타내는 한국수어입니다.",
-            },
-            {
-                word: "3",
-                description: "숫자 3을 나타내는 한국수어입니다.",
-            },
-            {
-                word: "4",
-                description: "숫자 4를 나타내는 한국수어입니다.",
-            },
-        ],
-    },
-
-    2: {
-        title: "모음 · 자음",
-        description: "한국수어의 기본 문자 표현을 학습합니다.",
-        expressions: [
-            {
-                word: "ㄱ",
-                description: "자음 ㄱ을 나타내는 한국수어입니다.",
-            },
-            {
-                word: "ㄴ",
-                description: "자음 ㄴ을 나타내는 한국수어입니다.",
-            },
-            {
-                word: "ㅏ",
-                description: "모음 ㅏ를 나타내는 한국수어입니다.",
-            },
-            {
-                word: "ㅓ",
-                description: "모음 ㅓ를 나타내는 한국수어입니다.",
-            },
-        ],
-    },
-
-    3: {
-        title: "쉬운 단어",
-        description: "일상에서 자주 사용하는 익숙한 단어를 학습합니다.",
-        expressions: [
-            {
-                word: "안녕",
-                description: "인사를 할 때 사용하는 한국수어입니다.",
-            },
-            {
-                word: "엄마",
-                description: "어머니를 나타내는 한국수어입니다.",
-            },
-            {
-                word: "아빠",
-                description: "아버지를 나타내는 한국수어입니다.",
-            },
-            {
-                word: "친구",
-                description: "친구를 나타내는 한국수어입니다.",
-            },
-        ],
-    },
-};
 
 function Lesson() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const unitId = Number(id) || 1;
-
-    const lesson = lessonData[unitId];
+    const [searchParams] = useSearchParams();
+    const unitId = Number(id);
+    const lesson = lessons[unitId];
+    const levelId = lesson?.levelId || getLevelId(searchParams.get("level"));
+    const listPath = `/learn?level=${levelId}`;
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -91,7 +23,7 @@ function Lesson() {
 
                     <button
                         className="next-button"
-                        onClick={() => navigate("/learn")}
+                        onClick={() => navigate(listPath)}
                     >
                         Unit 목록으로
                     </button>
@@ -109,7 +41,7 @@ function Lesson() {
         if (!isLast) {
             setCurrentIndex(currentIndex + 1);
         } else {
-            navigate("/learn");
+            navigate(listPath);
         }
     };
 
@@ -119,7 +51,7 @@ function Lesson() {
 
                 <button
                     className="lesson-back"
-                    onClick={() => navigate("/learn")}
+                    onClick={() => navigate(listPath)}
                 >
                     ← Unit 목록
                 </button>

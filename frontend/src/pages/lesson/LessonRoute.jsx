@@ -70,5 +70,5 @@ export default function LessonRoute() {
   if (normalized !== id) return null;
 
   // 그대로 렌더링
-  return <Lesson />;
+  return <Lesson key={normalized} />;
 }
