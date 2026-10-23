@@ -70,6 +70,28 @@ export function createAuthService(client) {
       const { error } = await requireClient().auth.signOut({ scope: 'local' });
       if (error) throw new Error(authErrorMessage(error));
     },
+    async changePassword({ currentPassword, password }) {
+      if (!currentPassword) throw new Error('현재 비밀번호를 입력해주세요.');
+      if (!password || password.length < 8) throw new Error('새 비밀번호는 8자 이상 입력해주세요.');
+      if (password.length > 128) throw new Error('새 비밀번호가 너무 깁니다.');
+      if (currentPassword === password) throw new Error('현재 비밀번호와 다른 비밀번호를 입력해주세요.');
+      const api = requireClient();
+      const { data: userData, error: userError } = await api.auth.getUser();
+      if (userError || !userData.user?.email) throw new Error('다시 로그인한 뒤 비밀번호를 변경해주세요.');
+      // Reauthenticate this same user; this also refreshes an older session without email delivery.
+      const { error: verificationError } = await api.auth.signInWithPassword({
+        email: userData.user.email, password: currentPassword,
+      });
+      if (verificationError) {
+        if (verificationError.code === 'invalid_credentials') throw new Error('현재 비밀번호가 올바르지 않습니다.');
+        throw new Error(authErrorMessage(verificationError));
+      }
+      const { error } = await api.auth.updateUser({ password, current_password: currentPassword });
+      if (error) {
+        if (error.code === 'same_password') throw new Error('현재 비밀번호와 다른 비밀번호를 입력해주세요.');
+        throw new Error(authErrorMessage(error));
+      }
+    },
     async getProfile(userId) {
       const { data, error } = await requireClient().from('member_profiles')
         .select('id, username, name, created_at').eq('id', userId).single();

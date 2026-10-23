@@ -9,6 +9,7 @@ export function MemberControls() {
   if (!profile) return null;
   return <div className="member-controls">
     <span>{profile.name}님</span>
+    <Link to="/mypage" className="member-mypage-link">마이페이지</Link>
     <button type="button" className="home-login-button" disabled={pending} onClick={async () => {
       setPending(true); setError('');
       try { await logout(); } catch (e) { setError(e.message); }

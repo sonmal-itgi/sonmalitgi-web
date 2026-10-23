@@ -1,6 +1,8 @@
 import { levels, getLevelId } from "../../data/curriculum.js";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./Learn.css";
+import { useLearningProgress } from "../../hooks/useLearningProgress.js";
+import { progressPercent } from "../../lib/progress.js";
 
 function Learn() {
     const navigate = useNavigate();
@@ -9,6 +11,8 @@ function Learn() {
     const selectedLevel = getLevelId(searchParams.get("level"));
 
     const level = levels[selectedLevel];
+    const { records, loading, error, reload } = useLearningProgress();
+    const byUnit = Object.fromEntries(records.map((record) => [record.unit_id, record]));
 
     return (
         <div className="learn-page">
@@ -37,9 +41,13 @@ function Learn() {
 
                 </div>
 
+                {error && <div role="alert"><p className="auth-error">{error}</p><button onClick={reload}>다시 불러오기</button></div>}
                 <div className="unit-list">
 
-                    {level.units.map((unit) => (
+                    {level.units.map((unit) => {
+                        const record = byUnit[unit.id];
+                        const percent = progressPercent(record);
+                        return (
 
                         <div
                             className="unit-card"
@@ -53,7 +61,7 @@ function Learn() {
                 </span>
 
                                 <span className="unit-progress">
-                  0%
+                  {loading ? "…" : error ? "—" : `${percent}%`}
                 </span>
 
                             </div>
@@ -74,7 +82,7 @@ function Learn() {
 
                                 <div
                                     className="progress-fill"
-                                    style={{ width: "0%" }}
+                                    style={{ width: `${percent}%` }}
                                 />
 
                             </div>
@@ -87,12 +95,12 @@ function Learn() {
                                     )
                                 }
                             >
-                                학습 시작
+                                {record?.completed_at ? "다시 학습" : record ? "이어서 학습" : "학습 시작"}
                             </button>
 
                         </div>
 
-                    ))}
+                    ); })}
 
                 </div>
 
