@@ -390,3 +390,7 @@ body {
 .member-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 5%; background: white; border-bottom: 1px solid #e8eee9; }
 .member-logo { color: #1d2922; text-decoration: none; font-weight: 800; }
 .member-controls { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; font-size: 14px; }
+
+.auth-logo img { width: 100%; height: 100%; object-fit: contain; }
+.member-logo { display: inline-flex; align-items: center; gap: 8px; }
+.member-logo img { width: 32px; height: 32px; object-fit: contain; }

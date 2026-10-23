@@ -8,9 +8,10 @@ export function normalizeUsername(value) {
 export function validateCredentials({ username, password, name }, signup = false) {
   const normalized = normalizeUsername(username);
   if (!USERNAME_PATTERN.test(normalized)) throw new Error('아이디는 영문, 숫자, 밑줄(_)로 4~20자 입력해주세요.');
-  if (!password || (signup && (password.length < 8 || password.length > 128))) {
-    throw new Error(signup ? '비밀번호는 8~128자로 입력해주세요.' : '비밀번호를 입력해주세요.');
+  if (!password || (signup && password.length < 8)) {
+    throw new Error(signup ? '비밀번호는 8자 이상 입력해주세요.' : '비밀번호를 입력해주세요.');
   }
+  if (signup && password.length > 128) throw new Error('비밀번호가 너무 깁니다.');
   if (signup && (!name?.trim() || name.trim().length > 50)) throw new Error('이름은 1~50자로 입력해주세요.');
   return normalized;
 }

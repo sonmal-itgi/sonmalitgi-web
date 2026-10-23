@@ -20,7 +20,7 @@ export function MemberControls() {
 
 export default function Header() {
   return <>
-    <header className="member-header"><Link to="/" className="member-logo">🤟 손말잇기</Link><MemberControls /></header>
+    <header className="member-header"><Link to="/" className="member-logo"><img src="/sonmalitgi-icon.png" alt="" /> 손말잇기</Link><MemberControls /></header>
     <Outlet />
   </>;
 }

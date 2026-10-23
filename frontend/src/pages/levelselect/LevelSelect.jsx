@@ -34,7 +34,7 @@ function LevelSelect() {
         <div className="level-container">
 
           <div className="auth-logo">
-            🤟
+            <img src="/sonmalitgi-icon.png" alt="손말잇기" />
           </div>
 
           <div className="level-header">

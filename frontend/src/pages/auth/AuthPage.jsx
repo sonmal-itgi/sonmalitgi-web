@@ -27,7 +27,7 @@ export default function AuthPage({ signup = false }) {
   }
   return <div className="auth-page"><div className="auth-card">
     <button type="button" className="back-button" aria-label="홈으로" onClick={() => navigate('/')}>←</button>
-    <div className="auth-logo" aria-hidden="true">🤟</div>
+    <div className="auth-logo"><img src="/sonmalitgi-icon.png" alt="손말잇기" /></div>
     <h1>{signup ? <>손말잇기에 오신 걸<br />환영해요!</> : '다시 만나요!'}</h1>
     <p>{signup ? <>이름과 아이디를 입력하고<br />학습을 시작해보세요.</> : <>손말잇기에 로그인하고<br />학습을 계속해보세요.</>}</p>
     {!configured && <p className="auth-error" role="status">회원 서비스 연결을 준비 중입니다.</p>}
@@ -40,7 +40,7 @@ export default function AuthPage({ signup = false }) {
       <input id="username" name="username" autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder="영문, 숫자, 밑줄 4~20자" value={values.username} onChange={update} required minLength={4} maxLength={20} aria-describedby="username-hint" />
       <small id="username-hint" className="auth-hint">영문 대소문자는 구분하지 않아요.</small>
       <label htmlFor="password">비밀번호</label>
-      <input id="password" name="password" type="password" autoComplete={signup ? 'new-password' : 'current-password'} placeholder={signup ? '8~128자로 입력해주세요' : '비밀번호를 입력해주세요'} value={values.password} onChange={update} required minLength={signup ? 8 : undefined} maxLength={signup ? 128 : undefined} />
+      <input id="password" name="password" type="password" autoComplete={signup ? 'new-password' : 'current-password'} placeholder={signup ? '8자 이상 입력해주세요' : '비밀번호를 입력해주세요'} value={values.password} onChange={update} required minLength={signup ? 8 : undefined} maxLength={signup ? 128 : undefined} />
       {signup && <>
         <label htmlFor="confirmation">비밀번호 확인</label>
         <input id="confirmation" type="password" autoComplete="new-password" placeholder="비밀번호를 다시 입력해주세요" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} required maxLength={128} />
