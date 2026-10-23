@@ -4,20 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dde220f6-de45-4844-b29d-d42fa41c8475" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/.env.local" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README_SUPABASE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/lib/supabase.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/pages/debug/AuthTest.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/pages/debug/HealthCheck.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/pages/lesson/LessonAlias.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/App.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/supabase.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/auth/LoginSupabase.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/auth/SignupSupabase.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
-    </list>
+    <list default="true" id="dde220f6-de45-4844-b29d-d42fa41c8475" name="변경" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -100,7 +87,7 @@
       <workItem from="1791205416106" duration="2607000" />
       <workItem from="1792330111595" duration="3714000" />
       <workItem from="1792649061389" duration="2820000" />
-      <workItem from="1792663555486" duration="3091000" />
+      <workItem from="1792663555486" duration="3423000" />
     </task>
     <servers />
   </component>
