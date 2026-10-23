@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
+import { useAuth } from "../../auth/context.js";
+import { MemberControls } from "../../components/Header.jsx";
 
 function Home() {
   const navigate = useNavigate();
+  const { session, profile } = useAuth();
 
   return (
       <div className="home">
@@ -26,21 +29,23 @@ function Home() {
           </div>
 
           <div className="home-header-buttons">
+            {profile ? <MemberControls /> : <>
 
             <button
                 className="home-login-button"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate(session ? "/level" : "/login")}
             >
               로그인
             </button>
 
             <button
                 className="home-signup-button"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate(session ? "/level" : "/signup")}
             >
               회원가입
             </button>
 
+            </>}
           </div>
         </header>
 
@@ -74,7 +79,7 @@ function Home() {
 
             <button
                 className="home-main-button"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate(session ? "/level" : "/login")}
             >
               학습하기
               <span>→</span>
@@ -319,7 +324,7 @@ function Home() {
 
             <button
                 className="home-main-button"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate(session ? "/level" : "/signup")}
             >
               시작하기
               <span>→</span>

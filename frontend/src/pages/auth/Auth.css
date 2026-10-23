@@ -381,3 +381,12 @@ body {
         height: 50px;
     }
 }
+.auth-card fieldset { border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; }
+.auth-card fieldset:disabled { opacity: .65; }
+.auth-card button:disabled { cursor: wait; opacity: .65; }
+.auth-hint { margin: -12px 0 20px; color: #6d7771; font-size: 12px; }
+.auth-error { color: #b33333; font-size: 14px; line-height: 1.6; }
+.auth-status { min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px; }
+.member-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 5%; background: white; border-bottom: 1px solid #e8eee9; }
+.member-logo { color: #1d2922; text-decoration: none; font-weight: 800; }
+.member-controls { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; font-size: 14px; }

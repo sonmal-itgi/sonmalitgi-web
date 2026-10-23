@@ -1,0 +1,5 @@
+project_id = "uxxtaparwvsmcvdnquvr"
+
+# Public signup endpoint: validates the project API key and limits requests internally.
+[functions.username-signup]
+verify_jwt = false
