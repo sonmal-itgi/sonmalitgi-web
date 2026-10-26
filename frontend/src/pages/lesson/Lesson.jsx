@@ -57,6 +57,7 @@ function LessonSession({ lesson, listPath }) {
       <div className="sign-video"><div className="video-placeholder"><div className="video-icon">▶</div><p>수어 영상 영역</p><span>추후 실제 수어 영상을 연결합니다.</span></div></div>
       <div className="expression-info"><p className="expression-label">학습 표현</p><h2>{current.word}</h2><p className="expression-description">{current.description}</p></div>
     </div>
+    <button className="next-button" onClick={() => navigate("/practice")}>AI 수어 연습</button>
     {saveError && <p className="lesson-save-error" role="alert">{saveError}</p>}
     <button className="next-button" disabled={pending} onClick={nextExpression}>{pending ? '저장 중…' : isLast ? '학습 완료' : '다음 표현'}</button>
     <p className="lesson-progress-text">다음 표현 또는 학습 완료를 누르면 학습현황이 저장돼요.</p>
