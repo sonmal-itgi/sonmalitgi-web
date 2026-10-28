@@ -4,7 +4,7 @@ import { useAuth } from '../../auth/context.js';
 import { levels, lessons } from '../../data/curriculum.js';
 import { useLearningProgress } from '../../hooks/useLearningProgress.js';
 import { authService } from '../../lib/supabase.js';
-import { lessonLink, progressPercent } from '../../lib/progress.js';
+import { lessonLink, progressPercent, progressDetails } from '../../lib/progress.js';
 import './MyPage.css';
 
 function PasswordForm() {
@@ -49,6 +49,7 @@ export default function MyPage() {
   const { records, loading, error, reload } = useLearningProgress();
   const byUnit = Object.fromEntries(records.map((r) => [r.unit_id, r]));
   const recent = records.find((r) => !r.completed_at && lessons[r.unit_id]) || records.find((r) => lessons[r.unit_id]);
+  const recentDetail = progressDetails(recent);
   const completedUnits = records.filter((r) => r.completed_at && lessons[r.unit_id]).length;
   const studied = records.reduce((sum, r) => sum + (lessons[r.unit_id] ? r.completed_expressions : 0), 0);
   const total = Object.values(lessons).reduce((sum, unit) => sum + unit.count, 0);
@@ -64,20 +65,20 @@ export default function MyPage() {
       {loading ? <p role="status">학습 기록을 불러오고 있어요…</p> : error ? <div role="alert"><p className="auth-error">{error}</p><button className="outline-button" onClick={reload}>다시 불러오기</button></div> : <>
         <div className="mypage-stats">
           <div><strong>{completedUnits}<small> / {Object.keys(lessons).length}</small></strong><span>완료한 유닛</span></div>
-          <div><strong>{studied}<small> / {total}</small></strong><span>학습한 표현</span></div>
+          <div><strong>{studied}<small> / {total}</small></strong><span>평가를 통과한 표현</span></div>
           <div><strong>{records.length}</strong><span>시작한 유닛</span></div>
         </div>
         {recent ? <div className="mypage-resume">
           <div><small>{recent.completed_at ? '최근 완료한 학습' : '이어서 학습하기'}</small><h3>UNIT {recent.unit_id} · {lessons[recent.unit_id].title}</h3>
-            <p>{recent.completed_at ? '완료한 내용을 다시 복습해보세요.' : `표현 ${recent.expression_index + 1} / ${recent.total_expressions} · ${lessons[recent.unit_id].expressions[recent.expression_index]?.word || ''}`}</p></div>
+            <p>{recent.completed_at ? '완료한 내용을 다시 복습해보세요.' : `진행률 ${recentDetail.percent}% · 시청 ${recentDetail.watchedCount}/${recent.total_expressions} · 평가 ${recentDetail.passedCount}/${recent.total_expressions}`}</p></div>
           <Link className="mypage-primary-link" to={lessonLink(recent.unit_id)}>{recent.completed_at ? '다시 학습하기' : '이어서 학습'} →</Link>
         </div> : <div className="mypage-empty"><h3>첫 배움을 시작해볼까요?</h3><p>유닛을 시작하면 이곳에 학습 기록이 쌓여요.</p><Link to="/level" className="mypage-primary-link">학습 시작하기 →</Link></div>}
         <div className="mypage-levels">{Object.entries(levels).map(([levelId, level]) => <section key={levelId}>
           <h3>{level.name}</h3><div className="mypage-units">{level.units.map((unit) => {
-            const record = byUnit[unit.id]; const percent = progressPercent(record);
+            const record = byUnit[unit.id]; const percent = progressPercent(record); const detail = progressDetails(record);
             return <Link key={unit.id} to={lessonLink(unit.id)} className="mypage-unit">
               <div className="mypage-unit-top"><small>UNIT {unit.id}</small><span className={record?.completed_at ? 'complete' : ''}>{record?.completed_at ? '학습 완료' : record ? '학습 중' : '시작 전'}</span></div>
-              <h4>{unit.title}</h4><p>{record?.completed_expressions || 0} / {unit.count}개 표현 · {percent}%</p>
+              <h4>{unit.title}</h4><p>시청 {detail.watchedCount}/{unit.count} · 평가 {detail.passedCount}/{unit.count} · {percent}%</p>
               <div className="progress-background" role="progressbar" aria-label={`${unit.title} 학습률`} aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}><div className="progress-fill" style={{ width: `${percent}%` }} /></div>
             </Link>;
           })}</div>

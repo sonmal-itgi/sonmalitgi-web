@@ -19,22 +19,22 @@ try {
     const result = await auth[i].signup({ name: '마이페이지 검증', username: `qa_${run}_${i}`, password });
     ids.push(result.session.user.id); console.log('CREATED_TEST_USER', result.session.user.id);
   }
-  await progress[0].save(3, 0);
-  await progress[0].save(3, 2);
+  await progress[0].saveCombined(3, [], []);
+  await progress[0].saveCombined(3, [0, 1], [0, 1]);
   let record = await progress[0].getUnit(3);
   assert.equal(record.expression_index, 2); assert.equal(record.completed_expressions, 2);
   await auth[0].logout();
   await auth[0].login({ username: `qa_${run}_0`, password });
   assert.equal((await progress[0].getUnit(3)).expression_index, 2);
   console.log('PASS progress persists after logout and login');
-  await progress[0].save(3, 4, true);
+  await progress[0].saveCombined(3, [0, 1, 2, 3, 4], [0, 1, 2, 3, 4], true);
   record = await progress[0].getUnit(3);
   assert.equal(record.completed_expressions, 5); assert.ok(record.completed_at);
-  await progress[0].save(3, 0);
+  await progress[0].saveCombined(3, [], []);
   record = await progress[0].getUnit(3);
   assert.equal(record.completed_expressions, 5); assert.ok(record.completed_at);
   console.log('PASS completion and review preserve completed progress');
-  await assert.rejects(progress[0].save(3, 1, true));
+  await assert.rejects(progress[0].saveCombined(4, [0], [], true));
   assert.equal(await progress[1].getUnit(3), null);
   const { error: foreignWrite } = await clients[1].from('learning_progress').insert({
     user_id: ids[0], unit_id: 4, expression_index: 0, completed_expressions: 0, total_expressions: 6,
