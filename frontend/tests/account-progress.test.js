@@ -32,8 +32,8 @@ test('password changes authenticate the existing account and send the current pa
 
 test('progress and resume links use each unit’s actual level', () => {
   assert.equal(progressPercent(null), 0);
-  assert.equal(progressPercent({ completed_expressions: 1, total_expressions: 12 }), 8);
-  assert.equal(progressPercent({ completed_expressions: 5, total_expressions: 5 }), 100);
+  assert.equal(progressPercent({ completed_expressions: 1, total_expressions: 12 }), 4);
+  assert.equal(progressPercent({ completed_expressions: 5, total_expressions: 5 }), 50);
   assert.equal(lessonLink(3), '/lesson/3?level=intermediate');
   assert.equal(lessonLink(6), '/lesson/6?level=advanced');
 });

@@ -5,7 +5,7 @@ import { AuthContext } from '../src/auth/context.js';
 import Lesson from '../src/pages/lesson/Lesson.jsx';
 
 const { save, getUnit, sessions } = vi.hoisted(() => ({ save: vi.fn(), getUnit: vi.fn(), sessions: [] }));
-vi.mock('../src/lib/supabase.js', () => ({ progressService: { save, getUnit } }));
+vi.mock('../src/lib/supabase.js', () => ({ progressService: { saveCombined: save, getUnit } }));
 vi.mock('../src/data/curriculum.js', async (original) => {
   const data = await original();
   // Test-only media and class IDs exercise all 12 steps without filling real missing data.
@@ -74,7 +74,7 @@ describe('유닛 전체 영상 후 표현별 평가', () => {
     }
     fireEvent.click(screen.getByRole('button', { name: '유닛 완료' }));
     expect(await screen.findByText('유닛 목록')).toBeTruthy();
-    expect(save).toHaveBeenLastCalledWith(1, 11, true);
+    expect(save).toHaveBeenLastCalledWith(1, Array.from({ length: 12 }, (_, i) => i), Array.from({ length: 12 }, (_, i) => i), true);
     expect(new Set(sessions).size).toBe(12);
   });
 
@@ -110,20 +110,25 @@ describe('유닛 전체 영상 후 표현별 평가', () => {
     }
     expect(screen.getByRole('button', { name: '유닛 완료' }).disabled).toBe(true);
     expect(screen.getByRole('button', { name: '다음 평가' }).disabled).toBe(true);
-    expect(save).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(screen.queryByText('시청·평가 기록 저장 중…')).toBeNull());
+    const last = save.mock.calls.at(-1);
+    expect(last[2]).not.toContain(0);
+    expect(last[3]).toBe(false);
   });
 
-  it('저장 실패 시 같은 평가에 머물며 다시 저장할 수 있다', async () => {
+  it('자동 저장 실패를 표시하고 이동 후에도 전체 기록을 다시 저장할 수 있다', async () => {
     const { container } = renderLesson();
     await screen.findByRole('heading', { name: '숫자 기초' });
     await watchVideos(container);
-    fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
+    await waitFor(() => expect(screen.queryByText('시청·평가 기록 저장 중…')).toBeNull());
     save.mockRejectedValueOnce(new Error('저장 실패'));
-    fireEvent.click(screen.getByRole('button', { name: '다음 평가' }));
-    expect(await screen.findByRole('alert')).toHaveProperty('textContent', '저장 실패');
-    expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('FS0801');
+    fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
+    expect(await screen.findByRole('alert')).toHaveProperty('textContent', '저장 실패다시 저장');
     await nextEvaluation();
     expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('FS0802');
+    fireEvent.click(screen.getByRole('button', { name: '다시 저장' }));
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull());
+    expect(save.mock.calls.at(-1)[2]).toEqual([0]);
   });
 
   it('시청을 건너뛴 미리보기는 평가를 통과해도 유닛 완료로 저장하지 않는다', async () => {
@@ -139,7 +144,7 @@ describe('유닛 전체 영상 후 표현별 평가', () => {
     expect(save).toHaveBeenCalledTimes(1);
   });
 
-  it('비통과 결과는 완료 수에 포함하지 않고 새 시도는 현재 평가만 초기화한다', async () => {
+  it('비통과 결과는 집계하지 않고 재시도해도 이미 얻은 통과 기록은 유지한다', async () => {
     const { container } = renderLesson();
     await screen.findByRole('heading', { name: '숫자 기초' });
     await watchVideos(container);
@@ -150,7 +155,7 @@ describe('유닛 전체 영상 후 표현별 평가', () => {
     fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
     expect(screen.getByText(/평가 통과 1개/)).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: '새 시도' }));
-    expect(screen.getByText(/평가 통과 0개/)).toBeTruthy();
+    expect(screen.getByText(/평가 통과 1개/)).toBeTruthy();
   });
 });
 
@@ -166,4 +171,34 @@ it('영상이 비어 있는 실제 유닛도 모든 영상 화면을 넘긴 뒤 
   fireEvent.click(screen.getByRole('button', { name: '다음 평가' }));
   expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('WORD1201');
   expect(save).toHaveBeenCalledTimes(1);
+});
+
+it('진행률은 화면 위치가 아닌 시청·통과 완료 수로 계산하며 반복 시청은 중복 집계하지 않는다', async () => {
+  const { container } = renderLesson();
+  await screen.findByRole('heading', { name: '숫자 기초' });
+  const percent = () => Number(screen.getByRole('progressbar').getAttribute('aria-valuenow'));
+  expect(percent()).toBe(0);
+  fireEvent.click(screen.getByRole('button', { name: '다음 영상' }));
+  expect(percent()).toBe(0);
+  fireEvent.click(screen.getByRole('button', { name: '이전 영상' }));
+  fireEvent.ended(container.querySelector('video'));
+  expect(percent()).toBe(4);
+  fireEvent.ended(container.querySelector('video'));
+  expect(percent()).toBe(4);
+  await watchVideos(container);
+  expect(percent()).toBe(50);
+  fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
+  expect(percent()).toBe(54);
+  await nextEvaluation();
+  fireEvent.click(screen.getByRole('button', { name: '이전 평가' }));
+  expect(percent()).toBe(54);
+});
+
+it('다시 접속하면 DB에 저장된 시청·평가 기록을 복원한다', async () => {
+  getUnit.mockResolvedValue({ total_expressions: 12, watched_expression_indices: Array.from({ length: 12 }, (_, i) => i), passed_expression_indices: [0, 1, 2, 3, 4, 5] });
+  renderLesson();
+  await screen.findByRole('heading', { name: '숫자 기초' });
+  expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('75');
+  expect(screen.getByText('시청 완료 · 다시 볼 수 있어요.')).toBeTruthy();
+  expect(save).not.toHaveBeenCalled();
 });

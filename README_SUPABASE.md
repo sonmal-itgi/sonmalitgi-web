@@ -70,3 +70,7 @@ npm run build
 
 마이페이지 실제 연동 검증: `node --env-file=.env.local tests/live-progress.mjs`.
 임시 계정을 생성하므로 출력되는 UUID를 확인하고 해당 계정만 정리합니다.
+
+## 시청·평가 통합 진행률
+
+기본 학습 기록 테이블 설정 후 `supabase/combined-progress.sql`을 적용합니다. 영상 시청 50%, 평가 통과 50%로 진행률을 계산하고, 표현별 중복 방지 및 다시 접속했을 때의 기록 복원을 지원합니다. 기존 영상 전용 완료 기록에는 평가 통과를 임의 부여하지 않습니다. `supabase/tests/combined-progress.sql`은 합성 데이터로 검증한 뒤 모든 변경을 롤백합니다.

@@ -2,7 +2,7 @@ import { levels, getLevelId } from "../../data/curriculum.js";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./Learn.css";
 import { useLearningProgress } from "../../hooks/useLearningProgress.js";
-import { progressPercent } from "../../lib/progress.js";
+import { progressPercent, progressDetails } from "../../lib/progress.js";
 
 function Learn() {
     const navigate = useNavigate();
@@ -47,6 +47,7 @@ function Learn() {
                     {level.units.map((unit) => {
                         const record = byUnit[unit.id];
                         const percent = progressPercent(record);
+                        const detail = progressDetails(record);
                         return (
 
                         <div
@@ -75,7 +76,7 @@ function Learn() {
                             </p>
 
                             <p className="expression-count">
-                                학습 표현 {unit.count}개
+                                학습 표현 {unit.count}개 · 시청 {detail.watchedCount}/{unit.count} · 평가 {detail.passedCount}/{unit.count}
                             </p>
 
                             <div className="progress-background">
