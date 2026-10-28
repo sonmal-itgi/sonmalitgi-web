@@ -3,7 +3,6 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContext } from '../src/auth/context.js';
 import Lesson from '../src/pages/lesson/Lesson.jsx';
-import ExpressionStep from '../src/pages/lesson/ExpressionStep.jsx';
 
 const { save, getUnit, sessions } = vi.hoisted(() => ({ save: vi.fn(), getUnit: vi.fn(), sessions: [] }));
 vi.mock('../src/lib/supabase.js', () => ({ progressService: { save, getUnit } }));
@@ -18,12 +17,13 @@ vi.mock('../src/data/curriculum.js', async (original) => {
   return { ...data, lessons };
 });
 vi.mock('../src/pages/practice/Practice.jsx', () => ({
-  SignEvaluation: ({ targetId, onAttemptStart, onFinal }) => {
+  SignEvaluation: ({ targetId, initialResult, onAttemptStart, onFinal }) => {
     sessions.push(targetId);
     const finish = (result, model_mode = 'model', type = 'final') => onFinal({
       type, result, model_mode, target_id: targetId, predicted_id: targetId,
     });
     return <div data-testid="evaluation" data-target={targetId || ''}>
+      <span data-testid="previous-result">{initialResult?.result || '없음'}</span>
       <button onClick={() => finish('PASS')}>모델 통과</button>
       <button onClick={() => finish('PASS', 'demo')}>데모 통과</button>
       <button onClick={() => finish('PASS', 'model', 'prediction')}>중간 통과</button>
@@ -41,73 +41,129 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-function renderLesson() {
-  return render(<MemoryRouter initialEntries={['/lesson/1']}>
+function renderLesson(unit = 1) {
+  return render(<MemoryRouter initialEntries={[`/lesson/${unit}`]}>
     <AuthContext.Provider value={{ session: { user: { id: 'test-user' } } }}>
       <Routes><Route path="/lesson/:id" element={<Lesson />} /><Route path="/learn" element={<p>유닛 목록</p>} /></Routes>
     </AuthContext.Provider>
   </MemoryRouter>);
 }
 
-describe('표현별 영상과 평가', () => {
-  it('유닛 1의 12개 영상마다 해당 표현을 따로 평가하고 마지막에만 유닛을 완료한다', async () => {
+async function watchVideos(container) {
+  for (let index = 0; index < 12; index++) {
+    expect(screen.queryByTestId('evaluation')).toBeNull();
+    fireEvent.ended(container.querySelector('video'));
+    fireEvent.click(screen.getByRole('button', { name: index === 11 ? '평가로 이동' : '다음 영상' }));
+  }
+}
+async function nextEvaluation() {
+  fireEvent.click(screen.getByRole('button', { name: '다음 평가' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: '다음 평가' }).textContent).toBe('다음 평가'));
+}
+
+describe('유닛 전체 영상 후 표현별 평가', () => {
+  it('12개 영상을 모두 본 다음 12개를 각각 평가하고 마지막에만 유닛을 완료한다', async () => {
     const { container } = renderLesson();
     await screen.findByRole('heading', { name: '숫자 기초' });
+    await watchVideos(container);
     for (let index = 0; index < 12; index++) {
-      expect(screen.queryByTestId('evaluation')).toBeNull();
-      fireEvent.ended(container.querySelector('video'));
       const target = index < 10 ? `FS08${String(index + 1).padStart(2, '0')}` : `TEST_ONLY_${index}`;
       expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe(target);
-      const next = screen.getByRole('button', { name: index === 11 ? '마지막 평가 완료 · 유닛 완료' : '평가 완료 · 다음 표현' });
-      expect(next.disabled).toBe(true);
       fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
-      expect(next.disabled).toBe(false);
-      fireEvent.click(next);
-      await waitFor(() => expect(save).toHaveBeenLastCalledWith(1, index === 11 ? 11 : index + 1, index === 11));
-      if (index < 11) await waitFor(() => expect(container.querySelector('video')).not.toBeNull());
+      if (index < 11) await nextEvaluation();
     }
+    fireEvent.click(screen.getByRole('button', { name: '유닛 완료' }));
     expect(await screen.findByText('유닛 목록')).toBeTruthy();
+    expect(save).toHaveBeenLastCalledWith(1, 11, true);
     expect(new Set(sessions).size).toBe(12);
   });
 
-  it('중간 판정·데모·재시도·실패·촬영 오류로 다음 표현을 완료하지 않는다', async () => {
+  it('영상·평가·단계 경계를 이전 다음으로 이동해도 시청과 평가 결과를 유지한다', async () => {
     const { container } = renderLesson();
     await screen.findByRole('heading', { name: '숫자 기초' });
+    expect(screen.getByRole('button', { name: '이전 영상' }).disabled).toBe(true);
     fireEvent.ended(container.querySelector('video'));
-    const next = screen.getByRole('button', { name: '평가 완료 · 다음 표현' });
-    for (const name of ['중간 통과', '데모 통과', '재시도 결과', '실패 결과', '촬영 오류']) {
-      fireEvent.click(screen.getByRole('button', { name }));
-      expect(next.disabled).toBe(true);
-    }
+    fireEvent.click(screen.getByRole('button', { name: '다음 영상' }));
+    fireEvent.click(screen.getByRole('button', { name: '이전 영상' }));
+    expect(screen.getByText('시청 완료 · 다시 볼 수 있어요.')).toBeTruthy();
+    await watchVideos(container);
     fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
-    expect(next.disabled).toBe(false);
-    fireEvent.click(screen.getByRole('button', { name: '새 시도' }));
-    expect(next.disabled).toBe(true);
-    expect(save).toHaveBeenCalledTimes(1); // Resume position only, no completed expression.
+    await nextEvaluation();
+    expect(screen.getByTestId('previous-result').textContent).toBe('없음');
+    fireEvent.click(screen.getByRole('button', { name: '이전 평가' }));
+    expect(screen.getByTestId('previous-result').textContent).toBe('PASS');
+    fireEvent.click(screen.getByRole('button', { name: '영상으로 돌아가기' }));
+    expect(screen.getByRole('heading', { name: '12' })).toBeTruthy();
+    expect(screen.queryByTestId('evaluation')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '평가로 이동' }));
+    expect(screen.getByTestId('previous-result').textContent).toBe('PASS');
   });
 
-  it('저장 실패 시 같은 표현과 평가를 유지하고 저장을 재시도한다', async () => {
+  it('미통과 평가도 이동할 수 있지만 건너뛴 표현은 완료로 저장하지 않는다', async () => {
     const { container } = renderLesson();
     await screen.findByRole('heading', { name: '숫자 기초' });
-    fireEvent.ended(container.querySelector('video'));
+    await watchVideos(container);
+    fireEvent.click(screen.getByRole('button', { name: '실패 결과' }));
+    for (let index = 0; index < 11; index++) {
+      await nextEvaluation();
+      fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
+    }
+    expect(screen.getByRole('button', { name: '유닛 완료' }).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: '다음 평가' }).disabled).toBe(true);
+    expect(save).toHaveBeenCalledTimes(1);
+  });
+
+  it('저장 실패 시 같은 평가에 머물며 다시 저장할 수 있다', async () => {
+    const { container } = renderLesson();
+    await screen.findByRole('heading', { name: '숫자 기초' });
+    await watchVideos(container);
     fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
     save.mockRejectedValueOnce(new Error('저장 실패'));
-    fireEvent.click(screen.getByRole('button', { name: '평가 완료 · 다음 표현' }));
+    fireEvent.click(screen.getByRole('button', { name: '다음 평가' }));
     expect(await screen.findByRole('alert')).toHaveProperty('textContent', '저장 실패');
     expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('FS0801');
-    fireEvent.click(screen.getByRole('button', { name: '평가 완료 · 다음 표현' }));
-    await waitFor(() => expect(container.querySelector('video')).not.toBeNull());
+    await nextEvaluation();
+    expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('FS0802');
   });
 
-  it('영상이 없는 미리보기와 ID가 없는 표현은 완료하지 않는다', () => {
-    const next = vi.fn();
-    render(<ExpressionStep expression={{ word: '11', contentId: null }} index={10} total={12} onNext={next} />);
-    expect(screen.getByText('이 표현의 기준 영상은 준비 중입니다.')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: '평가 화면 미리보기' }));
-    fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
-    const button = screen.getByRole('button', { name: '평가 완료 · 다음 표현' });
-    expect(button.disabled).toBe(true);
-    fireEvent.click(button);
-    expect(next).not.toHaveBeenCalled();
+  it('시청을 건너뛴 미리보기는 평가를 통과해도 유닛 완료로 저장하지 않는다', async () => {
+    renderLesson();
+    await screen.findByRole('heading', { name: '숫자 기초' });
+    for (let index = 0; index < 11; index++) fireEvent.click(screen.getByRole('button', { name: '다음 영상' }));
+    fireEvent.click(screen.getByRole('button', { name: '평가로 이동' }));
+    for (let index = 0; index < 12; index++) {
+      fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
+      if (index < 11) await nextEvaluation();
+    }
+    expect(screen.getByRole('button', { name: '유닛 완료' }).disabled).toBe(true);
+    expect(save).toHaveBeenCalledTimes(1);
   });
+
+  it('비통과 결과는 완료 수에 포함하지 않고 새 시도는 현재 평가만 초기화한다', async () => {
+    const { container } = renderLesson();
+    await screen.findByRole('heading', { name: '숫자 기초' });
+    await watchVideos(container);
+    for (const name of ['데모 통과', '중간 통과', '재시도 결과', '촬영 오류']) {
+      fireEvent.click(screen.getByRole('button', { name }));
+      expect(screen.getByText(/평가 통과 0개/)).toBeTruthy();
+    }
+    fireEvent.click(screen.getByRole('button', { name: '모델 통과' }));
+    expect(screen.getByText(/평가 통과 1개/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: '새 시도' }));
+    expect(screen.getByText(/평가 통과 0개/)).toBeTruthy();
+  });
+});
+
+it('영상이 비어 있는 실제 유닛도 모든 영상 화면을 넘긴 뒤 평가에 진입할 수 있다', async () => {
+  renderLesson(3);
+  await screen.findByRole('heading', { name: '인사·기본 표현' });
+  for (let index = 0; index < 5; index++) {
+    expect(screen.getByText('이 표현의 기준 영상은 준비 중입니다.')).toBeTruthy();
+    expect(screen.queryByTestId('evaluation')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: index === 4 ? '평가로 이동' : '다음 영상' }));
+  }
+  expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('WORD1290');
+  fireEvent.click(screen.getByRole('button', { name: '다음 평가' }));
+  expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('WORD1201');
+  expect(save).toHaveBeenCalledTimes(1);
 });
