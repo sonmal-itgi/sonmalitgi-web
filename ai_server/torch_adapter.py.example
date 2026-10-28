@@ -1,0 +1,34 @@
+"""Rename to torch_adapter.py ONLY for a model trained with this exact RGB contract.
+For OpenPose/keypoint models, implement the training-time keypoint pipeline instead.
+Install torch and numpy separately in a Python version supported by your PyTorch build.
+"""
+import json
+import os
+import numpy as np
+import torch
+from .model import Prediction
+
+class TorchAdapter:
+    mode = "model"
+    def __init__(self):
+        self.model = torch.jit.load(os.environ['MODEL_PATH'], map_location='cpu').eval()
+        with open(os.environ['LABELS_PATH']) as f:
+            self.labels = json.load(f)  # e.g. ["FS0824", "FS0825"] in training class order
+
+    @torch.inference_mode()
+    def predict(self, frames):
+        # EXAMPLE CONTRACT ONLY: RGB [1,T,C,224,224], values in [0,1].
+        # Replace resize/normalization/layout with your training pipeline.
+        array = np.stack([np.asarray(f.resize((224, 224)), dtype=np.float32) / 255 for f in frames])
+        inputs = torch.from_numpy(array).permute(0, 3, 1, 2).unsqueeze(0)
+        probabilities = self.model(inputs).softmax(dim=-1)[0]
+        confidence, index = probabilities.max(dim=-1)
+        return Prediction(self.labels[index.item()], confidence.item(), True,
+                          calibrated=False,
+                          diagnostic='모델 연결됨 · 촬영 품질 검사와 판정 기준 검증이 필요합니다.')
+        # capture_ok=True here is a placeholder, NOT a hand detection result.
+        # Implement hand/body visibility checks before enabling evaluated production use.
+        # Set calibrated=True only after validation, not simply after loading weights.
+
+def create_model():
+    return TorchAdapter()

@@ -1,0 +1,14 @@
+.git
+.idea
+.venv
+**/__pycache__
+**/.pytest_cache
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+frontend
+backend
+supabase
+docs
+ai_server/tests
