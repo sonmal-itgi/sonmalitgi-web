@@ -13,7 +13,7 @@ export default function ExpressionStep({ expression, index, total, phase, watche
       {url && !videoError ? <video className="reference-video" controls playsInline preload="metadata"
         aria-label={`${expression.word} 기준 수어 영상`} src={url}
         onEnded={onWatched} onError={() => setVideoError(true)} />
-        : <div className="sign-video"><div className="video-placeholder">
+        : <div className="sign-video"><div className="video-placeholder"><span className="video-placeholder-icon" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m10 9 5 3-5 3Z" /></svg></span>
           <p>{videoError ? '기준 영상을 불러오지 못했습니다.' : '이 표현의 기준 영상은 준비 중입니다.'}</p>
           <span>이전·다음 버튼으로 다른 표현을 확인할 수 있어요.</span>
           {videoError && <button className="outline-button" onClick={() => setVideoError(false)}>영상 다시 불러오기</button>}

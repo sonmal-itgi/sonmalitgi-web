@@ -179,3 +179,9 @@ a {
     padding: 0 18px;
   }
 }
+
+/* Shared details for the learning and account pages. */
+body:has(.level-page, .learn-page, .lesson-page, .auth-page) { min-width: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .level-page *, .learn-page *, .lesson-page *, .auth-page *, .ai-practice * { transition: none !important; animation: none !important; }
+}

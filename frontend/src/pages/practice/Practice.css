@@ -11,3 +11,14 @@
 
 .ai-practice-embedded { max-width: none; margin: 16px 0 0; padding: 16px; border-radius: 12px; }
 .ai-practice .buttons { flex-wrap: wrap; }
+
+.ai-practice { background:#edf3ef; color:#26332d; font-family:inherit; border:1px solid #dce5dd; border-radius:14px; }
+.ai-practice h2 { font-size:20px; letter-spacing:-.5px; }
+.ai-practice p { font-size:13px; line-height:1.8; color:#64756b; }
+.ai-practice video { background:#263b30; border-radius:10px; }
+.ai-practice button { background:#397252; font-size:13px; }
+.ai-practice button:hover:enabled { background:#2c6043; }
+.ai-practice .buttons > button + button { background:#fff; color:#397252; border:1px solid #c6d6c9; }
+.ai-practice .notice { color:#786741; background:#f3f0e4; border:1px solid #e4dec7; }
+.ai-practice input { border-color:#c6d6c9; color:#26332d; background:white; }
+@media(max-width:640px) { .ai-practice-embedded { padding:14px; } .ai-practice h2 { font-size:18px; overflow-wrap:anywhere; } .ai-practice .buttons { gap:8px; } .ai-practice button { padding:12px; font-size:12px; } }

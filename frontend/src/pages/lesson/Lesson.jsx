@@ -110,14 +110,14 @@ function LessonSession({ lesson, listPath }) {
   </main>;
   const current = lesson.expressions[index];
   return <div className="lesson-page"><div className="lesson-container">
-    <button className="lesson-back" disabled={pending} onClick={leave}>← Unit 목록</button>
+    <button className="lesson-back" disabled={pending} onClick={leave}>← 유닛 목록</button>
     <div className="lesson-header"><span>UNIT {unitId}</span><h1>{lesson.title}</h1><p>{lesson.description}</p></div>
     <ol className="expression-stages" aria-label="유닛 학습 순서">
       <li aria-current={phase === 'video' ? 'step' : undefined}>1. 영상 전체 시청 ({total}개)</li>
       <li aria-current={phase === 'evaluation' ? 'step' : undefined}>2. 표현별 평가 ({total}개)</li>
     </ol>
     <div className="lesson-progress">
-      <div className="lesson-progress-text"><strong>전체 진행률 {percent}%</strong> · {phase === 'video' ? '영상' : '평가'} {index + 1} / {total} · 시청 완료 {watchedCount}개 · 평가 통과 {passedCount}개</div>
+      <div className="lesson-progress-summary"><strong>전체 진행률 <span>{percent}%</span></strong><span>시청 완료 {watchedCount}개 · 평가 통과 {passedCount}개</span></div>
       <div className="progress-background" role="progressbar" aria-label="시청과 평가 통합 진행률" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}><div className="progress-fill" style={{ width: `${percent}%` }} /></div>
       <p className="lesson-progress-text">영상 시청 50% + 평가 통과 50%</p>
     </div>
