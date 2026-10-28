@@ -10,10 +10,18 @@ function Arrow({ diagonal = false }) {
   </svg>;
 }
 
+function LearningStepIcon({ kind }) {
+  return <svg aria-hidden="true" focusable="false" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    {kind === 'video' && <><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m10 9 5 3-5 3Z" /></>}
+    {kind === 'hand' && <><path d="M8 12V5a1.5 1.5 0 0 1 3 0v6M11 11V3.5a1.5 1.5 0 0 1 3 0V11M14 11V5a1.5 1.5 0 0 1 3 0v7" /><path d="M17 12V8a1.5 1.5 0 0 1 3 0v7a7 7 0 0 1-7 7h-1a6 6 0 0 1-4.8-2.4L3 14a1.5 1.5 0 0 1 2.2-2L8 15v-3" /></>}
+    {kind === 'record' && <><rect x="5" y="4" width="14" height="17" rx="2" /><rect x="9" y="2" width="6" height="4" rx="1" /><path d="m9 12 2 2 4-4M9 17h6" /></>}
+  </svg>;
+}
+
 const steps = [
-  { number: '01', title: '먼저, 눈으로 익혀요.', text: '유닛의 표현을 하나씩 살펴보며 한국수어와 친해져요.', tag: '영상 학습' },
-  { number: '02', title: '이번엔, 직접 표현해요.', text: '배운 표현을 카메라 앞에서 연습하고, 표현별 평가를 진행해요.', tag: '표현 연습' },
-  { number: '03', title: '차곡차곡, 배움을 쌓아요.', text: '시청과 평가 기록을 함께 확인하고, 필요한 표현은 다시 돌아봐요.', tag: '학습 기록' },
+  { number: '01', icon: 'video', title: '먼저, 눈으로 익혀요.', text: '유닛의 표현을 하나씩 살펴보며 한국수어와 친해져요.', tag: '영상 학습' },
+  { number: '02', icon: 'hand', title: '이번엔, 직접 표현해요.', text: '배운 표현을 카메라 앞에서 연습하고, 표현별 평가를 진행해요.', tag: '표현 연습' },
+  { number: '03', icon: 'record', title: '차곡차곡, 배움을 쌓아요.', text: '시청과 평가 기록을 함께 확인하고, 필요한 표현은 다시 돌아봐요.', tag: '학습 기록' },
 ];
 
 export default function Home() {
@@ -76,7 +84,7 @@ export default function Home() {
 
       <section id="how-to-learn" className="home-process" aria-labelledby="process-title"><div className="home-container home-process-inner">
         <div className="home-process-intro"><p className="home-eyebrow">A LITTLE, EVERY DAY</p><h2 id="process-title">보고, 표현하고,<br /><span>조금 더 가까워져요.</span></h2><p>영상을 모두 살펴본 뒤 직접 표현해보세요.<br />한 번 더 연습하는 만큼, 배움도 쌓이니까요.</p><Link className="home-process-link" to={startPath}>나의 배움 시작하기 <Arrow /></Link></div>
-        <ol className="home-step-list">{steps.map((step) => <li key={step.number}><span className="home-step-number">{step.number}</span><div><span className="home-step-tag">{step.tag}</span><h3>{step.title}</h3><p>{step.text}</p></div></li>)}</ol>
+        <ol className="home-step-list">{steps.map((step) => <li key={step.number}><div className="home-step-marker"><span className="home-step-number">{step.number}</span><span className="home-step-icon"><LearningStepIcon kind={step.icon} /></span></div><div><span className="home-step-tag">{step.tag}</span><h3>{step.title}</h3><p>{step.text}</p></div></li>)}</ol>
       </div></section>
 
       <section className="home-closing home-container" aria-labelledby="closing-title"><div><p className="home-eyebrow">LET’S CONNECT</p><h2 id="closing-title">우리의 다음 대화는,<br /><span>손끝에서 시작될지도.</span></h2></div><div className="home-closing-action"><Link className="home-primary" to={session ? '/level' : '/signup'}>손말잇기와 시작하기 <Arrow /></Link><p>서로를 이해하는 새로운 방법을 만나보세요.</p></div></section>

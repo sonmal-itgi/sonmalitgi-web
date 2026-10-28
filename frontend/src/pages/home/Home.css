@@ -88,7 +88,7 @@
 .home-process-intro > p:not(.home-eyebrow) { color: #bacabd; font-size: 13px; line-height: 1.9; margin: 26px 0 35px; }
 .home-process-link { display: inline-flex; align-items: center; gap: 28px; padding-bottom: 10px; border-bottom: 1px solid #7c9381; font-size: 13px; }
 .home-step-list { list-style: none; padding: 0; margin: 0; }
-.home-step-list li { display: grid; grid-template-columns: 35px 1fr; gap: 20px; padding: 26px 0; border-top: 1px solid #ffffff24; }
+.home-step-list li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 20px; padding: 26px 0; border-top: 1px solid #ffffff24; }
 .home-step-list li:first-child { padding-top: 0; border-top: 0; }
 .home-step-list li:last-child { padding-bottom: 0; }
 .home-step-number { padding-top: 6px; color: #91b094; font-size: 13px; font-variant-numeric: tabular-nums; }
@@ -224,4 +224,15 @@
 body:has(.home) { min-width: 0; }
 @media (max-width: 640px) {
   .home-header-start, .home-login { min-height: 40px; display: inline-flex; align-items: center; }
+}
+
+.home-step-marker { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.home-step-marker .home-step-number { padding-top: 0; }
+.home-step-icon { display: grid; place-items: center; width: 48px; height: 48px; flex-shrink: 0; border: 1px solid #adc9b330; border-radius: 14px; background: #ffffff06; color: #b2c9ad; }
+.home-step-icon svg { display: block; }
+@media (max-width: 640px) {
+  .home-step-list li { grid-template-columns: 42px minmax(0, 1fr); gap: 16px; }
+  .home-step-marker { gap: 10px; }
+  .home-step-icon { width: 40px; height: 40px; border-radius: 12px; }
+  .home-step-icon svg { width: 24px; height: 24px; }
 }
