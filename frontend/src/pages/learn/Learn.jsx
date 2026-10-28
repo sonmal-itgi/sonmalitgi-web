@@ -12,6 +12,7 @@ function Learn() {
 
     const level = levels[selectedLevel];
     const { records, loading, error, reload } = useLearningProgress();
+    const expressionCount = level.units.reduce((sum, unit) => sum + unit.count, 0);
     const byUnit = Object.fromEntries(records.map((record) => [record.unit_id, record]));
 
     return (
@@ -25,10 +26,10 @@ function Learn() {
                     ← 단계 선택
                 </button>
 
-                <div className="learn-header">
+                <div className="learn-intro"><div className="learn-header">
 
                     <p className="learn-category">
-                        {level.name} · {level.cefr}
+                        MY LEARNING · {level.name}
                     </p>
 
                     <h1>
@@ -41,6 +42,8 @@ function Learn() {
 
                 </div>
 
+                <div className="learn-overview"><span className="learn-overview-icon" aria-hidden="true"><img src={`/icons/levels/${selectedLevel}.svg`} alt="" /></span><div><strong>{level.units.length}<small>개 유닛</small><span> / </span>{expressionCount}<small>개 표현</small></strong><p>영상으로 익히고, 직접 표현하며 배워요.</p></div></div></div>
+                <div className="learn-list-heading"><h2>나의 학습 유닛</h2><span>시청 50% + 평가 50%</span></div>
                 {error && <div role="alert"><p className="auth-error">{error}</p><button onClick={reload}>다시 불러오기</button></div>}
                 <div className="unit-list">
 
@@ -50,7 +53,7 @@ function Learn() {
                         const detail = progressDetails(record);
                         return (
 
-                        <div
+                        <article
                             className="unit-card"
                             key={unit.id}
                         >
@@ -76,10 +79,10 @@ function Learn() {
                             </p>
 
                             <p className="expression-count">
-                                학습 표현 {unit.count}개 · 시청 {detail.watchedCount}/{unit.count} · 평가 {detail.passedCount}/{unit.count}
+                                <span>학습 표현 {unit.count}개</span><span>시청 {detail.watchedCount}/{unit.count}</span><span>평가 {detail.passedCount}/{unit.count}</span>
                             </p>
 
-                            <div className="progress-background">
+                            <div className="progress-background" role="progressbar" aria-label={`${unit.title} 시청과 평가 통합 진행률`} aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
 
                                 <div
                                     className="progress-fill"
@@ -99,12 +102,12 @@ function Learn() {
                                 {record?.completed_at ? "다시 학습" : record ? "이어서 학습" : "학습 시작"}
                             </button>
 
-                        </div>
+                        </article>
 
                     ); })}
 
                 </div>
-
+                <p className="learn-footnote">한 번의 시청, 한 번의 표현. 작은 배움이 차곡차곡 쌓여요.</p>
             </div>
         </div>
     );

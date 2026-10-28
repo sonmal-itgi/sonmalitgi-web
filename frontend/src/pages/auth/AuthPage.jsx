@@ -25,10 +25,20 @@ export default function AuthPage({ signup = false }) {
     } catch (e) { setError(e.message); }
     finally { setPending(false); }
   }
-  return <div className="auth-page"><div className="auth-card">
+  return <main className="auth-page"><div className="auth-layout">
+    <aside className="auth-story" aria-label="손말잇기 소개">
+      <a href="/" className="auth-brand"><img src="/sonmalitgi-icon.png" alt="" />손말잇기</a>
+      <div className="auth-story-copy"><span className="page-eyebrow">A LITTLE, EVERY DAY</span>
+        <h2>손끝에서 시작되는<br /><span>새로운 대화.</span></h2>
+        <p>한 표현을 알아가는 오늘이<br />서로를 이해하는 내일이 되도록.</p>
+      </div>
+      <div className="auth-story-art" aria-hidden="true"><div className="auth-art-ring" /><img src="/sonmalitgi-icon.png" alt="" /><span>너와 나 사이, 손말잇기</span></div>
+      <p className="auth-story-footer">보고, 표현하고, 배움을 쌓아요. <span aria-hidden="true">↗</span></p>
+    </aside>
+    <div className="auth-card">
     <button type="button" className="back-button" aria-label="홈으로" onClick={() => navigate('/')}>←</button>
-    <div className="auth-logo"><img src="/sonmalitgi-icon.png" alt="손말잇기" /></div>
-    <h1>{signup ? <>손말잇기에 오신 걸<br />환영해요!</> : '다시 만나요!'}</h1>
+    <p className="auth-form-eyebrow">{signup ? "JOIN OUR JOURNEY" : "WELCOME BACK"}</p>
+    <h1>{signup ? <>손말잇기에 오신 걸<br />환영해요!</> : '다시 만나 반가워요.'}</h1>
     <p>{signup ? <>이름과 아이디를 입력하고<br />학습을 시작해보세요.</> : <>손말잇기에 로그인하고<br />학습을 계속해보세요.</>}</p>
     {!configured && <p className="auth-error" role="status">회원 서비스 연결을 준비 중입니다.</p>}
     <form onSubmit={submit}><fieldset disabled={pending || !configured}>
@@ -52,5 +62,5 @@ export default function AuthPage({ signup = false }) {
     <button type="button" disabled={pending} className={signup ? 'text-button' : 'outline-button full'} onClick={() => navigate(signup ? '/login' : '/signup', { state: location.state })}>
       {signup ? '이미 계정이 있으신가요? 로그인' : '회원가입하기'}
     </button>
-  </div></div>;
+  </div></div></main>;
 }

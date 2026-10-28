@@ -1,102 +1,33 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { levels } from "../../data/curriculum.js";
 import "./LevelSelect.css";
 
-function LevelSelect() {
+const introductions = [
+  { id: 'beginner', subtitle: '첫걸음을 가볍게', description: '한국수어를 처음 만난다면, 작은 숫자 표현부터 시작해요.' },
+  { id: 'intermediate', subtitle: '일상을 더 가깝게', description: '익숙한 인사부터 방향과 이동까지, 표현의 폭을 넓혀요.' },
+  { id: 'advanced', subtitle: '대화를 더 자연스럽게', description: '하나의 표현을 넘어, 일상에서 나누는 문장을 익혀요.' },
+];
+
+export default function LevelSelect() {
   const navigate = useNavigate();
-
-  const levels = [
-    {
-      id: "beginner",
-      icon: "/icons/levels/beginner.svg",
-      title: "초급",
-      description: "한국수어를 처음 배우는 분",
-      detail: "숫자 기초 · 숫자 응용",
-    },
-    {
-      id: "intermediate",
-      icon: "/icons/levels/intermediate.svg",
-      title: "중급",
-      description: "기본적인 수어 표현을 알고 있는 분",
-      detail: "인사 · 기본 표현 · 방향 · 이동",
-    },
-    {
-      id: "advanced",
-      icon: "/icons/levels/advanced.svg",
-      title: "고급",
-      description: "자연스러운 수어 표현을 연습하는 분",
-      detail: "이동 · 속도 · 시간 · 택시 이용 · 요금",
-    },
-  ];
-
-  return (
-      <div className="level-page">
-
-        <div className="level-container">
-
-          <div className="auth-logo">
-            <img src="/sonmalitgi-icon.png" alt="손말잇기" />
-          </div>
-
-          <div className="level-header">
-
-            <h1>
-              어디서부터 시작할까요?
-            </h1>
-
-            <p>
-              현재 나의 한국수어 수준에 맞는
-              <br />
-              학습 단계를 선택해주세요.
-            </p>
-
-          </div>
-
-          <div className="level-list">
-
-            {levels.map((level) => (
-
-                <button
-                    key={level.id}
-                    className="level-select-card"
-                    onClick={() =>
-                        navigate(`/learn?level=${level.id}`)
-                    }
-                >
-
-                  <div className="level-icon">
-                    <img src={level.icon} alt="" />
-                  </div>
-
-                  <div className="level-info">
-
-                    <h2>
-                      {level.title}
-                    </h2>
-
-                    <p>
-                      {level.description}
-                    </p>
-
-                    <small>
-                      {level.detail}
-                    </small>
-
-                  </div>
-
-                  <span className="level-arrow">
-                →
-              </span>
-
-                </button>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </div>
-  );
+  return <main className="level-page"><div className="level-container">
+    <Link to="/" className="level-home-link">← 홈으로</Link>
+    <div className="level-header">
+      <p className="page-eyebrow">FIND YOUR START</p>
+      <h1>나의 속도로,<br /><span>첫 표현을 시작해요.</span></h1>
+      <p>지금 나에게 맞는 단계를 골라보세요.<br />언제든 다른 단계로 돌아올 수 있어요.</p>
+    </div>
+    <div className="level-list">
+      {introductions.map((intro, index) => {
+        const level = levels[intro.id];
+        return <button key={intro.id} className={`level-select-card level-select-${intro.id}`} onClick={() => navigate(`/learn?level=${intro.id}`)}>
+          <div className="level-card-top"><span>LEVEL 0{index + 1}</span><img src={`/icons/levels/${intro.id}.svg`} alt="" /></div>
+          <div className="level-info"><h2>{level.name}</h2><strong>{intro.subtitle}</strong><p>{intro.description}</p></div>
+          <div className="level-topics">{level.units.map(unit => <span key={unit.id}>{unit.title}</span>)}</div>
+          <div className="level-card-bottom"><span>{level.units.length}개 유닛 · {level.units.reduce((sum, unit) => sum + unit.count, 0)}개 표현</span><span className="level-arrow" aria-hidden="true">↗</span></div>
+        </button>;
+      })}
+    </div>
+    <p className="level-footnote"><span aria-hidden="true">✳</span> 잘하는 것보다, 한 번 더 표현해보는 마음으로.</p>
+  </div></main>;
 }
-
-export default LevelSelect;

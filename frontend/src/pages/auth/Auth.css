@@ -1,396 +1,52 @@
-/* Auth.css */
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    font-family:
-            Pretendard,
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            "Noto Sans KR",
-            sans-serif;
-    background-color: #f7faf8;
-    color: #222;
-}
-
-/* 전체 페이지 */
-.auth-page {
-    width: 100%;
-    min-height: 100vh;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 40px 20px;
-
-    background:
-            linear-gradient(
-                    135deg,
-                    #f3fbf6 0%,
-                    #ffffff 50%,
-                    #f4faf6 100%
-            );
-}
-
-/* 로그인 / 회원가입 카드 */
-.auth-card {
-    position: relative;
-
-    width: 100%;
-    max-width: 430px;
-
-    padding: 48px 42px 42px;
-
-    background-color: #ffffff;
-
-    border: 1px solid #e8eee9;
-    border-radius: 24px;
-
-    box-shadow:
-            0 12px 40px rgba(0, 0, 0, 0.06);
-
-    text-align: center;
-}
-
-/* 뒤로가기 버튼 */
-.back-button {
-    position: absolute;
-    top: 24px;
-    left: 24px;
-
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: none;
-    border-radius: 50%;
-
-    background-color: #f4f7f5;
-
-    color: #444;
-    font-size: 22px;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-.back-button:hover {
-    background-color: #e8f3ec;
-    transform: translateX(-2px);
-}
-
-/* 로고 */
-.auth-logo {
-    width: 74px;
-    height: 74px;
-
-    margin: 10px auto 22px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 22px;
-
-    background-color: #e9f8ef;
-
-    font-size: 38px;
-}
-
-/* 제목 */
-.auth-card h1 {
-    margin: 0 0 14px;
-
-    color: #1d2922;
-
-    font-size: 30px;
-    font-weight: 800;
-    line-height: 1.3;
-
-    letter-spacing: -0.8px;
-}
-
-/* 설명 */
-.auth-card > p {
-    margin: 0 0 34px;
-
-    color: #7a827d;
-
-    font-size: 15px;
-    line-height: 1.65;
-}
-
-/* 폼 */
-.auth-card form {
-    display: flex;
-    flex-direction: column;
-
-    text-align: left;
-}
-
-/* 라벨 */
-.auth-card label {
-    margin: 0 0 8px;
-
-    color: #37413b;
-
-    font-size: 14px;
-    font-weight: 600;
-}
-
-/* input */
-.auth-card input {
-    width: 100%;
-    height: 52px;
-
-    margin-bottom: 20px;
-    padding: 0 16px;
-
-    border: 1px solid #dce3de;
-    border-radius: 12px;
-
-    background-color: #ffffff;
-
-    color: #222;
-
-    font-size: 15px;
-
-    outline: none;
-
-    transition:
-            border-color 0.2s,
-            box-shadow 0.2s,
-            background-color 0.2s;
-}
-
-.auth-card input::placeholder {
-    color: #b1b8b4;
-}
-
-.auth-card input:hover {
-    border-color: #b8c7bd;
-}
-
-.auth-card input:focus {
-    border-color: #49a76d;
-
-    box-shadow:
-            0 0 0 4px rgba(73, 167, 109, 0.12);
-
-    background-color: #fcfffd;
-}
-
-/* 공통 전체 너비 */
-.full {
-    width: 100%;
-}
-
-/* 로그인 / 회원가입 메인 버튼 */
-.main-button {
-    height: 54px;
-
-    margin-top: 6px;
-
-    border: none;
-    border-radius: 13px;
-
-    background-color: #3fa866;
-
-    color: white;
-
-    font-size: 16px;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-            background-color 0.2s,
-            transform 0.15s,
-            box-shadow 0.2s;
-}
-
-.main-button:hover {
-    background-color: #35965a;
-
-    box-shadow:
-            0 8px 20px rgba(63, 168, 102, 0.22);
-}
-
-.main-button:active {
-    transform: scale(0.98);
-}
-
-/* 처음이신가요 divider */
-.auth-divider {
-    position: relative;
-
-    margin: 30px 0 22px;
-
-    text-align: center;
-}
-
-.auth-divider::before {
-    content: "";
-
-    position: absolute;
-    top: 50%;
-    left: 0;
-
-    width: 100%;
-    height: 1px;
-
-    background-color: #e7ebe8;
-}
-
-.auth-divider span {
-    position: relative;
-
-    padding: 0 14px;
-
-    background-color: #ffffff;
-
-    color: #969d99;
-
-    font-size: 13px;
-}
-
-/* 회원가입 outline 버튼 */
-.outline-button {
-    height: 52px;
-
-    border: 1.5px solid #52a871;
-    border-radius: 13px;
-
-    background-color: #ffffff;
-
-    color: #39945c;
-
-    font-size: 15px;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-            background-color 0.2s,
-            border-color 0.2s,
-            transform 0.15s;
-}
-
-.outline-button:hover {
-    background-color: #f0faf4;
-    border-color: #3e9b61;
-}
-
-.outline-button:active {
-    transform: scale(0.98);
-}
-
-/* 이미 계정이 있으신가요 */
-.text-button {
-    margin-top: 26px;
-
-    border: none;
-
-    background: none;
-
-    color: #6d7771;
-
-    font-size: 14px;
-
-    cursor: pointer;
-
-    transition: color 0.2s;
-}
-
-.text-button:hover {
-    color: #39945c;
-    text-decoration: underline;
-}
-
-/* 모바일 */
-@media (max-width: 520px) {
-    .auth-page {
-        padding: 0;
-        align-items: stretch;
-        background-color: #ffffff;
-    }
-
-    .auth-card {
-        max-width: none;
-        min-height: 100vh;
-
-        padding: 70px 24px 40px;
-
-        border: none;
-        border-radius: 0;
-
-        box-shadow: none;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .back-button {
-        top: 22px;
-        left: 20px;
-    }
-
-    .auth-logo {
-        width: 68px;
-        height: 68px;
-
-        font-size: 34px;
-    }
-
-    .auth-card h1 {
-        font-size: 27px;
-    }
-
-    .auth-card > p {
-        margin-bottom: 28px;
-    }
-}
-
-/* 작은 모바일 */
-@media (max-width: 360px) {
-    .auth-card {
-        padding-left: 18px;
-        padding-right: 18px;
-    }
-
-    .auth-card h1 {
-        font-size: 24px;
-    }
-
-    .auth-card input {
-        height: 50px;
-    }
-
-    .main-button,
-    .outline-button {
-        height: 50px;
-    }
-}
-.auth-card fieldset { border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; }
-.auth-card fieldset:disabled { opacity: .65; }
-.auth-card button:disabled { cursor: wait; opacity: .65; }
-.auth-hint { margin: -12px 0 20px; color: #6d7771; font-size: 12px; }
-.auth-error { color: #b33333; font-size: 14px; line-height: 1.6; }
-.auth-status { min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px; }
-.member-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 5%; background: white; border-bottom: 1px solid #e8eee9; }
-.member-logo { color: #1d2922; text-decoration: none; font-weight: 800; }
-.member-controls { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; font-size: 14px; }
-
-.auth-logo img { width: 100%; height: 100%; object-fit: contain; }
-.member-logo { display: inline-flex; align-items: center; gap: 8px; }
-.member-logo img { width: 32px; height: 32px; object-fit: contain; }
+.auth-page { min-height:100vh; padding:40px; display:grid; place-items:center; background:#f7faf8; color:#26332d; }
+.auth-layout { display:grid; grid-template-columns:1fr 1fr; width:min(1080px,100%); background:#fff; border:1px solid #dce5dd; border-radius:22px; overflow:hidden; }
+.auth-story { position:relative; overflow:hidden; padding:40px; display:flex; flex-direction:column; background:#263b30; color:#f4f8f1; }
+.auth-brand { display:inline-flex; align-items:center; gap:8px; font-size:21px; font-weight:750; letter-spacing:-1px; }
+.auth-brand img { width:35px; height:35px; }
+.auth-story-copy { margin-top:55px; position:relative; z-index:1; }
+.auth-story .page-eyebrow { color:#acc9a7; font-size:10px; }
+.auth-story h2 { font-size:38px; line-height:1.45; letter-spacing:-2px; margin:0 0 20px; word-break:keep-all; }
+.auth-story h2 span { color:#b2c9ad; }
+.auth-story-copy p { font-size:14px; color:#bacabd; line-height:1.9; }
+.auth-story-art { position:relative; display:grid; place-items:center; width:min(300px,100%); aspect-ratio:1.2; margin:12px auto 20px; }
+.auth-art-ring { position:absolute; inset:15% 0; border:1px solid #8aa98a55; border-radius:50%; transform:rotate(-28deg); }
+.auth-art-ring::after { content:''; position:absolute; inset:-22% 18%; border:1px solid #8aa98a55; border-radius:50%; }
+.auth-story-art img { width:74%; transform:rotate(-10deg); }
+.auth-story-art > span { position:absolute; bottom:0; padding:7px 13px; border:1px solid #8aa98a55; border-radius:50px; font-size:10px; color:#b2c9ad; background:#263b30; }
+.auth-story-footer { margin:auto 0 0; padding-top:22px; border-top:1px solid #ffffff24; display:flex; justify-content:space-between; gap:16px; color:#bacabd; font-size:11px; }
+.auth-card { position:relative; width:100%; padding:72px 52px 44px; align-self:center; }
+.auth-form-eyebrow { margin:0 0 16px; font-size:10px; letter-spacing:1.7px; font-weight:700; color:#6a826e; }
+.auth-card h1 { margin:0 0 14px; font-size:30px; line-height:1.4; letter-spacing:-1.2px; }
+.auth-card > p:not(.auth-form-eyebrow) { margin:0 0 28px; color:#64756b; font-size:14px; line-height:1.8; }
+.back-button { position:absolute; top:22px; left:26px; display:grid; place-items:center; width:36px; height:36px; border:1px solid #dce5dd; border-radius:50%; background:transparent; color:#64756b; font-size:20px; }
+.back-button:hover { background:#edf3ea; }
+.auth-card form { text-align:left; }
+.auth-card fieldset { border:0; margin:0; padding:0; min-width:0; display:flex; flex-direction:column; }
+.auth-card label { margin:0 0 8px; font-size:12px; font-weight:650; color:#405549; }
+.auth-card input { width:100%; height:50px; margin-bottom:20px; padding:0 14px; border:1px solid #dce5dd; border-radius:8px; background:#fbfcfb; color:#26332d; font-size:14px; outline:none; transition:border-color .2s,box-shadow .2s; }
+.auth-card input::placeholder { color:#909e94; }
+.auth-card input:focus { border-color:#59916c; box-shadow:0 0 0 3px #39725215; background:white; }
+.auth-hint { margin:-12px 0 20px; color:#728376; font-size:11px; line-height:1.6; }
+.full { width:100%; }
+.main-button { height:52px; margin-top:6px; border:0; border-radius:8px; background:#263b30; color:white; font-size:14px; font-weight:650; cursor:pointer; }
+.main-button:hover { background:#397252; }
+.outline-button { min-height:50px; padding:10px 18px; border:1px solid #c6d6c9; border-radius:8px; background:white; color:#397252; font-size:14px; font-weight:600; cursor:pointer; }
+.outline-button:hover { background:#f0f5ef; }
+.auth-divider { display:flex; align-items:center; gap:14px; margin:24px 0 18px; color:#728376; font-size:11px; }
+.auth-divider::before,.auth-divider::after { content:''; flex:1; height:1px; background:#dce5dd; }
+.auth-card > .text-button { display:block; margin:22px auto 0; color:#64756b; font-size:12px; }
+.auth-card fieldset:disabled,.auth-card button:disabled { opacity:.65; }
+.auth-card button:disabled { cursor:wait; }
+.auth-error { color:#b33333; font-size:14px; line-height:1.6; }
+.auth-status { min-height:60vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:24px; }
+.member-header { display:flex; justify-content:space-between; align-items:center; gap:20px; min-height:88px; padding:16px max(32px,calc((100% - 1184px)/2)); background:#f7faf8; border-bottom:1px solid #dce5dd; }
+.member-logo { display:inline-flex; align-items:center; gap:8px; color:#26332d; font-size:22px; font-weight:800; letter-spacing:-1px; white-space:nowrap; }
+.member-logo img { width:38px; height:38px; object-fit:contain; }
+.member-controls { display:flex; justify-content:flex-end; align-items:center; gap:20px; font-size:13px; color:#64756b; }
+.member-mypage-link { color:#397252; font-weight:600; }
+.home-login-button { padding:9px 12px; border:1px solid #dce5dd; border-radius:6px; background:transparent; color:#64756b; font-size:12px; }
+.home-login-button:hover { background:#edf3ea; }
+@media(max-width:900px) { .auth-page { padding:24px; } .auth-story { padding:30px; } .auth-story h2 { font-size:31px; } .auth-card { padding:70px 32px 36px; } .auth-story-copy { margin-top:44px; } }
+@media(max-width:640px) { .auth-page { padding:0; display:block; background:white; } .auth-layout { display:block; border:0; border-radius:0; } .auth-story { padding:22px 24px; } .auth-brand { font-size:18px; } .auth-brand img { width:30px; height:30px; } .auth-story-copy { margin-top:25px; } .auth-story .page-eyebrow { margin-bottom:10px; font-size:8px; } .auth-story h2 { font-size:27px; margin:0; } .auth-story-copy p,.auth-story-art,.auth-story-footer { display:none; } .auth-card { padding:68px 24px 36px; } .auth-card h1 { font-size:27px; } .back-button { left:auto; right:24px; top:20px; } .member-header { min-height:72px; padding:14px 20px; gap:12px; } .member-logo { font-size:19px; gap:5px; } .member-logo img { width:30px; height:30px; } .member-controls { gap:10px; font-size:11px; } .member-controls > span:first-child { display:none; } .home-login-button { padding:8px; font-size:11px; } }
+
+@media(max-width:640px) { .auth-card input { font-size:16px; } }

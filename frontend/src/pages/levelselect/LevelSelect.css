@@ -1,209 +1,28 @@
-.level-page {
-    min-height: 100vh;
-    width: 100%;
-    background: #f7f8fa;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 24px;
-    box-sizing: border-box;
-}
-
-.level-container {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.auth-logo {
-    width: 90px;
-    height: 90px;
-    margin: 0 auto 30px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #eaf8f1;
-    border-radius: 28px;
-
-    font-size: 44px;
-}
-
-.level-header {
-    margin-bottom: 42px;
-}
-
-.level-header h1 {
-    margin: 0 0 16px;
-
-    color: #222;
-    font-size: 38px;
-    font-weight: 700;
-    letter-spacing: -1.5px;
-}
-
-.level-header p {
-    margin: 0;
-
-    color: #777;
-    font-size: 17px;
-    line-height: 1.7;
-}
-
-.level-list {
-    width: 100%;
-
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-
-    text-align: left;
-}
-
-.level-select-card {
-    width: 100%;
-    min-height: 300px;
-
-    padding: 30px 26px;
-
-    border: 1px solid #e5e7eb;
-    border-radius: 20px;
-
-    background: white;
-
-    display: flex;
-    flex-direction: column;
-
-    text-align: left;
-
-    cursor: pointer;
-
-    transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease,
-            border-color 0.2s ease;
-}
-
-.level-select-card:hover {
-    transform: translateY(-5px);
-
-    border-color: #cfd8e3;
-
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-}
-
-.level-icon {
-    width: 52px;
-    height: 52px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: transparent;
-    border-radius: 16px;
-
-    font-size: 28px;
-
-    margin-bottom: 28px;
-}
-
-.level-info {
-    flex: 1;
-}
-
-.level-info h2 {
-    margin: 0 0 12px;
-
-    color: #222;
-
-    font-size: 25px;
-    font-weight: 700;
-
-    letter-spacing: -0.5px;
-}
-
-.level-info p {
-    margin: 0 0 14px;
-
-    color: #555;
-
-    font-size: 15px;
-    line-height: 1.5;
-}
-
-.level-info small {
-    color: #999;
-
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.level-arrow {
-    margin-top: 28px;
-
-    color: #222;
-
-    font-size: 25px;
-
-    transition: transform 0.2s ease;
-}
-
-.level-select-card:hover .level-arrow {
-    transform: translateX(5px);
-}
-
-/* 태블릿 */
-@media (max-width: 900px) {
-
-    .level-list {
-        grid-template-columns: 1fr;
-    }
-
-    .level-select-card {
-        min-height: auto;
-    }
-
-    .level-icon {
-        margin-bottom: 20px;
-    }
-
-}
-
-
-/* 모바일 */
-@media (max-width: 600px) {
-
-    .level-page {
-        padding: 40px 18px;
-    }
-
-    .auth-logo {
-        width: 75px;
-        height: 75px;
-
-        font-size: 36px;
-
-        margin-bottom: 24px;
-    }
-
-    .level-header h1 {
-        font-size: 28px;
-    }
-
-    .level-header p {
-        font-size: 15px;
-    }
-
-    .level-list {
-        gap: 14px;
-    }
-
-    .level-select-card {
-        padding: 24px;
-    }
-
-}
-.level-icon img { width: 100%; height: 100%; object-fit: contain; }
+.level-page { min-height: calc(100vh - 88px); background: #f7faf8; padding: 40px 48px 64px; }
+.level-container { max-width: 1184px; margin: auto; }
+.level-home-link { display: inline-block; color: #64756b; font-size: 13px; padding: 8px 0; }
+.level-header { text-align: center; margin: 28px 0 44px; }
+.page-eyebrow { display: block; margin: 0 0 18px; color: #397252; font-size: 10px; font-weight: 700; letter-spacing: 1.8px; }
+.level-header h1 { margin: 0 0 20px; color: #26332d; font-size: clamp(34px, 4vw, 48px); letter-spacing: -.065em; line-height: 1.35; word-break: keep-all; }
+.level-header h1 span { color: #397252; }
+.level-header > p:last-child { color: #64756b; font-size: 14px; line-height: 1.9; margin: 0; }
+.level-list { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 20px; }
+.level-select-card { display: flex; flex-direction: column; min-width: 0; text-align: left; padding: 30px; background: #fff; border: 1px solid #dce5dd; border-radius: 16px; color: #26332d; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.level-select-beginner { background: #edf3ea; border-color: #d7e3d3; }
+.level-select-card:hover { transform: translateY(-5px); border-color: #7a9c80; box-shadow: 0 14px 30px #263b3009; }
+.level-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+.level-card-top > span { color: #6a826e; font-size: 10px; letter-spacing: 1.8px; font-weight: 700; }
+.level-card-top img { width: 44px; height: 44px; }
+.level-info { flex: 1; }
+.level-info h2 { font-size: 32px; letter-spacing: -1px; margin: 0 0 10px; }
+.level-info strong { color: #49684f; font-size: 14px; font-weight: 550; }
+.level-info p { color: #64756b; font-size: 13px; line-height: 1.9; margin: 20px 0 24px; word-break: keep-all; }
+.level-topics { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 30px; }
+.level-topics span { padding: 6px 9px; border: 1px solid #dce5dd; border-radius: 6px; font-size: 11px; color: #64756b; }
+.level-card-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 20px; border-top: 1px solid #dce5dd; font-size: 12px; color: #5d7362; }
+.level-arrow { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #cbd9cd; border-radius: 50%; font-size: 22px; transition: background .2s; }
+.level-select-card:hover .level-arrow { background: #dce9dd; }
+.level-footnote { text-align: center; margin: 32px 0 0; color: #728376; font-size: 12px; }
+.level-footnote > span { margin-right: 8px; color: #6c8a6c; }
+@media(max-width:800px) { .level-page { padding: 28px 24px 48px; } .level-list { grid-template-columns: 1fr; gap: 16px; } .level-select-card { padding: 24px; } .level-card-top { margin-bottom: 16px; } .level-info h2 { display: inline-block; margin-right: 16px; font-size: 28px; } .level-info p { margin: 14px 0 18px; } .level-topics { margin-bottom: 22px; } .level-header { margin-top: 22px; } }
+@media(max-width:480px) { .level-page { padding-inline:20px; } .level-header { text-align:left; margin-bottom:30px; } .level-header h1 { font-size:34px; } .level-footnote { font-size:11px; line-height:1.8; } }
