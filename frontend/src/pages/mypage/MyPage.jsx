@@ -62,6 +62,7 @@ export default function MyPage() {
         : error ? <button className="mypage-link" onClick={reload}>학습 기록 다시 불러오기</button>
         : <Link to={recent ? lessonLink(recent.unit_id) : '/level'} className="mypage-link">학습하러 가기 →</Link>}
     </section>
+    <div className="mypage-review-link"><Link to="/review">다시 익힐 표현이 있나요? <strong>오답노트 보기 →</strong></Link></div>
     <section className="mypage-card" aria-labelledby="progress-title">
       <div className="mypage-section-title"><span>나의 배움 기록</span><h2 id="progress-title">학습현황</h2></div>
       {loading ? <p role="status">학습 기록을 불러오고 있어요…</p> : error ? <div role="alert"><p className="auth-error">{error}</p><button className="outline-button" onClick={reload}>다시 불러오기</button></div> : <>

@@ -28,6 +28,6 @@ export function GuestOnly() {
   const location = useLocation();
   if (loading || error) return <AuthStatus />;
   const from = location.state?.from;
-  const destination = typeof from === 'string' && /^\/(level|learn|lesson|mypage)(\/|\?|$)/.test(from) ? from : '/level';
+  const destination = typeof from === 'string' && /^\/(level|learn|lesson|mypage|review)(\/|\?|$)/.test(from) ? from : '/level';
   return session ? <Navigate to={destination} replace /> : <Outlet />;
 }
