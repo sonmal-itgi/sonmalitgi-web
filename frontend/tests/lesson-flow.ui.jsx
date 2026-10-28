@@ -4,8 +4,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContext } from '../src/auth/context.js';
 import Lesson from '../src/pages/lesson/Lesson.jsx';
 
-const { save, getUnit, sessions } = vi.hoisted(() => ({ save: vi.fn(), getUnit: vi.fn(), sessions: [] }));
-vi.mock('../src/lib/supabase.js', () => ({ progressService: { saveCombined: save, getUnit } }));
+const { save, sessions } = vi.hoisted(() => ({ save: vi.fn(), sessions: [] }));
+vi.mock('../src/lib/supabase.js', () => ({ progressService: { saveCombined: save } }));
 vi.mock('../src/data/curriculum.js', async (original) => {
   const data = await original();
   // Test-only media and class IDs exercise all 12 steps without filling real missing data.
@@ -37,7 +37,7 @@ vi.mock('../src/pages/practice/Practice.jsx', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks(); sessions.length = 0;
-  getUnit.mockResolvedValue(null); save.mockResolvedValue({});
+  save.mockResolvedValue({});
 });
 afterEach(cleanup);
 
@@ -194,11 +194,11 @@ it('진행률은 화면 위치가 아닌 시청·통과 완료 수로 계산하�
   expect(percent()).toBe(54);
 });
 
-it('다시 접속하면 DB에 저장된 시청·평가 기록을 복원한다', async () => {
-  getUnit.mockResolvedValue({ total_expressions: 12, watched_expression_indices: Array.from({ length: 12 }, (_, i) => i), passed_expression_indices: [0, 1, 2, 3, 4, 5] });
+it('다시 접속하면 방문 시점을 갱신하고 기존 시청·평가 기록을 복원한다', async () => {
+  save.mockResolvedValueOnce({ total_expressions: 12, watched_expression_indices: Array.from({ length: 12 }, (_, i) => i), passed_expression_indices: [0, 1, 2, 3, 4, 5] });
   renderLesson();
   await screen.findByRole('heading', { name: '숫자 기초' });
   expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('75');
   expect(screen.getByText('시청 완료 · 다시 볼 수 있어요.')).toBeTruthy();
-  expect(save).not.toHaveBeenCalled();
+  expect(save).toHaveBeenCalledExactlyOnceWith(1, [], []);
 });
