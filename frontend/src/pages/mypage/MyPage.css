@@ -56,3 +56,7 @@
 }
 .member-controls .home-login-button { border: 1px solid #dce8df; background: white; border-radius: 9px; padding: 8px 12px; color: #526b5a; font-size: 13px; cursor: pointer; }
 .member-header { flex-wrap: wrap; }
+
+.mypage-review-link { margin:0 0 24px; padding:18px 22px; border:1px solid #dce5dd; border-radius:12px; color:#64756b; font-size:13px; }
+.mypage-review-link a { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+.mypage-review-link strong { color:#397252; font-size:12px; }

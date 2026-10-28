@@ -6,12 +6,16 @@ import { progressService } from '../../lib/supabase.js';
 import { progressDetails } from '../../lib/progress.js';
 import { canAdvanceExpression } from '../../lib/lessonEvaluation.js';
 import ExpressionStep from './ExpressionStep.jsx';
+import { initialLessonStep } from '../../lib/review.js';
+import { useReviewRecorder } from '../../hooks/useReviewRecorder.js';
+import { Link } from 'react-router-dom';
 import './Lesson.css';
 
-function LessonSession({ lesson, listPath }) {
+function LessonSession({ lesson, listPath, params }) {
   const navigate = useNavigate();
   // 0..N-1: all reference videos; N..2N-1: all expression evaluations.
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(() => initialLessonStep(lesson, params));
+  const review = useReviewRecorder(lesson.id);
   const [watched, setWatched] = useState({});
   const [assessments, setAssessments] = useState({});
   const [credits, setCredits] = useState({});
@@ -80,6 +84,7 @@ function LessonSession({ lesson, listPath }) {
   }
   function receiveResult(result) {
     setAssessments((previous) => ({ ...previous, [index]: result }));
+    review.record(index, result);
     if (!canAdvanceExpression(lesson.expressions[index], learning.current.watched[index], result)
       || learning.current.passed[index]) return;
     const snapshot = { ...learning.current, passed: { ...learning.current.passed, [index]: true } };
@@ -92,13 +97,13 @@ function LessonSession({ lesson, listPath }) {
   async function leave() {
     if (pending) return;
     setPending(true);
-    if (await enqueueSave()) navigate(listPath);
+    if (await review.flush() && await enqueueSave()) navigate(listPath);
     setPending(false);
   }
   async function complete() {
     if (pending || !allPassed) return;
     setPending(true);
-    if (await enqueueSave(learning.current, true)) navigate(listPath);
+    if (await review.flush() && await enqueueSave(learning.current, true)) navigate(listPath);
     setPending(false);
   }
   if (loading) return <main className="auth-status" role="status">학습 기록을 확인하고 있어요…</main>;
@@ -109,7 +114,7 @@ function LessonSession({ lesson, listPath }) {
   </main>;
   const current = lesson.expressions[index];
   return <div className="lesson-page"><div className="lesson-container">
-    <button className="lesson-back" disabled={pending} onClick={leave}>← 유닛 목록</button>
+    <button className="lesson-back" disabled={pending} onClick={leave}>{listPath === '/review' ? '← 오답노트' : '← 유닛 목록'}</button>
     <div className="lesson-header"><span>UNIT {unitId}</span><h1>{lesson.title}</h1><p>{lesson.description}</p></div>
     <ol className="expression-stages" aria-label="유닛 학습 순서">
       <li aria-current={phase === 'video' ? 'step' : undefined}>1. 영상 전체 시청 ({total}개)</li>
@@ -127,6 +132,9 @@ function LessonSession({ lesson, listPath }) {
       onAttemptStart={() => setAssessments((previous) => ({ ...previous, [index]: null }))}
       onFinal={receiveResult} />
     {credits[index] && phase === 'evaluation' && <p className="lesson-progress-text">이 표현은 이미 평가를 통과했어요. 다시 연습해도 완료 기록은 유지됩니다.</p>}
+    {review.pending > 0 && <p className="lesson-progress-text" role="status">오답노트 저장 중…</p>}
+    {review.failures > 0 ? <div className="lesson-save-error" role="alert"><p>오답노트 {review.failures}건을 저장하지 못했어요.</p><button className="outline-button" onClick={review.retry} disabled={review.pending > 0}>오답노트 다시 저장</button></div>
+      : review.message && <p className="lesson-progress-text" role="status">{review.message} <Link to="/review">오답노트 보기 →</Link></p>}
     {syncing > 0 && <p className="lesson-progress-text" role="status">시청·평가 기록 저장 중…</p>}
     {saveError && <div className="lesson-save-error" role="alert"><p>{saveError}</p><button className="outline-button" onClick={() => void enqueueSave()} disabled={syncing > 0}>다시 저장</button></div>}
     <nav className="lesson-navigation" aria-label="학습 이전 다음 이동">
@@ -150,7 +158,7 @@ export default function Lesson() {
   const { session } = useAuth();
   const navigate = useNavigate();
   const lesson = lessons[Number(id)];
-  const listPath = `/learn?level=${lesson?.levelId || getLevelId(searchParams.get('level'))}`;
+  const listPath = searchParams.get('review') === '1' ? '/review' : `/learn?level=${lesson?.levelId || getLevelId(searchParams.get('level'))}`;
   if (!lesson) return <main className="auth-status"><h1>존재하지 않는 유닛입니다.</h1><button onClick={() => navigate(listPath)}>유닛 목록으로</button></main>;
-  return <LessonSession key={`${session.user.id}:${lesson.id}`} lesson={lesson} listPath={listPath} />;
+  return <LessonSession key={`${session.user.id}:${lesson.id}`} lesson={lesson} listPath={listPath} params={searchParams} />;
 }

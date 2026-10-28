@@ -4,8 +4,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContext } from '../src/auth/context.js';
 import Lesson from '../src/pages/lesson/Lesson.jsx';
 
-const { save, sessions } = vi.hoisted(() => ({ save: vi.fn(), sessions: [] }));
-vi.mock('../src/lib/supabase.js', () => ({ progressService: { saveCombined: save } }));
+const { save, recordReview, sessions } = vi.hoisted(() => ({ save: vi.fn(), recordReview: vi.fn(), sessions: [] }));
+vi.mock('../src/lib/supabase.js', () => ({ progressService: { saveCombined: save }, reviewService: { record: recordReview } }));
 vi.mock('../src/data/curriculum.js', async (original) => {
   const data = await original();
   // Test-only media and class IDs exercise all 12 steps without filling real missing data.
@@ -20,7 +20,7 @@ vi.mock('../src/pages/practice/Practice.jsx', () => ({
   SignEvaluation: ({ targetId, initialResult, onAttemptStart, onFinal }) => {
     sessions.push(targetId);
     const finish = (result, model_mode = 'model', type = 'final') => onFinal({
-      type, result, model_mode, target_id: targetId, predicted_id: targetId,
+      type, result, model_mode, attempt_id: crypto.randomUUID(), target_id: targetId, predicted_id: targetId,
     });
     return <div data-testid="evaluation" data-target={targetId || ''}>
       <span data-testid="previous-result">{initialResult?.result || '없음'}</span>
@@ -37,12 +37,12 @@ vi.mock('../src/pages/practice/Practice.jsx', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks(); sessions.length = 0;
-  save.mockResolvedValue({});
+  save.mockResolvedValue({}); recordReview.mockResolvedValue(null);
 });
 afterEach(cleanup);
 
-function renderLesson(unit = 1) {
-  return render(<MemoryRouter initialEntries={[`/lesson/${unit}`]}>
+function renderLesson(unit = 1, query = '') {
+  return render(<MemoryRouter initialEntries={[`/lesson/${unit}${query}`]}>
     <AuthContext.Provider value={{ session: { user: { id: 'test-user' } } }}>
       <Routes><Route path="/lesson/:id" element={<Lesson />} /><Route path="/learn" element={<p>유닛 목록</p>} /></Routes>
     </AuthContext.Provider>
@@ -201,4 +201,15 @@ it('다시 접속하면 방문 시점을 갱신하고 기존 시청·평가 기�
   expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('75');
   expect(screen.getByText('시청 완료 · 다시 볼 수 있어요.')).toBeTruthy();
   expect(save).toHaveBeenCalledExactlyOnceWith(1, [], []);
+});
+
+it('오답노트에서 선택한 표현의 평가로 바로 들어가고 최종 오답을 저장한다', async () => {
+  recordReview.mockResolvedValue({ unit_id: 1 });
+  renderLesson(1, '?expression=5&phase=evaluation&review=1');
+  await screen.findByRole('heading', { name: '숫자 기초' });
+  expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('FS0806');
+  fireEvent.click(screen.getByRole('button', { name: '실패 결과' }));
+  await waitFor(() => expect(recordReview).toHaveBeenCalledWith(1, 5, expect.objectContaining({ result: 'FAIL', target_id: 'FS0806' })));
+  expect(await screen.findByText('오답노트에 저장했어요.')).toBeTruthy();
+  expect(screen.getByRole('button', { name: '← 오답노트' })).toBeTruthy();
 });

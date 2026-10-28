@@ -9,6 +9,7 @@ import LessonRoute from './pages/lesson/LessonRoute.jsx';
 import Header from './components/Header.jsx';
 import MyPage from './pages/mypage/MyPage.jsx';
 import Practice from './pages/practice/Practice.jsx';
+import Review from './pages/review/Review.jsx';
 import './App.css';
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
     <Route element={<RequireAuth />}><Route element={<Header />}>
       <Route path="/level" element={<LevelSelect />} />
       <Route path="/mypage" element={<MyPage />} />
+      <Route path="/review" element={<Review />} />
       <Route path="/practice" element={<Practice />} />
       <Route path="/learn" element={<Learn />} />
       <Route path="/lesson/:id" element={<LessonRoute />} />

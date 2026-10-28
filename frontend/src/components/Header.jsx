@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../auth/context.js';
 
 export function MemberControls() {
@@ -9,6 +9,7 @@ export function MemberControls() {
   if (!profile) return null;
   return <div className="member-controls">
     <span>{profile.name}님</span>
+    <Link to="/review" className="member-review-link">오답노트</Link>
     <Link to="/mypage" className="member-mypage-link">마이페이지</Link>
     <button type="button" className="home-login-button" disabled={pending} onClick={async () => {
       setPending(true); setError('');
@@ -21,7 +22,7 @@ export function MemberControls() {
 
 export default function Header() {
   return <>
-    <header className="member-header"><Link to="/" className="member-logo"><img src="/sonmalitgi-icon.png" alt="" /> 손말잇기</Link><MemberControls /></header>
+    <header className="member-header"><Link to="/" className="member-logo"><img src="/sonmalitgi-icon.png" alt="" /> 손말잇기</Link><nav className="member-study-tabs" aria-label="학습 메뉴"><NavLink to="/level">학습</NavLink><NavLink to="/review">오답노트</NavLink></nav><MemberControls /></header>
     <Outlet />
   </>;
 }
