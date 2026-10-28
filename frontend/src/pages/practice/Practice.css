@@ -8,3 +8,6 @@
 .ai-practice button:disabled { opacity: .45; cursor: default; }
 .ai-practice section, .ai-practice .notice { padding: 16px; background: white; border-radius: 12px; }
 .ai-practice .notice { color: #774700; background: #fff0cb; }
+
+.ai-practice-embedded { max-width: none; margin: 16px 0 0; padding: 16px; border-radius: 12px; }
+.ai-practice .buttons { flex-wrap: wrap; }

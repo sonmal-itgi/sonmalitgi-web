@@ -288,7 +288,7 @@ export const levels = Object.fromEntries(Object.entries(levelDefinitions).map(([
 ]));
 
 export const lessons = Object.fromEntries(Object.entries(levels).flatMap(([levelId, level]) =>
-  level.units.map((unit) => [unit.id, { ...unit, levelId, expressions: expressions[unit.id] }]),
+  level.units.map((unit) => [unit.id, { ...unit, levelId, expressions: expressions[unit.id].map((expression) => ({ videoUrl: null, ...expression })) }]),
 ));
 
 export function getLevelId(value) {

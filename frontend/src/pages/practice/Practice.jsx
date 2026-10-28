@@ -3,11 +3,12 @@ import './Practice.css';
 
 const WS_URL = import.meta.env.VITE_AI_WS_URL || 'ws://localhost:8000/ws/v1/evaluate';
 
-export default function Practice() {
+export function SignEvaluation({ targetId, word, embedded = false, onAttemptStart, onFinal }) {
   const video = useRef(null);
   const session = useRef(null);
   const [active, setActive] = useState(false);
-  const [target, setTarget] = useState('FS0824');
+  const [manualTarget, setTarget] = useState('FS0824');
+  const target = targetId === undefined ? manualTarget : (targetId || '');
   const [status, setStatus] = useState('시작하면 카메라와 서버에 연결합니다.');
   const [result, setResult] = useState(null);
   const [mode, setMode] = useState(null);
@@ -51,6 +52,7 @@ export default function Practice() {
     if (session.current) return;
     const s = { closed: false, stopping: false, awaiting: false, ready: false };
     session.current = s;
+    onAttemptStart?.();
     setActive(true);
     setResult(null);
     setMode(null);
@@ -120,6 +122,7 @@ export default function Practice() {
             // Spring Boot integration: send only a server-verifiable evaluation receipt.
             // Never use this browser JSON alone to unlock lessons or award progress.
             cleanup(s);
+            onFinal?.(msg);
           }
         } else if (msg.type === 'error') {
           cleanup(s); setStatus(msg.message);
@@ -134,10 +137,13 @@ export default function Practice() {
     }
   }
 
-  return <main className="ai-practice">
-    <h1>한국수어 준실시간 평가</h1>
+  return <section className={`ai-practice${embedded ? " ai-practice-embedded" : ""}`} aria-label="수어 평가">
+    <h2>{word ? `‘${word}’ 수어 평가` : "한국수어 준실시간 평가"}</h2>
     <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 30초 촬영합니다.</p>
-    <label>목표 수어 ID <input value={target} maxLength={64} disabled={active} onChange={e => setTarget(e.target.value)} /></label>
+    {targetId === undefined
+      ? <label>목표 수어 ID <input value={target} maxLength={64} disabled={active} onChange={e => setTarget(e.target.value)} /></label>
+      : <p>현재 표현: {word} · {target || "수어 ID 연결 예정"}</p>}
+    {targetId === null && <p className="notice">이 표현의 수어 ID가 아직 연결되지 않아 평가를 시작할 수 없습니다.</p>}
     <video ref={video} autoPlay muted playsInline />
     <div className="buttons">
       <button onClick={start} disabled={active || !target.trim()}>평가 시작</button>
@@ -150,5 +156,9 @@ export default function Practice() {
       <p>{result.feedback}</p>
       <p>예측 ID: {result.predicted_id || '없음'} · 모델 점수: {result.confidence?.toFixed(3)}</p>
     </section>}
-  </main>;
+  </section>;
+}
+
+export default function Practice() {
+  return <main><SignEvaluation /></main>;
 }

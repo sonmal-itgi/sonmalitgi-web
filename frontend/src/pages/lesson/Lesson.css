@@ -151,3 +151,9 @@
 .next-button:hover {
     background: #333;
 }
+.reference-video { display: block; width: 100%; max-height: 480px; margin-top: 24px; background: #182222; border-radius: 12px; }
+.expression-stages { display: flex; gap: 24px; flex-wrap: wrap; list-style: none; padding: 0; color: #777; }
+.expression-stages [aria-current="step"] { color: #4e702b; font-weight: 700; }
+.evaluation-preview { margin-top: 16px; }
+.evaluation-notice { padding: 12px; background: #fff0cb; border-radius: 8px; color: #774700; }
+.next-button:disabled { opacity: .45; cursor: default; }

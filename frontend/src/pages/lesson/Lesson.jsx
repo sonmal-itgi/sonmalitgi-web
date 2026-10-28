@@ -4,6 +4,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../auth/context.js';
 import { progressService } from '../../lib/supabase.js';
 import './Lesson.css';
+import ExpressionStep from './ExpressionStep.jsx';
 
 function LessonSession({ lesson, listPath }) {
   const navigate = useNavigate();
@@ -53,14 +54,10 @@ function LessonSession({ lesson, listPath }) {
       <div className="lesson-progress-text">표현 {currentIndex + 1} / {lesson.expressions.length}</div>
       <div className="progress-background"><div className="progress-fill" style={{ width: `${(currentIndex + 1) / lesson.expressions.length * 100}%` }} /></div>
     </div>
-    <div className="expression-card">
-      <div className="sign-video"><div className="video-placeholder"><div className="video-icon">▶</div><p>수어 영상 영역</p><span>추후 실제 수어 영상을 연결합니다.</span></div></div>
-      <div className="expression-info"><p className="expression-label">학습 표현</p><h2>{current.word}</h2><p className="expression-description">{current.description}</p></div>
-    </div>
-    <button className="next-button" onClick={() => navigate("/practice")}>AI 수어 연습</button>
-    {saveError && <p className="lesson-save-error" role="alert">{saveError}</p>}
-    <button className="next-button" disabled={pending} onClick={nextExpression}>{pending ? '저장 중…' : isLast ? '학습 완료' : '다음 표현'}</button>
-    <p className="lesson-progress-text">다음 표현 또는 학습 완료를 누르면 학습현황이 저장돼요.</p>
+    <p className="lesson-progress-text">이 유닛은 표현 {lesson.expressions.length}개를 각각 시청하고 평가합니다. 현재 {currentIndex + 1}번째 평가 순서예요.</p>
+    <ExpressionStep key={currentIndex} expression={current} index={currentIndex}
+      total={lesson.expressions.length} isLast={isLast} pending={pending}
+      saveError={saveError} onNext={nextExpression} />
   </div></div>;
 }
 
