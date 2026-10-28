@@ -157,3 +157,8 @@
 .evaluation-preview { margin-top: 16px; }
 .evaluation-notice { padding: 12px; background: #fff0cb; border-radius: 8px; color: #774700; }
 .next-button:disabled { opacity: .45; cursor: default; }
+
+.lesson-navigation { display: flex; align-items: stretch; gap: 12px; margin-top: 20px; }
+.lesson-navigation > button { flex: 1; min-height: 50px; margin-top: 0; }
+.lesson-navigation .next-button { width: auto; }
+.lesson-navigation button:disabled { opacity: .45; cursor: default; }

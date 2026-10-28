@@ -3,15 +3,15 @@ import './Practice.css';
 
 const WS_URL = import.meta.env.VITE_AI_WS_URL || 'ws://localhost:8000/ws/v1/evaluate';
 
-export function SignEvaluation({ targetId, word, embedded = false, onAttemptStart, onFinal }) {
+export function SignEvaluation({ targetId, word, embedded = false, initialResult = null, onAttemptStart, onFinal }) {
   const video = useRef(null);
   const session = useRef(null);
   const [active, setActive] = useState(false);
   const [manualTarget, setTarget] = useState('FS0824');
   const target = targetId === undefined ? manualTarget : (targetId || '');
-  const [status, setStatus] = useState('시작하면 카메라와 서버에 연결합니다.');
-  const [result, setResult] = useState(null);
-  const [mode, setMode] = useState(null);
+  const [status, setStatus] = useState(initialResult ? '이 표현의 이전 평가 결과입니다. 다시 평가할 수 있어요.' : '시작하면 카메라와 서버에 연결합니다.');
+  const [result, setResult] = useState(initialResult);
+  const [mode, setMode] = useState(initialResult?.model_mode || null);
 
   function cleanup(s) {
     if (!s || s.closed) return;
