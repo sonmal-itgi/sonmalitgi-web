@@ -48,7 +48,7 @@ export default function MyPage() {
   const { profile } = useAuth();
   const { records, loading, error, reload } = useLearningProgress();
   const byUnit = Object.fromEntries(records.map((r) => [r.unit_id, r]));
-  const recent = records.find((r) => !r.completed_at && lessons[r.unit_id]) || records.find((r) => lessons[r.unit_id]);
+  const recent = records.find((r) => lessons[r.unit_id]);
   const recentDetail = progressDetails(recent);
   const completedUnits = records.filter((r) => r.completed_at && lessons[r.unit_id]).length;
   const studied = records.reduce((sum, r) => sum + (lessons[r.unit_id] ? r.completed_expressions : 0), 0);
@@ -58,7 +58,9 @@ export default function MyPage() {
     <section className="mypage-profile mypage-card">
       <img src="/sonmalitgi-icon.png" alt="" />
       <div><h2>{profile.name}님</h2><p>아이디 · {profile.username}</p><small>가입일 · {new Date(profile.created_at).toLocaleDateString('ko-KR')}</small></div>
-      <Link to="/level" className="mypage-link">학습하러 가기 →</Link>
+      {loading ? <span className="mypage-link" role="status">학습 기록 확인 중…</span>
+        : error ? <button className="mypage-link" onClick={reload}>학습 기록 다시 불러오기</button>
+        : <Link to={recent ? lessonLink(recent.unit_id) : '/level'} className="mypage-link">학습하러 가기 →</Link>}
     </section>
     <section className="mypage-card" aria-labelledby="progress-title">
       <div className="mypage-section-title"><span>나의 배움 기록</span><h2 id="progress-title">학습현황</h2></div>

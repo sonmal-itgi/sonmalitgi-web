@@ -31,9 +31,8 @@ function LessonSession({ lesson, listPath }) {
     let active = true;
     (async () => {
       try {
-        const record = await progressService.getUnit(unitId);
-        if (!active) return;
-        const saved = record || await progressService.saveCombined(unitId, [], []);
+        // Empty progress additions preserve credits and refresh the last visit time.
+        const saved = await progressService.saveCombined(unitId, [], []);
         if (active) {
           const detail = progressDetails(saved);
           const restored = { watched: Object.fromEntries(detail.watched.map((i) => [i, true])), passed: Object.fromEntries(detail.passed.map((i) => [i, true])) };
