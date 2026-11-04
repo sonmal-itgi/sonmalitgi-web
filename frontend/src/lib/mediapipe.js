@@ -3,7 +3,7 @@ import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 // Keep the WASM version identical to the installed JS package.
 const WASM_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.2/wasm';
 const MODEL_URL = import.meta.env?.VITE_MEDIAPIPE_MODEL_URL ||
-  'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/holistic_landmarker.task';
+  'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
 
 export async function createLandmarker() {
   const files = await FilesetResolver.forVisionTasks(WASM_URL);
