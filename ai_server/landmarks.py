@@ -1,0 +1,31 @@
+"""Wire format for browser MediaPipe Holistic output (unmirrored coordinates)."""
+import math
+
+SCHEMA = "mediapipe-holistic-v1"
+COUNTS = {"pose": 33, "face": 478, "left_hand": 21, "right_hand": 21}
+
+
+def decode_landmarks(message, previous_timestamp=-1):
+    if message.get("type") != "landmarks" or message.get("schema") != SCHEMA:
+        raise ValueError("Unknown landmark schema")
+    timestamp = message.get("timestamp_ms")
+    def finite(value):
+        return type(value) in (int, float) and math.isfinite(value)
+    if not finite(timestamp) or timestamp < 0 or timestamp <= previous_timestamp:
+        raise ValueError("Landmark timestamps must increase")
+    frame = {"schema": SCHEMA, "timestamp_ms": timestamp}
+    for name, count in COUNTS.items():
+        points = message.get(name)
+        if not isinstance(points, list) or len(points) not in (0, count):
+            raise ValueError("Invalid landmark count")
+        frame[name] = []
+        for point in points:
+            if not isinstance(point, dict) or not all(finite(point.get(k)) for k in ("x", "y", "z")):
+                raise ValueError("Invalid landmark coordinates")
+            clean = {k: point[k] for k in ("x", "y", "z")}
+            if "visibility" in point:
+                if not finite(point["visibility"]) or not 0 <= point["visibility"] <= 1:
+                    raise ValueError("Invalid visibility")
+                clean["visibility"] = point["visibility"]
+            frame[name].append(clean)
+    return frame

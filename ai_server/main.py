@@ -11,6 +11,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from PIL import Image, UnidentifiedImageError
 from .evaluation import Evaluator
 from .model import load_model
+from .landmarks import decode_landmarks
 
 WINDOW = 16
 STRIDE = 4
@@ -56,12 +57,20 @@ async def evaluate(ws: WebSocket):
         if len(raw) > 2048:
             raise ValueError("시작 메시지 크기 제한 초과")
         config = json.loads(raw)
-        if config.get("type") != "start":
+        if not isinstance(config, dict) or config.get("type") != "start":
             raise ValueError("start 메시지가 필요합니다")
         attempt_id = str(UUID(config["attempt_id"]))
         target = config["target_id"]
         if not isinstance(target, str) or not 1 <= len(target) <= 64:
             raise ValueError("잘못된 target_id")
+        input_mode = config.get("input_mode", "jpeg")
+        if input_mode not in ("jpeg", "landmarks"):
+            raise ValueError("Unknown input mode")
+        predict = getattr(app.state.model, "predict_landmarks", None) if input_mode == "landmarks" else app.state.model.predict
+        if not callable(predict):
+            await ws.send_json({"type": "error", "message": "서버 모델이 랜드마크 입력을 지원하지 않습니다. predict_landmarks 어댑터를 연결해 주세요."})
+            return
+        previous_timestamp = -1
         judge = Evaluator(target)
         frames = deque(maxlen=WINDOW)
         count = 0
@@ -70,11 +79,11 @@ async def evaluate(ws: WebSocket):
         last_inferred = 0
         async def infer():
             async with app.state.model_lock:
-                prediction = await asyncio.to_thread(app.state.model.predict, list(frames))
+                prediction = await asyncio.to_thread(predict, list(frames))
             return judge.update(prediction)
         began = time.monotonic()
         await ws.send_json(dict(type="ready", attempt_id=attempt_id,
-                                model_mode=app.state.model.mode, fps=8, window=WINDOW))
+                                model_mode=app.state.model.mode, input_mode=input_mode, fps=8, window=WINDOW))
         while True:
             event = await receive()
             elapsed = time.monotonic() - began
@@ -84,18 +93,30 @@ async def evaluate(ws: WebSocket):
                 await ws.send_json(dict(type="final", attempt_id=attempt_id,
                                         target_id=target, model_mode=app.state.model.mode, **latest))
                 break
+            message = None
             if event.get("text") is not None:
-                if len(event["text"]) > 128 or json.loads(event["text"]).get("type") != "stop":
-                    raise ValueError("stop 메시지 또는 JPEG만 허용됩니다")
+                raw = event["text"]
+                if len(raw.encode("utf-8")) > MAX_BYTES:
+                    raise ValueError("Message too large")
+                message = json.loads(raw)
+                if not isinstance(message, dict):
+                    raise ValueError("Object required")
+            if message is not None and message.get("type") == "stop":
                 if len(frames) == WINDOW and count > last_inferred:
                     latest = await infer()
                 await ws.send_json(dict(type="final", attempt_id=attempt_id,
                                         target_id=target, model_mode=app.state.model.mode, **latest))
                 break
-            data = event.get("bytes")
-            if data is None:
-                raise ValueError("JPEG 바이너리가 필요합니다")
-            frame = await asyncio.to_thread(decode_frame, data)
+            if input_mode == "landmarks":
+                if message is None:
+                    raise ValueError("Landmark JSON required")
+                frame = decode_landmarks(message, previous_timestamp)
+                previous_timestamp = frame["timestamp_ms"]
+            else:
+                data = event.get("bytes")
+                if data is None:
+                    raise ValueError("JPEG binary required")
+                frame = await asyncio.to_thread(decode_frame, data)
             frames.append(frame)
             count += 1
             # One client frame is in flight; server acknowledges after any inference.

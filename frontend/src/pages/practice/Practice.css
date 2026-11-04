@@ -22,3 +22,13 @@
 .ai-practice .notice { color:#786741; background:#f3f0e4; border:1px solid #e4dec7; }
 .ai-practice input { border-color:#c6d6c9; color:#26332d; background:white; }
 @media(max-width:640px) { .ai-practice-embedded { padding:14px; } .ai-practice h2 { font-size:18px; overflow-wrap:anywhere; } .ai-practice .buttons { gap:8px; } .ai-practice button { padding:12px; font-size:12px; } }
+
+.landmark-preview { position: relative; margin: 20px 0; aspect-ratio: 4/3; }
+.landmark-preview video { width: 100%; height: 100%; margin: 0; }
+.landmark-preview canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transform: scaleX(-1); pointer-events: none; }
+.ai-practice .landmark-preview video { margin: 0; }
+
+.landmark-json { margin: 16px 0; min-width: 0; }
+.landmark-json h3 { margin: 0 0 8px; font-size: 16px; }
+.landmark-json pre { box-sizing: border-box; max-height: 360px; max-width: 100%; overflow: auto; padding: 16px; margin: 12px 0 0; border-radius: 8px; background: #172b22; color: #d8f3e3; font-size: 12px; line-height: 1.6; text-align: left; }
+.landmark-json code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }

@@ -1,3 +1,4 @@
+import { createLandmarker, landmarkFrame, drawLandmarks } from '../../lib/mediapipe';
 import { useEffect, useRef, useState } from 'react';
 import './Practice.css';
 
@@ -5,6 +6,8 @@ const WS_URL = import.meta.env.VITE_AI_WS_URL || 'ws://localhost:8000/ws/v1/eval
 
 export function SignEvaluation({ targetId, word, embedded = false, initialResult = null, onAttemptStart, onFinal }) {
   const video = useRef(null);
+  const overlay = useRef(null);
+  const [landmarks, setLandmarks] = useState(null);
   const session = useRef(null);
   const [active, setActive] = useState(false);
   const [manualTarget, setTarget] = useState('FS0824');
@@ -16,6 +19,8 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
   function cleanup(s) {
     if (!s || s.closed) return;
     s.closed = true;
+    s.landmarker?.close();
+    overlay.current?.getContext('2d')?.clearRect(0, 0, overlay.current.width, overlay.current.height);
     clearTimeout(s.timer);
     clearTimeout(s.deadline);
     clearTimeout(s.watchdog);
@@ -55,8 +60,9 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
     onAttemptStart?.();
     setActive(true);
     setResult(null);
+    setLandmarks(null);
     setMode(null);
-    setStatus('카메라 연결 중…');
+    setStatus('카메라와 MediaPipe 모델 준비 중…');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }, audio: false,
@@ -66,8 +72,9 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
       video.current.srcObject = stream;
       await video.current.play();
       if (s.closed) return;
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
+      const landmarker = await createLandmarker();
+      if (s.closed) { landmarker.close(); return; }
+      s.landmarker = landmarker;
       const ws = new WebSocket(WS_URL);
       s.ws = ws;
       s.watchdog = setTimeout(() => {
@@ -78,18 +85,21 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
         if (s.closed || s.stopping || s.awaiting || ws.readyState !== WebSocket.OPEN) return;
         const v = video.current;
         if (!v?.videoWidth) { s.timer = setTimeout(capture, 125); return; }
-        const scale = Math.min(640 / v.videoWidth, 480 / v.videoHeight, 1);
-        canvas.width = Math.floor(v.videoWidth * scale);
-        canvas.height = Math.floor(v.videoHeight * scale);
-        context.drawImage(v, 0, 0, canvas.width, canvas.height);
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', .7));
-        if (s.closed || s.stopping) return;
-        if (!blob || blob.size > 150000) {
-          cleanup(s); setStatus('프레임 생성에 실패했거나 크기가 너무 큽니다.'); return;
+        if (v.readyState < 2 || s.lastVideoTime === v.currentTime || ws.bufferedAmount > 150000) {
+          s.timer = setTimeout(capture, 125); return;
         }
-        if (ws.bufferedAmount > 150000) { s.timer = setTimeout(capture, 125); return; }
-        s.awaiting = true;
-        ws.send(blob);
+        try {
+          const timestamp = performance.now();
+          const detection = s.landmarker.detectForVideo(v, timestamp);
+          const frame = landmarkFrame(detection, timestamp);
+          s.lastVideoTime = v.currentTime;
+          drawLandmarks(overlay.current, v, frame);
+          setLandmarks(frame);
+          s.awaiting = true;
+          ws.send(JSON.stringify(frame));
+        } catch (error) {
+          cleanup(s); setStatus(`랜드마크 추출 실패: ${error.message}`); return;
+        }
         clearTimeout(s.watchdog);
         s.watchdog = setTimeout(() => {
           cleanup(s); setStatus('분석 응답 시간이 초과됐습니다.');
@@ -97,7 +107,7 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
       };
       ws.onopen = () => {
         if (s.closed) return;
-        ws.send(JSON.stringify({ type: 'start', attempt_id: crypto.randomUUID(), target_id: target.trim() }));
+        ws.send(JSON.stringify({ type: 'start', input_mode: 'landmarks', attempt_id: crypto.randomUUID(), target_id: target.trim() }));
       };
       ws.onmessage = event => {
         if (s.closed) return;
@@ -108,7 +118,7 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
           clearTimeout(s.watchdog);
           s.ready = true;
           setMode(msg.model_mode);
-          setStatus('수어를 표현하세요. 최근 16프레임을 4프레임마다 분석합니다.');
+          setStatus('수어를 표현하세요. 브라우저에서 추출한 랜드마크 좌표를 분석합니다.');
           s.deadline = setTimeout(stop, 29000);
           capture();
         } else if (msg.type === 'ack') {
@@ -133,7 +143,7 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
         if (!s.closed) { cleanup(s); setStatus('연결이 종료됐습니다. 다시 시작해 주세요.'); }
       };
     } catch (error) {
-      if (!s.closed) { cleanup(s); setStatus(`카메라 시작 실패: ${error.message}`); }
+      if (!s.closed) { cleanup(s); setStatus(`카메라 또는 MediaPipe 준비 실패: ${error.message}`); }
     }
   }
 
@@ -144,12 +154,23 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
       ? <label>목표 수어 ID <input value={target} maxLength={64} disabled={active} onChange={e => setTarget(e.target.value)} /></label>
       : <p>현재 표현: {word} · {target || "수어 ID 연결 예정"}</p>}
     {targetId === null && <p className="notice">이 표현의 수어 ID가 아직 연결되지 않아 평가를 시작할 수 없습니다.</p>}
-    <video ref={video} autoPlay muted playsInline />
+    <div className="landmark-preview">
+      <video ref={video} autoPlay muted playsInline />
+      <canvas ref={overlay} aria-hidden="true" />
+    </div>
+    {landmarks && <p>검출된 점 · 몸 {landmarks.pose.length} · 왼손 {landmarks.left_hand.length} · 오른손 {landmarks.right_hand.length} · 얼굴 {landmarks.face.length}</p>}
     <div className="buttons">
       <button onClick={start} disabled={active || !target.trim()}>평가 시작</button>
       <button onClick={stop} disabled={!active}>종료 및 최종 평가</button>
     </div>
     <p role="status">{status}</p>
+    <section className="landmark-json" aria-label="랜드마크 좌표 JSON">
+      <h3>랜드마크 좌표 JSON</h3>
+      <p>서버로 보내는 최신 프레임입니다. 촬영 중 자동으로 갱신되며 종료 후에도 마지막 좌표가 남습니다.</p>
+      {landmarks
+        ? <pre tabIndex={0} aria-label="최신 프레임 좌표"><code>{JSON.stringify(landmarks, null, 2)}</code></pre>
+        : <p>평가를 시작하면 추출한 좌표가 여기에 표시됩니다.</p>}
+    </section>
     {mode === 'demo' && <p className="notice">통신 테스트 모드 · 실제 수어 인식 모델이 연결되지 않았습니다.</p>}
     {result && <section aria-live="polite">
       <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result}</h2>

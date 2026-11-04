@@ -18,8 +18,18 @@ class Model(Protocol):
     mode: str
     def predict(self, frames: list[Image.Image]) -> Prediction: ...
 
+class LandmarkModel(Protocol):
+    mode: str
+    def predict_landmarks(self, frames: list[dict]) -> Prediction: ...
+
 class DemoModel:
     mode = "demo"
+    def predict_landmarks(self, frames):
+        capture_ok = any(f["pose"] and (f["left_hand"] or f["right_hand"]) for f in frames)
+        return Prediction(None, 0.0, capture_ok, False,
+                          "랜드마크 수신 완료. 학습된 랜드마크 모델을 연결해 주세요." if capture_ok
+                          else "몸과 손이 카메라에 보이도록 위치를 조정해 주세요.")
+
     def predict(self, frames):
         return Prediction(None, 0.0, True, False,
                           "통신 테스트 모드입니다. 학습된 모델을 연결해 주세요.")
