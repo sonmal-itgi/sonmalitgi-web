@@ -25,10 +25,10 @@ class LandmarkModel(Protocol):
 class DemoModel:
     mode = "demo"
     def predict_landmarks(self, frames):
-        capture_ok = any(f["pose"] and (f["left_hand"] or f["right_hand"]) for f in frames)
+        capture_ok = any((f["left_hand"] or f["right_hand"]) for f in frames)
         return Prediction(None, 0.0, capture_ok, False,
                           "랜드마크 수신 완료. 학습된 랜드마크 모델을 연결해 주세요." if capture_ok
-                          else "몸과 손이 카메라에 보이도록 위치를 조정해 주세요.")
+                          else "손이 카메라에 보이도록 위치를 조정해 주세요.")
 
     def predict(self, frames):
         return Prediction(None, 0.0, True, False,

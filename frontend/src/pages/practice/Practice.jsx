@@ -62,7 +62,7 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
     setResult(null);
     setLandmarks(null);
     setMode(null);
-    setStatus('카메라와 MediaPipe 모델 준비 중…');
+    setStatus('카메라와 양손 인식 모델 준비 중…');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }, audio: false,
@@ -118,7 +118,7 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
           clearTimeout(s.watchdog);
           s.ready = true;
           setMode(msg.model_mode);
-          setStatus('수어를 표현하세요. 브라우저에서 추출한 랜드마크 좌표를 분석합니다.');
+          setStatus('수어를 표현하세요. 양손을 카메라에 보여 주세요. 손 좌표를 분석합니다.');
           s.deadline = setTimeout(stop, 29000);
           capture();
         } else if (msg.type === 'ack') {
@@ -158,7 +158,7 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
       <video ref={video} autoPlay muted playsInline />
       <canvas ref={overlay} aria-hidden="true" />
     </div>
-    {landmarks && <p>검출된 점 · 몸 {landmarks.pose.length} · 왼손 {landmarks.left_hand.length} · 오른손 {landmarks.right_hand.length} · 얼굴 {landmarks.face.length}</p>}
+    {landmarks && <p>검출된 점 · 왼손 {landmarks.left_hand.length} · 오른손 {landmarks.right_hand.length}</p>}
     <div className="buttons">
       <button onClick={start} disabled={active || !target.trim()}>평가 시작</button>
       <button onClick={stop} disabled={!active}>종료 및 최종 평가</button>

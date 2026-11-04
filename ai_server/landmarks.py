@@ -1,20 +1,22 @@
-"""Wire format for browser MediaPipe Holistic output (unmirrored coordinates)."""
+"""Wire format for browser MediaPipe hand output (unmirrored coordinates)."""
 import math
 
 SCHEMA = "mediapipe-holistic-v1"
-COUNTS = {"pose": 33, "face": 478, "left_hand": 21, "right_hand": 21}
+LEGACY_COUNTS = {"pose": 33, "face": 478, "left_hand": 21, "right_hand": 21}
 
 
 def decode_landmarks(message, previous_timestamp=-1):
-    if message.get("type") != "landmarks" or message.get("schema") != SCHEMA:
+    schema = message.get("schema")
+    if message.get("type") != "landmarks" or schema not in (SCHEMA, "mediapipe-hands-v1"):
         raise ValueError("Unknown landmark schema")
     timestamp = message.get("timestamp_ms")
     def finite(value):
         return type(value) in (int, float) and math.isfinite(value)
     if not finite(timestamp) or timestamp < 0 or timestamp <= previous_timestamp:
         raise ValueError("Landmark timestamps must increase")
-    frame = {"schema": SCHEMA, "timestamp_ms": timestamp}
-    for name, count in COUNTS.items():
+    counts = LEGACY_COUNTS if schema == SCHEMA else {"left_hand": 21, "right_hand": 21}
+    frame = {"schema": schema, "timestamp_ms": timestamp}
+    for name, count in counts.items():
         points = message.get(name)
         if not isinstance(points, list) or len(points) not in (0, count):
             raise ValueError("Invalid landmark count")

@@ -71,3 +71,15 @@ def test_rgb_only_adapter_rejected_before_ready():
         with client.websocket_connect("/ws/v1/evaluate", headers={"origin": "http://localhost:5173"}) as ws:
             ws.send_json(dict(type="start", input_mode="landmarks", target_id="A", attempt_id=str(uuid4())))
             assert ws.receive_json()["type"] == "error"
+
+
+def test_hands_only_schema_and_capture():
+    from ai_server.model import DemoModel
+    point = {"x": .2, "y": .3, "z": -.1}
+    hands = dict(type="landmarks", schema="mediapipe-hands-v1", timestamp_ms=125,
+                 left_hand=[point] * 21, right_hand=[])
+    decoded = decode_landmarks(hands)
+    assert "pose" not in decoded and "face" not in decoded
+    assert DemoModel().predict_landmarks([decoded]).capture_ok
+    decoded["left_hand"] = []
+    assert not DemoModel().predict_landmarks([decoded]).capture_ok
