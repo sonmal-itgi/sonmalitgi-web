@@ -30,4 +30,10 @@ def decode_landmarks(message, previous_timestamp=-1):
                     raise ValueError("Invalid visibility")
                 clean["visibility"] = point["visibility"]
             frame[name].append(clean)
+    if "image_width" in message or "image_height" in message:
+        for key in ("image_width", "image_height"):
+            value = message.get(key)
+            if type(value) is not int or not 1 <= value <= 8192:
+                raise ValueError("Invalid camera dimensions")
+            frame[key] = value
     return frame

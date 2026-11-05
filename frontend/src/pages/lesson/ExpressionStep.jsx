@@ -4,7 +4,7 @@ import { referenceVideoUrl } from '../../lib/lessonEvaluation.js';
 
 const VIDEO_BASE = import.meta.env.VITE_SIGN_VIDEO_BASE_URL || '';
 
-export default function ExpressionStep({ expression, index, total, phase, watched, result, onWatched, onAttemptStart, onFinal }) {
+export default function ExpressionStep({ levelId, expression, index, total, phase, watched, result, onWatched, onAttemptStart, onFinal }) {
   const [videoError, setVideoError] = useState(false);
   const url = referenceVideoUrl(expression, VIDEO_BASE);
   return <div className="expression-card">
@@ -19,7 +19,7 @@ export default function ExpressionStep({ expression, index, total, phase, watche
           {videoError && <button className="outline-button" onClick={() => setVideoError(false)}>영상 다시 불러오기</button>}
         </div></div>}
       <p className="lesson-progress-text">{watched ? '시청 완료 · 다시 볼 수 있어요.' : '영상이 끝나면 시청 완료로 표시돼요.'}</p>
-    </> : <SignEvaluation embedded word={expression.word} targetId={expression.contentId ?? null}
+    </> : <SignEvaluation embedded evaluationKind={levelId === 'intermediate' ? 'word' : undefined} word={expression.word} targetId={expression.contentId ?? null}
       initialResult={result} onAttemptStart={onAttemptStart} onFinal={onFinal} />}
   </div>;
 }

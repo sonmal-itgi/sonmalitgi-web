@@ -34,9 +34,24 @@ class DemoModel:
         return Prediction(None, 0.0, True, False,
                           "통신 테스트 모드입니다. 학습된 모델을 연결해 주세요.")
 
-def load_model() -> Model:
-    adapter = os.getenv("MODEL_ADAPTER")
+def load_model(env_name="MODEL_ADAPTER") -> Model:
+    adapter = os.getenv(env_name)
     if not adapter:
         return DemoModel()
     module, factory = adapter.split(":", 1)
     return getattr(importlib.import_module(module), factory)()
+
+
+def load_word_model():
+    """Separate hands-only word model; never reuse the body-based checkpoint."""
+    model = load_model("WORD_MODEL_ADAPTER")
+    if isinstance(model, DemoModel):
+        return model
+    if (getattr(model, "input_schema", None) != "mediapipe-hands-v1"
+            or not callable(getattr(model, "predict_landmarks", None))):
+        raise ValueError("WORD_MODEL_ADAPTER must support mediapipe-hands-v1")
+    ids = getattr(model, "supported_ids", None)
+    if not isinstance(ids, (list, tuple, set)) or not ids or not all(
+            isinstance(value, str) and value.startswith("WORD") for value in ids):
+        raise ValueError("Word model must declare nonempty supported_ids (WORD IDs)")
+    return model

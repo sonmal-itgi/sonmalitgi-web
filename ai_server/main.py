@@ -10,7 +10,7 @@ from uuid import UUID
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from PIL import Image, UnidentifiedImageError
 from .evaluation import Evaluator
-from .model import load_model
+from .model import load_model, load_word_model
 from .landmarks import decode_landmarks
 
 WINDOW = 16
@@ -22,6 +22,7 @@ ORIGINS = set(os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0
 @asynccontextmanager
 async def lifespan(app):
     app.state.model = load_model()
+    app.state.word_model = load_word_model()
     # Serialize inference for adapters that are not thread-safe.
     app.state.model_lock = asyncio.Lock()
     yield
@@ -30,7 +31,9 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "model_mode": app.state.model.mode}
+    return {"status": "ok", "model_mode": app.state.model.mode,
+            "word_model_mode": app.state.word_model.mode,
+            "word_supported_ids": sorted(getattr(app.state.word_model, "supported_ids", []))}
 
 def decode_frame(data: bytes):
     if not data or len(data) > MAX_BYTES:
@@ -40,12 +43,15 @@ def decode_frame(data: bytes):
             raise ValueError("640×480 이하 JPEG 프레임이 필요합니다")
         return img.convert("RGB")
 
+@app.websocket("/ws/v1/word/evaluate")
 @app.websocket("/ws/v1/evaluate")
 async def evaluate(ws: WebSocket):
     if ws.headers.get("origin") not in ORIGINS:
         await ws.close(code=1008)
         return
     await ws.accept()
+    word_session = ws.url.path == "/ws/v1/word/evaluate"
+    model = app.state.word_model if word_session else app.state.model
     async def receive():
         event = await asyncio.wait_for(ws.receive(), timeout=10)
         if event["type"] == "websocket.disconnect":
@@ -66,7 +72,18 @@ async def evaluate(ws: WebSocket):
         input_mode = config.get("input_mode", "jpeg")
         if input_mode not in ("jpeg", "landmarks"):
             raise ValueError("Unknown input mode")
-        predict = getattr(app.state.model, "predict_landmarks", None) if input_mode == "landmarks" else app.state.model.predict
+        if word_session:
+            if input_mode != "landmarks":
+                raise ValueError("Word model requires landmarks")
+            if model.mode == "demo":
+                await ws.send_json({"type": "error", "code": "MODEL_NOT_READY",
+                                    "message": "중급 손 전용 수어 모델을 준비 중입니다. 현재는 인식 평가를 제공하지 않습니다."})
+                return
+            if target not in model.supported_ids:
+                await ws.send_json({"type": "error", "code": "UNSUPPORTED_TARGET",
+                                    "message": "이 표현은 현재 중급 모델의 지원 단어에 포함되지 않습니다."})
+                return
+        predict = getattr(model, "predict_landmarks", None) if input_mode == "landmarks" else model.predict
         if not callable(predict):
             await ws.send_json({"type": "error", "message": "서버 모델이 랜드마크 입력을 지원하지 않습니다. predict_landmarks 어댑터를 연결해 주세요."})
             return
@@ -83,7 +100,7 @@ async def evaluate(ws: WebSocket):
             return judge.update(prediction)
         began = time.monotonic()
         await ws.send_json(dict(type="ready", attempt_id=attempt_id,
-                                model_mode=app.state.model.mode, input_mode=input_mode, fps=8, window=WINDOW))
+                                model_mode=model.mode, input_mode=input_mode, fps=8, window=WINDOW))
         while True:
             event = await receive()
             elapsed = time.monotonic() - began
@@ -91,7 +108,7 @@ async def evaluate(ws: WebSocket):
                 if len(frames) == WINDOW and count > last_inferred:
                     latest = await infer()
                 await ws.send_json(dict(type="final", attempt_id=attempt_id,
-                                        target_id=target, model_mode=app.state.model.mode, **latest))
+                                        target_id=target, model_mode=model.mode, **latest))
                 break
             message = None
             if event.get("text") is not None:
@@ -105,11 +122,13 @@ async def evaluate(ws: WebSocket):
                 if len(frames) == WINDOW and count > last_inferred:
                     latest = await infer()
                 await ws.send_json(dict(type="final", attempt_id=attempt_id,
-                                        target_id=target, model_mode=app.state.model.mode, **latest))
+                                        target_id=target, model_mode=model.mode, **latest))
                 break
             if input_mode == "landmarks":
                 if message is None:
                     raise ValueError("Landmark JSON required")
+                if word_session and message.get("schema") != "mediapipe-hands-v1":
+                    raise ValueError("Hands-only schema required")
                 frame = decode_landmarks(message, previous_timestamp)
                 previous_timestamp = frame["timestamp_ms"]
             else:
@@ -125,11 +144,11 @@ async def evaluate(ws: WebSocket):
                 last_inferred = count
                 await ws.send_json(dict(type="prediction", attempt_id=attempt_id,
                                         target_id=target, frame_count=count,
-                                        model_mode=app.state.model.mode, **latest))
+                                        model_mode=model.mode, **latest))
                 # PASS is terminal; FAIL is provisional until user stops.
                 if latest["result"] == "PASS":
                     await ws.send_json(dict(type="final", attempt_id=attempt_id,
-                                            target_id=target, model_mode=app.state.model.mode, **latest))
+                                            target_id=target, model_mode=model.mode, **latest))
                     break
             await ws.send_json(dict(type="ack", frame_count=count))
     except WebSocketDisconnect:

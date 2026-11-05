@@ -126,7 +126,7 @@ function LessonSession({ lesson, listPath, params }) {
       <p className="lesson-progress-text">영상 시청 50% + 평가 통과 50%</p>
     </div>
     {phase === 'evaluation' && watchedCount < total && <p className="evaluation-notice">아직 모든 영상을 시청하지 않았어요. 평가 화면은 둘러볼 수 있지만 유닛 완료에는 전체 영상 시청과 모든 평가 통과가 필요해요.</p>}
-    <ExpressionStep key={step} expression={current} index={index} total={total} phase={phase}
+    <ExpressionStep levelId={lesson.levelId} key={step} expression={current} index={index} total={total} phase={phase}
       watched={Boolean(watched[index])} result={assessments[index] || null}
       onWatched={markWatched}
       onAttemptStart={() => setAssessments((previous) => ({ ...previous, [index]: null }))}

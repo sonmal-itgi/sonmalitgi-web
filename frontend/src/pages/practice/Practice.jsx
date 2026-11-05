@@ -2,9 +2,10 @@ import { createLandmarker, landmarkFrame, drawLandmarks } from '../../lib/mediap
 import { useEffect, useRef, useState } from 'react';
 import './Practice.css';
 
+const WORD_WS_URL = import.meta.env.VITE_WORD_AI_WS_URL || 'ws://localhost:8000/ws/v1/word/evaluate';
 const WS_URL = import.meta.env.VITE_AI_WS_URL || 'ws://localhost:8000/ws/v1/evaluate';
 
-export function SignEvaluation({ targetId, word, embedded = false, initialResult = null, onAttemptStart, onFinal }) {
+export function SignEvaluation({ evaluationKind, targetId, word, embedded = false, initialResult = null, onAttemptStart, onFinal }) {
   const video = useRef(null);
   const overlay = useRef(null);
   const [landmarks, setLandmarks] = useState(null);
@@ -75,7 +76,7 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
       const landmarker = await createLandmarker();
       if (s.closed) { landmarker.close(); return; }
       s.landmarker = landmarker;
-      const ws = new WebSocket(WS_URL);
+      const ws = new WebSocket(evaluationKind === 'word' ? WORD_WS_URL : WS_URL);
       s.ws = ws;
       s.watchdog = setTimeout(() => {
         cleanup(s);
@@ -92,6 +93,8 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
           const timestamp = performance.now();
           const detection = s.landmarker.detectForVideo(v, timestamp);
           const frame = landmarkFrame(detection, timestamp);
+          frame.image_width = v.videoWidth;
+          frame.image_height = v.videoHeight;
           s.lastVideoTime = v.currentTime;
           drawLandmarks(overlay.current, v, frame);
           setLandmarks(frame);
@@ -149,6 +152,7 @@ export function SignEvaluation({ targetId, word, embedded = false, initialResult
 
   return <section className={`ai-practice${embedded ? " ai-practice-embedded" : ""}`} aria-label="수어 평가">
     <h2>{word ? `‘${word}’ 수어 평가` : "한국수어 준실시간 평가"}</h2>
+    {evaluationKind === 'word' && <p className="notice">중급은 양손 좌표를 사용하는 단어 모델로 평가합니다. 모델 준비 상태와 지원 단어에 따라 평가 가능 여부가 안내됩니다.</p>}
     <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 30초 촬영합니다.</p>
     {targetId === undefined
       ? <label>목표 수어 ID <input value={target} maxLength={64} disabled={active} onChange={e => setTarget(e.target.value)} /></label>
