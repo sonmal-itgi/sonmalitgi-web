@@ -15,6 +15,16 @@ export function progressDetails(record) {
   return { watched, passed, watchedCount: watched.length, passedCount: passed.length, percent };
 }
 
+// Resume from the first unfinished task, using records rather than rounded percent.
+export function resumeLessonStep(lesson, record) {
+  const total = lesson.expressions.length;
+  const { watched, passed } = progressDetails({ ...record, total_expressions: total });
+  const nextVideo = lesson.expressions.findIndex((_, index) => !watched.includes(index));
+  if (nextVideo !== -1) return nextVideo;
+  const nextEvaluation = lesson.expressions.findIndex((_, index) => !passed.includes(index));
+  return nextEvaluation === -1 ? 0 : total + nextEvaluation;
+}
+
 export function progressPercent(record) { return progressDetails(record).percent; }
 export function isUnitComplete(record) { return progressPercent(record) === 100; }
 

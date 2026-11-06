@@ -199,7 +199,7 @@ it('다시 접속하면 방문 시점을 갱신하고 기존 시청·평가 기�
   renderLesson();
   await screen.findByRole('heading', { name: '숫자 기초' });
   expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('75');
-  expect(screen.getByText('시청 완료 · 다시 볼 수 있어요.')).toBeTruthy();
+  expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('FS0807');
   expect(save).toHaveBeenCalledExactlyOnceWith(1, [], []);
 });
 
@@ -212,4 +212,50 @@ it('오답노트에서 선택한 표현의 평가로 바로 들어가고 최종 
   await waitFor(() => expect(recordReview).toHaveBeenCalledWith(1, 5, expect.objectContaining({ result: 'FAIL', target_id: 'FS0806' })));
   expect(await screen.findByText('오답노트에 저장했어요.')).toBeTruthy();
   expect(screen.getByRole('button', { name: '← 오답노트' })).toBeTruthy();
+});
+
+
+it('영상 시청 50%에서 다시 접속하면 첫 수어 평가부터 이어진다', async () => {
+  save.mockResolvedValueOnce({ total_expressions: 12,
+    watched_expression_indices: Array.from({ length: 12 }, (_, i) => i), passed_expression_indices: [] });
+  const { container } = renderLesson();
+  await screen.findByRole('heading', { name: '숫자 기초' });
+  expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('50');
+  expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('FS0801');
+  expect(container.querySelector('video')).toBeNull();
+});
+
+it('영상 일부를 시청했으면 아직 시청하지 않은 첫 영상으로 이어진다', async () => {
+  save.mockResolvedValueOnce({ total_expressions: 12,
+    watched_expression_indices: [0, 1, 3], passed_expression_indices: [] });
+  const { container } = renderLesson();
+  await screen.findByRole('heading', { name: '숫자 기초' });
+  expect(container.querySelector('video').getAttribute('src')).toBe('/test-only/2.mp4');
+  expect(screen.getByRole('heading', { name: '3' })).toBeTruthy();
+});
+
+it('평가를 건너뛰었다면 첫 미통과 평가로 이어진다', async () => {
+  save.mockResolvedValueOnce({ total_expressions: 12,
+    watched_expression_indices: Array.from({ length: 12 }, (_, i) => i), passed_expression_indices: [0, 2, 3] });
+  renderLesson();
+  await screen.findByRole('heading', { name: '숫자 기초' });
+  expect(screen.getByTestId('evaluation').getAttribute('data-target')).toBe('FS0802');
+});
+
+it('완료한 유닛은 다시 학습할 때 첫 영상부터 열린다', async () => {
+  const all = Array.from({ length: 12 }, (_, i) => i);
+  save.mockResolvedValueOnce({ total_expressions: 12,
+    watched_expression_indices: all, passed_expression_indices: all });
+  const { container } = renderLesson();
+  await screen.findByRole('heading', { name: '숫자 기초' });
+  expect(container.querySelector('video').getAttribute('src')).toBe('/test-only/0.mp4');
+  expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('100');
+});
+
+it('기록이 50%여도 오답노트에서 지정한 영상은 그대로 연다', async () => {
+  save.mockResolvedValueOnce({ total_expressions: 12,
+    watched_expression_indices: Array.from({ length: 12 }, (_, i) => i), passed_expression_indices: [] });
+  const { container } = renderLesson(1, '?expression=5&phase=video&review=1');
+  await screen.findByRole('heading', { name: '숫자 기초' });
+  expect(container.querySelector('video').getAttribute('src')).toBe('/test-only/5.mp4');
 });

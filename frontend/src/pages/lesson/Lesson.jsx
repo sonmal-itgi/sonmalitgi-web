@@ -41,6 +41,7 @@ function LessonSession({ lesson, listPath, params }) {
           const detail = progressDetails(saved);
           const restored = { watched: Object.fromEntries(detail.watched.map((i) => [i, true])), passed: Object.fromEntries(detail.passed.map((i) => [i, true])) };
           learning.current = restored;
+          setStep(initialLessonStep(lesson, params, saved));
           setWatched(restored.watched); setCredits(restored.passed);
           setLoading(false); setLoadError('');
         }
@@ -160,5 +161,5 @@ export default function Lesson() {
   const lesson = lessons[Number(id)];
   const listPath = searchParams.get('review') === '1' ? '/review' : `/learn?level=${lesson?.levelId || getLevelId(searchParams.get('level'))}`;
   if (!lesson) return <main className="auth-status"><h1>존재하지 않는 유닛입니다.</h1><button onClick={() => navigate(listPath)}>유닛 목록으로</button></main>;
-  return <LessonSession key={`${session.user.id}:${lesson.id}`} lesson={lesson} listPath={listPath} params={searchParams} />;
+  return <LessonSession key={`${session.user.id}:${lesson.id}:${searchParams.toString()}`} lesson={lesson} listPath={listPath} params={searchParams} />;
 }

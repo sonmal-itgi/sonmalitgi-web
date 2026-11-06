@@ -1,5 +1,5 @@
 import { lessons } from '../data/curriculum.js';
-import { lessonLink } from './progress.js';
+import { lessonLink, resumeLessonStep } from './progress.js';
 
 // Intermediate, uncertain, capture-error, mismatched, and demo outputs are not mistakes.
 export function reviewOutcome(expression, result) {
@@ -11,7 +11,9 @@ export function reviewOutcome(expression, result) {
 export function reviewLessonLink(unitId, index, phase = 'video') {
   return `${lessonLink(unitId)}&expression=${index}&phase=${phase}&review=1`;
 }
-export function initialLessonStep(lesson, params) {
+export function initialLessonStep(lesson, params, record) {
+  // Explicit links (e.g. review notes) take priority over automatic resume.
+  if (!params.has('expression') && !params.has('phase')) return resumeLessonStep(lesson, record);
   const raw = params.get('expression');
   if (raw !== null && !/^\d+$/.test(raw)) return 0;
   const index = raw === null ? 0 : Number(raw);
