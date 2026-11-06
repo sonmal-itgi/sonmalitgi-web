@@ -14,7 +14,7 @@ class HandsStub:
     def predict_landmarks(self, frames):
         assert len(frames) == 16
         assert frames[-1]["left_hand"][0]["z"] == .3
-        return Prediction("WORD1290", .99, True, True)
+        return Prediction("WORD1290", .5, True, False)
 
 
 def start(ws, target="WORD1290"):
@@ -37,15 +37,15 @@ def test_word_supported_target_stream_and_final():
         with client.websocket_connect("/ws/v1/word/evaluate", headers={"origin": "http://localhost:5173"}) as ws:
             start(ws)
             assert ws.receive_json()["model_mode"] == "hands-test"
-            for count in range(1, 25):
+            for count in range(1, 17):
                 ws.send_json(dict(type="landmarks", schema="mediapipe-hands-v1",
                                   timestamp_ms=count * 125, left_hand=[dict(x=.1, y=.2, z=.3)] * 21,
                                   right_hand=[]))
                 message = ws.receive_json()
-                if count in (16, 20, 24):
+                if count == 16:
                     assert message["type"] == "prediction"
                     message = ws.receive_json()
-                assert message["type"] == ("final" if count == 24 else "ack")
+                assert message["type"] == ("final" if count == 16 else "ack")
             assert message["result"] == "PASS"
             assert message["predicted_id"] == "WORD1290"
 

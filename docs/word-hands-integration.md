@@ -68,9 +68,11 @@ WORD_MODEL_ADAPTER=your_package.adapter:create_model uvicorn ai_server.main:app 
 
 포크 https://github.com/YugyeongChoi/sonmalitgi-AI-Level-2/tree/hands-only 에
 손 전용 학습/추론과 Railway Dockerfile을 준비했습니다. 중급 11단어를 대상으로 하며
-시험 모델은 calibrated=False로 예측값만 반환합니다.
+시험 모델은 calibrated=False를 유지하되 중급 경로에서만 명시적인 연습 판정 규칙을 사용합니다.
+목표 단어가 1위이고 점수가 0.5 이상이면 PASS, 다른 단어가 1위이고 0.5 이상이면 FAIL입니다.
+0.5 미만은 RETRY, 손 검출 실패는 CAPTURE_ERROR입니다. PASS는 기존 진도 저장 흐름에 반영합니다.
 Railway ai-server는 포크의 hands-only 브랜치를 사용하고,
 프론트 VITE_WORD_AI_WS_URL을 같은 서버의 /ws/v1/word/evaluate에 연결합니다.
 가중치는 빌드 중 공개 학습 데이터에서 생성합니다.
 실제 영상의 image_width/image_height를 프레임에 전달해 종횡비를 맞춥니다.
-실제 웹캠 검증을 마치기 전까지 RETRY는 연결 오류나 오답 판정을 의미하지 않습니다.
+이 연습 판정 기준은 실제 웹캠 정확도가 검증되었다는 의미가 아닙니다.
