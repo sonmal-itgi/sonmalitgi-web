@@ -36,7 +36,12 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
         onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
           onEnded={finishPlayback} onError={() => { setPlaying(false); setVideoError(true); }} />
         <div className="reference-video-controls">
-          <button type="button" className="outline-button" onClick={togglePlayback}>{playing ? '일시정지' : '재생'}</button>
+          <button type="button" className="outline-button" onClick={togglePlayback}
+            aria-label={playing ? '일시정지' : '재생'} title={playing ? '일시정지' : '재생'}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ verticalAlign: 'middle' }}>
+              {playing ? <path d="M6 4h4v16H6zm8 0h4v16h-4z" /> : <path d="M8 4v16l12-8z" />}
+            </svg>
+          </button>
           <button type="button" className="outline-button" aria-label="반복 재생" aria-pressed={repeat}
             onClick={() => setRepeat(value => !value)}>반복 재생 {repeat ? 'ON' : 'OFF'}</button>
         </div>
