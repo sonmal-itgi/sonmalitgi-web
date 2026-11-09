@@ -7,7 +7,7 @@
  * 주의: 코드 주석은 개발자용 안내이며, 실제 웹페이지에도 이용자가 확인할 수 있는 출처 및 라이선스 정보를 표시해야 합니다.
  */
 
-export const numberSignSource = {
+export const dictionarySignSource = {
   name: '국립국어원 한국수어사전',
   license: 'CC BY-NC-ND 2.0 대한민국',
   licenseUrl: 'https://creativecommons.org/licenses/by-nc-nd/2.0/kr/',
@@ -18,7 +18,7 @@ const detailPage = 'https://sldict.korean.go.kr/front/sign/signContentsView.do?o
 const mediaBase = 'https://sldict.korean.go.kr/multimedia/multimedia_files/convert/';
 
 // 사전의 원본 미디어와 상세 페이지를 평가 콘텐츠 ID 또는 숫자 표기로 연결한다.
-export const numberSignVideos = {
+export const dictionarySignVideos = {
   FS0801: {
     headword: '하나, 일, 한번',
     detailUrl: detailPage + '12573',
@@ -109,5 +109,40 @@ export const numberSignVideos = {
     videoUrl: mediaBase + '20220801/1005046/MOV000359774_700X466.webm',
     imageUrl: mediaBase + '20151125/216176/IMG000207276_700X466.jpg',
     handshape: '왼 주먹에서 1·2지를 펴고 손바닥을 오른쪽으로 향하게 세운다. 그 오른쪽 아래에서 오른 주먹의 4·5지를 펴 세운 뒤 손목을 좌우로 가볍게 두 번 돌린다.',
+  },
+  WORD1290: {
+    headword: '감사',
+    detailUrl: detailPage + '2372',
+    videoUrl: mediaBase + '20191028/632085/MOV000243986_700X466.webm',
+    imageUrl: mediaBase + '20151204/221972/IMG000214002_700X466.jpg',
+    handshape: '왼손을 손등이 위로 향하게 펴고, 오른손을 모로 세워 넷째 손가락 옆면으로 왼 손등을 두 번 댄다.',
+  },
+  WORD1201: {
+    headword: '죄송',
+    detailUrl: detailPage + '9917',
+    videoUrl: mediaBase + '20191022/630183/MOV000253802_700X466.webm',
+    imageUrl: mediaBase + '20151231/238194/IMG000234152_700X466.jpg',
+    handshape: '오른손 엄지와 새끼손가락 끝을 맞대어 이마에 댄 뒤, 두 손가락을 펴면서 왼 손등 위에 내려놓는다.',
+  },
+  WORD1589: {
+    headword: '부탁',
+    detailUrl: detailPage + '22',
+    videoUrl: mediaBase + '20191016/628275/MOV000254602_700X466.webm',
+    imageUrl: mediaBase + '20151117/211360/IMG000201649_700X466.jpg',
+    handshape: '왼 주먹의 새끼손가락을 펴 세우고, 모로 세운 오른손의 손끝이 그 손가락 등을 향하게 한 뒤 위아래로 두 번 흔든다.',
+  },
+  WORD1191: {
+    headword: '좋다',
+    detailUrl: detailPage + '9078',
+    videoUrl: mediaBase + '20191022/629987/MOV000259382_700X466.webm',
+    imageUrl: mediaBase + '20151231/238156/IMG000234137_700X466.jpg',
+    handshape: '오른 주먹을 들어 엄지와 새끼손가락의 옆면이 코에 닿게 한다.',
+  },
+  WORD1185: {
+    headword: '알다',
+    detailUrl: detailPage + '6031',
+    videoUrl: mediaBase + '20191011/626557/MOV000256441_700X466.webm',
+    imageUrl: mediaBase + '20151227/235307/IMG000230474_700X466.jpg',
+    handshape: '오른 손바닥으로 가슴을 위에서 아래로 두 번 쓸어내린다.',
   },
 };

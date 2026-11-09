@@ -171,11 +171,12 @@ describe('유닛 전체 영상 후 표현별 평가', () => {
   });
 });
 
-it('영상이 비어 있는 실제 유닛도 모든 영상 화면을 넘긴 뒤 평가에 진입할 수 있다', async () => {
+it('중급 유닛 3은 사전 영상 5개를 표시하고 기존 평가 ID로 진입한다', async () => {
   renderLesson(3);
   await screen.findByRole('heading', { name: '인사·기본 표현' });
-  for (let index = 0; index < 5; index++) {
-    expect(screen.getByText('이 표현의 기준 영상은 준비 중입니다.')).toBeTruthy();
+  const origins = [2372, 9917, 22, 9078, 6031];
+  for (let index = 0; index < origins.length; index++) {
+    confirmDictionaryVideo(origins[index]);
     expect(screen.queryByTestId('evaluation')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: index === 4 ? '평가로 이동' : '다음 영상' }));
   }

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { SignEvaluation } from '../practice/Practice.jsx';
 import { referenceVideoUrl } from '../../lib/lessonEvaluation.js';
 
-import { numberSignSource, numberSignVideos } from '../../data/numberSignVideos.js';
+import { dictionarySignSource, dictionarySignVideos } from '../../data/dictionarySignVideos.js';
 
 /*
  * [한국수어사전 콘텐츠 이용 안내]
@@ -21,7 +21,8 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [repeat, setRepeat] = useState(false);
-  const dictionaryVideo = levelId === 'beginner' ? numberSignVideos[expression.contentId] ?? numberSignVideos[expression.word] : undefined;
+  const dictionaryVideo = dictionarySignVideos[expression.contentId]
+    ?? (levelId === 'beginner' ? dictionarySignVideos[expression.word] : undefined);
   const url = dictionaryVideo?.videoUrl ?? referenceVideoUrl(expression, VIDEO_BASE);
   function togglePlayback() {
     const video = videoRef.current;
@@ -82,8 +83,8 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
           <a className="dictionary-video-link" href={dictionaryVideo.detailUrl} target="_blank" rel="noopener noreferrer">
             원본 수어 영상 보기 (새 탭)
           </a>
-          <p>출처: {numberSignSource.name}</p>
-          <p>라이선스: <a href={numberSignSource.licenseUrl}>{numberSignSource.license}</a></p>
+          <p>출처: {dictionarySignSource.name}</p>
+          <p>라이선스: <a href={dictionarySignSource.licenseUrl}>{dictionarySignSource.license}</a></p>
         </div>
         {videoError && !watched && <button type="button" className="outline-button" onClick={onWatched}>시청 완료 표시</button>}
       </>}
