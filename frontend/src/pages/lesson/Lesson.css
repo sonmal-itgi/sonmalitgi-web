@@ -12,14 +12,18 @@
 .video-placeholder p { margin:0 0 5px; }
 .reference-video { display:block; width:100%; max-height:480px; background:#fff; border-radius:10px; }
 .reference-video-controls { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.reference-video-controls .outline-button { min-height:40px; padding:6px 12px; font-size:13px; background:#f5f8f5; border-color:#e1e9e2; }
+.reference-video-controls .outline-button:hover,
 .reference-video-controls [aria-pressed="true"] { background:#e4f2e8; }
 .expression-stages { list-style:none; font-weight:500; }
 .expression-stages [aria-current="step"] { font-weight:700; }
 .next-button { width:100%; height:50px; margin-top:20px; color:white; font-size:14px; font-weight:600; }
 .next-button:disabled,.lesson-navigation button:disabled { opacity:.45; cursor:default; }
 .lesson-navigation { display:flex; align-items:stretch; gap:12px; margin-top:20px; }
-.lesson-navigation > button { flex:1; min-height:50px; margin-top:0; }
-.lesson-navigation .next-button { width:auto; }
+.lesson-navigation > button { min-height:48px; margin-top:0; }
+.lesson-navigation > .outline-button { background:transparent; border-color:transparent; }
+.lesson-navigation > .outline-button:hover:not(:disabled) { background:#edf3ea; }
+.lesson-navigation .next-button { width:auto; min-width:min(140px, 50%); margin-inline-start:auto; }
 /* Match the calm, green learning space across the full lesson. */
 .lesson-page { background:#f7faf8; padding:32px 32px 64px; color:#26332d; }
 .lesson-container { max-width:1000px; }
@@ -56,9 +60,14 @@
 .lesson-save-error { padding:16px; border:1px solid #efd6d1; border-radius:10px; color:#a14b3d; background:#fff9f7; }
 @media(max-width:640px) { .lesson-page { padding:22px 20px 48px; } .lesson-header h1 { font-size:30px; } .lesson-progress { padding:18px; } .lesson-progress-summary { align-items:flex-start; flex-direction:column; gap:8px; } .expression-card { padding:20px; } .expression-stages { font-size:11px; gap:4px; } .expression-stages li { padding:10px 6px; } .sign-video { min-height:240px; padding:20px; aspect-ratio:auto; } .video-placeholder p { font-size:13px; } .video-placeholder > span:not(.video-placeholder-icon) { font-size:11px; } .lesson-navigation { gap:10px; } .lesson-navigation button { font-size:12px; padding-inline:10px; } }
 
-.dictionary-video-link { display:inline-flex; align-items:center; justify-content:center; margin-top:10px; text-decoration:none; }
+.dictionary-video-link { display:inline-block; padding:4px 0; }
 .dictionary-video-credit { margin:12px 0; color:#64756b; }
 .dictionary-video-credit p { margin:0; }
 .dictionary-video-credit a { color:#397252; text-decoration:underline; }
 .dictionary-handshape { margin-top:12px; color:#397252; }
-.dictionary-handshape img { display:block; width:280px; max-width:100%; height:auto; margin-top:12px; }
+.handshape-button { display:inline-flex; align-items:center; gap:12px; min-height:40px; padding:6px 10px; border:0; border-radius:8px; background:#edf3ea; color:#397252; font-size:13px; font-weight:600; cursor:pointer; }
+.handshape-button:hover { background:#e4f2e8; }
+.handshape-button span { font-size:16px; }
+.handshape-panel { margin-top:10px; padding:12px; background:#f7faf8; border-radius:8px; color:#405549; font-size:13px; line-height:1.7; }
+.handshape-panel img { display:block; width:280px; max-width:100%; height:auto; border-radius:6px; }
+.handshape-panel p { margin:8px 0 0; }

@@ -16,7 +16,7 @@ import { numberSignSource, numberSignVideos } from '../../data/numberSignVideos.
 const VIDEO_BASE = import.meta.env.VITE_SIGN_VIDEO_BASE_URL || '';
 
 export default function ExpressionStep({ levelId, expression, index, total, phase, watched, result, onWatched, onAttemptStart, onFinal }) {
-  const [handshapeView, setHandshapeView] = useState(null);
+  const [showHandshape, setShowHandshape] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState(false);
@@ -66,17 +66,20 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
         </div></div>}
       {dictionaryVideo && <>
         <div className="dictionary-handshape">
-          <div className="reference-video-controls">
-            <button type="button" className="outline-button" aria-pressed={handshapeView === 'photo'}
-              onClick={() => setHandshapeView('photo')}>수형 사진 보기</button>
-            <button type="button" className="outline-button" aria-pressed={handshapeView === 'description'}
-              onClick={() => setHandshapeView('description')}>수형 설명 보기</button>
+          <button type="button" className="handshape-button" aria-expanded={showHandshape}
+            aria-controls="lesson-handshape" onClick={() => setShowHandshape(value => !value)}>
+            수형 사진·설명 {showHandshape ? '접기' : '보기'}
+            <span aria-hidden="true">{showHandshape ? '−' : '+'}</span>
+          </button>
+          <div id="lesson-handshape" className="handshape-panel" hidden={!showHandshape}>
+            {showHandshape && <>
+              <img src={dictionaryVideo.imageUrl} alt={`${dictionaryVideo.headword} 수형`} />
+              <p>{dictionaryVideo.handshape}</p>
+            </>}
           </div>
-          {handshapeView === 'photo' && <img src={dictionaryVideo.imageUrl} alt={`${dictionaryVideo.headword} 수형`} />}
-          {handshapeView === 'description' && <p>{dictionaryVideo.handshape}</p>}
         </div>
         <div className="lesson-progress-text dictionary-video-credit">
-          <a className="outline-button dictionary-video-link" href={dictionaryVideo.detailUrl} target="_blank" rel="noopener noreferrer">
+          <a className="dictionary-video-link" href={dictionaryVideo.detailUrl} target="_blank" rel="noopener noreferrer">
             원본 수어 영상 보기 (새 탭)
           </a>
           <p>출처: {numberSignSource.name}</p>

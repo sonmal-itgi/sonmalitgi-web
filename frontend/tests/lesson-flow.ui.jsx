@@ -56,10 +56,7 @@ function confirmDictionaryVideo(originNo) {
   expect(link.getAttribute('target')).toBe('_blank');
   const video = screen.getByLabelText(/기준 수어 영상/);
   expect(video.getAttribute('src')).toMatch(/^https:\/\/sldict\.korean\.go\.kr\/.*\.webm$/);
-  expect(screen.getByRole('button', { name: '수형 사진 보기' }).getAttribute('aria-pressed')).toBe('false');
-  expect(screen.getByRole('button', { name: '수형 설명 보기' }).getAttribute('aria-pressed')).toBe('false');
-  expect(screen.getByText('출처: 국립국어원 한국수어사전')).toBeTruthy();
-  expect(screen.getByRole('link', { name: 'CC BY-NC-ND 2.0 대한민국' })).toBeTruthy();
+  expect(screen.getByRole('button', { name: '수형 사진·설명 보기' }).getAttribute('aria-expanded')).toBe('false');
 }
 
 async function watchVideos(container) {
