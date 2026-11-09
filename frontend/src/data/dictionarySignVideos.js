@@ -183,6 +183,7 @@ export const dictionarySignVideos = {
   WORD1274: {
     headword: '달리다',
     detailUrl: detailPage + '10373',
+    alternate: { headword: '달리기, 달리다, 뛰다', detailUrl: detailPage + '3903' },
     videoUrl: mediaBase + '20200824/735034/MOV000251491_700X466.webm',
     imageUrl: mediaBase + '20151219/230569/IMG000224381_700X466.jpg',
     handshape: '두 팔을 옆구리에 붙이고 편 두 손을 마주 보게 한 뒤, 위아래로 짧고 빠르게 함께 흔든다.',

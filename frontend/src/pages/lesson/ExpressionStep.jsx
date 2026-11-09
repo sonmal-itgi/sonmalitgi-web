@@ -66,6 +66,13 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
           {videoError && <button className="outline-button" onClick={() => setVideoError(false)}>영상 다시 불러오기</button>}
         </div></div>}
       {dictionaryVideo && <>
+        {dictionaryVideo.alternate && <p className="evaluation-notice">
+          <strong>⚠ 수형 확인 중</strong>{' '}
+          ‘달리다’는 사전에 여러 수형이 있습니다. 현재 영상은 ‘(빠르게) 달리다, 뛰다’이며, AI 평가 모델과의 동작 일치 여부는 아직 확인되지 않았습니다.{' '}
+          <a href={dictionaryVideo.alternate.detailUrl} target="_blank" rel="noopener noreferrer">
+            다른 수형 ‘{dictionaryVideo.alternate.headword}’ 보기 (새 탭)
+          </a>
+        </p>}
         <div className="dictionary-handshape">
           <button type="button" className="handshape-button" aria-expanded={showHandshape}
             aria-controls="lesson-handshape" onClick={() => setShowHandshape(value => !value)}>
