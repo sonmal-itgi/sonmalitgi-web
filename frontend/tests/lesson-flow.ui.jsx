@@ -54,8 +54,9 @@ function confirmDictionaryVideo(originNo) {
   const link = screen.getByRole('link', { name: '원본 수어 영상 보기 (새 탭)' });
   expect(link.getAttribute('href')).toBe(`https://sldict.korean.go.kr/front/sign/signContentsView.do?origin_no=${originNo}`);
   expect(link.getAttribute('target')).toBe('_blank');
-  const frame = screen.getByTitle(/한국수어사전 원본 페이지/);
-  expect(frame.getAttribute('src')).toBe(link.getAttribute('href'));
+  const video = screen.getByLabelText(/기준 수어 영상/);
+  expect(video.getAttribute('src')).toMatch(/^https:\/\/sldict\.korean\.go\.kr\/.*\.webm$/);
+  expect(screen.getByText('수형 사진·설명 보기').closest('details').open).toBe(false);
   expect(screen.getByText('출처: 국립국어원 한국수어사전')).toBeTruthy();
   expect(screen.getByRole('link', { name: 'CC BY-NC-ND 2.0 대한민국' })).toBeTruthy();
 }
@@ -64,14 +65,8 @@ async function watchVideos(container) {
   const origins = [12573, 11057, 11311, 12528, 11055, 12841, 12674, 11419, 11315, 10919];
   for (let index = 0; index < 12; index++) {
     expect(screen.queryByTestId('evaluation')).toBeNull();
-    if (index < origins.length) {
-      confirmDictionaryVideo(origins[index]);
-      expect(container.querySelector('video')).toBeNull();
-      const mark = screen.queryByRole('button', { name: '시청 완료 표시' });
-      if (mark) fireEvent.click(mark);
-    } else {
-      fireEvent.ended(container.querySelector('video'));
-    }
+    if (index < origins.length) confirmDictionaryVideo(origins[index]);
+    fireEvent.ended(container.querySelector('video'));
     fireEvent.click(screen.getByRole('button', { name: index === 11 ? '평가로 이동' : '다음 영상' }));
   }
 }
@@ -101,7 +96,7 @@ describe('유닛 전체 영상 후 표현별 평가', () => {
     const { container } = renderLesson();
     await screen.findByRole('heading', { name: '숫자 기초' });
     expect(screen.getByRole('button', { name: '이전 영상' }).disabled).toBe(true);
-    fireEvent.click(screen.getByRole('button', { name: '시청 완료 표시' }));
+    fireEvent.ended(container.querySelector('video'));
     fireEvent.click(screen.getByRole('button', { name: '다음 영상' }));
     fireEvent.click(screen.getByRole('button', { name: '이전 영상' }));
     expect(screen.getByText('시청 완료 · 다시 볼 수 있어요.')).toBeTruthy();
@@ -200,7 +195,7 @@ it('진행률은 화면 위치가 아닌 시청·통과 완료 수로 계산하�
   fireEvent.click(screen.getByRole('button', { name: '다음 영상' }));
   expect(percent()).toBe(0);
   fireEvent.click(screen.getByRole('button', { name: '이전 영상' }));
-  fireEvent.click(screen.getByRole('button', { name: '시청 완료 표시' }));
+  fireEvent.ended(container.querySelector('video'));
   expect(percent()).toBe(4);
   expect(screen.queryByRole('button', { name: '시청 완료 표시' })).toBeNull();
   expect(percent()).toBe(4);

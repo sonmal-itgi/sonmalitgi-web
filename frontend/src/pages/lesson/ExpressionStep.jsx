@@ -9,7 +9,7 @@ import { numberSignSource, numberSignVideos } from '../../data/numberSignVideos.
  * 본 서비스의 일부 수어 학습 콘텐츠는 국립국어원 한국수어사전에서 제공하는 자료를 참조합니다.
  * CC BY-NC-ND 2.0 대한민국 라이선스가 적용되는 콘텐츠는 저작자표시, 비영리, 변경금지 조건을 준수해야 합니다.
  * 원본 영상을 임의로 수정하거나, 별도 허가 없이 다운로드 및 재배포하지 않습니다.
- * 공식적으로 허용된 임베드 방식 또는 원본 상세 페이지 연결 방식만 사용합니다.
+ * 확인된 원본 미디어를 직접 연결하고 사전 상세 페이지와 출처를 함께 표시합니다.
  * 주의: 코드 주석은 개발자용 안내이며, 실제 웹페이지에도 이용자가 확인할 수 있는 출처 및 라이선스 정보를 표시해야 합니다.
  */
 
@@ -21,7 +21,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   const [playing, setPlaying] = useState(false);
   const [repeat, setRepeat] = useState(false);
   const dictionaryVideo = levelId === 'beginner' ? numberSignVideos[expression.contentId] : undefined;
-  const url = dictionaryVideo ? null : referenceVideoUrl(expression, VIDEO_BASE);
+  const url = dictionaryVideo?.videoUrl ?? referenceVideoUrl(expression, VIDEO_BASE);
   function togglePlayback() {
     const video = videoRef.current;
     if (video.paused) void video.play().catch(() => setPlaying(false));
@@ -42,24 +42,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   return <div className="expression-card">
     <div className="expression-info"><p className="expression-label">{phase === 'video' ? '영상' : '평가'} {index + 1} / {total}</p><h2>{expression.word}</h2><p className="expression-description">{expression.description}</p></div>
     {phase === 'video' ? <>
-      {dictionaryVideo ? <>
-        <iframe className="dictionary-video-frame" src={dictionaryVideo.detailUrl}
-          title={`${dictionaryVideo.headword} 한국수어사전 원본 페이지`}
-          sandbox="allow-scripts allow-same-origin" allowFullScreen />
-        <div className="lesson-progress-text dictionary-video-credit">
-          <a className="outline-button dictionary-video-link" href={dictionaryVideo.detailUrl} target="_blank" rel="noopener noreferrer">
-            원본 수어 영상 보기 (새 탭)
-          </a>
-          <p>출처: {numberSignSource.name}</p>
-          <p>라이선스: <a href={numberSignSource.licenseUrl}>{numberSignSource.license}</a> · <a href={numberSignSource.policyUrl}>사전 저작권 정책</a></p>
-          <ul>
-            <li>저작자표시(BY): 저작자 및 원본 출처 명시</li>
-            <li>비영리(NC): 영리 목적 사용 금지</li>
-            <li>변경금지(ND): 원본 영상의 수정 및 편집 금지</li>
-          </ul>
-        </div>
-        {!watched && <button type="button" className="outline-button" onClick={onWatched}>시청 완료 표시</button>}
-      </> : url && !videoError ? <>
+      {url && !videoError ? <>
         <video ref={videoRef} className="reference-video" controls playsInline preload="metadata"
         aria-label={`${expression.word} 기준 수어 영상`} src={url}
         onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
@@ -80,8 +63,28 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
           <span>이전·다음 버튼으로 다른 표현을 확인할 수 있어요.</span>
           {videoError && <button className="outline-button" onClick={() => setVideoError(false)}>영상 다시 불러오기</button>}
         </div></div>}
-      <p className="lesson-progress-text">{watched ? '시청 완료 · 다시 볼 수 있어요.' : dictionaryVideo
-        ? '영상을 끝까지 본 뒤 시청 완료를 표시해 주세요.'
+      {dictionaryVideo && <>
+        <details className="dictionary-handshape">
+          <summary>수형 사진·설명 보기</summary>
+          <img src={dictionaryVideo.imageUrl} alt={`${dictionaryVideo.headword} 수형`} loading="lazy" />
+          <p>{dictionaryVideo.handshape}</p>
+        </details>
+        <div className="lesson-progress-text dictionary-video-credit">
+          <a className="outline-button dictionary-video-link" href={dictionaryVideo.detailUrl} target="_blank" rel="noopener noreferrer">
+            원본 수어 영상 보기 (새 탭)
+          </a>
+          <p>출처: {numberSignSource.name}</p>
+          <p>라이선스: <a href={numberSignSource.licenseUrl}>{numberSignSource.license}</a> · <a href={numberSignSource.policyUrl}>사전 저작권 정책</a></p>
+          <ul>
+            <li>저작자표시(BY): 저작자 및 원본 출처 명시</li>
+            <li>비영리(NC): 영리 목적 사용 금지</li>
+            <li>변경금지(ND): 원본 영상의 수정 및 편집 금지</li>
+          </ul>
+        </div>
+        {videoError && !watched && <button type="button" className="outline-button" onClick={onWatched}>시청 완료 표시</button>}
+      </>}
+      <p className="lesson-progress-text">{watched ? '시청 완료 · 다시 볼 수 있어요.' : dictionaryVideo && videoError
+        ? '원본 페이지에서 시청한 뒤 시청 완료를 표시해 주세요.'
         : '영상이 끝나면 시청 완료로 표시돼요.'}</p>
     </> : <SignEvaluation embedded evaluationKind={levelId === 'intermediate' ? 'word' : undefined} word={expression.word} targetId={expression.contentId ?? null}
       initialResult={result} onAttemptStart={onAttemptStart} onFinal={onFinal} />}
