@@ -17,7 +17,7 @@ const detailPage = 'https://sldict.korean.go.kr/front/sign/signContentsView.do?o
 
 const mediaBase = 'https://sldict.korean.go.kr/multimedia/multimedia_files/convert/';
 
-// 사전의 원본 미디어와 상세 페이지를 기존 평가 콘텐츠 ID로 연결한다.
+// 사전의 원본 미디어와 상세 페이지를 평가 콘텐츠 ID 또는 숫자 표기로 연결한다.
 export const numberSignVideos = {
   FS0801: {
     headword: '하나, 일, 한번',
@@ -88,5 +88,19 @@ export const numberSignVideos = {
     videoUrl: mediaBase + '20220802/1005853/MOV000359855_700X466.webm',
     imageUrl: mediaBase + '20151225/234351/IMG000229202_700X466.jpg',
     handshape: '오른 주먹의 1지를 펴서 약간 구부려 끝이 밖으로 향하게 하여 좌우로 약간 흔든다.',
+  },
+  '11': {
+    headword: '열하나, 십일',
+    detailUrl: detailPage + '11425',
+    videoUrl: mediaBase + '20220811/1009762/MOV000360059_700X466.webm',
+    imageUrl: mediaBase + '20151207/223681/IMG000216049_700X466.jpg',
+    handshape: '오른 주먹의 1지를 펴서 바닥이 밖으로 향하게 세워 굽혔다 편다.',
+  },
+  '12': {
+    headword: '십이, 열둘',
+    detailUrl: detailPage + '10923',
+    videoUrl: mediaBase + '20220811/1009761/MOV000360058_700X466.webm',
+    imageUrl: mediaBase + '20151225/234362/IMG000229221_700X466.jpg',
+    handshape: '오른 주먹의 1지를 굽히고 2지를 펴서 바닥이 밖으로 향하게 세운다.',
   },
 };

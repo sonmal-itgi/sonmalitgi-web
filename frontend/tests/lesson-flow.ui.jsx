@@ -60,7 +60,7 @@ function confirmDictionaryVideo(originNo) {
 }
 
 async function watchVideos(container) {
-  const origins = [12573, 11057, 11311, 12528, 11055, 12841, 12674, 11419, 11315, 10919];
+  const origins = [12573, 11057, 11311, 12528, 11055, 12841, 12674, 11419, 11315, 10919, 11425, 10923];
   for (let index = 0; index < 12; index++) {
     expect(screen.queryByTestId('evaluation')).toBeNull();
     if (index < origins.length) confirmDictionaryVideo(origins[index]);

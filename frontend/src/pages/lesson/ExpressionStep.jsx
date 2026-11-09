@@ -21,7 +21,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [repeat, setRepeat] = useState(false);
-  const dictionaryVideo = levelId === 'beginner' ? numberSignVideos[expression.contentId] : undefined;
+  const dictionaryVideo = levelId === 'beginner' ? numberSignVideos[expression.contentId] ?? numberSignVideos[expression.word] : undefined;
   const url = dictionaryVideo?.videoUrl ?? referenceVideoUrl(expression, VIDEO_BASE);
   function togglePlayback() {
     const video = videoRef.current;
