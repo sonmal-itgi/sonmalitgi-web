@@ -189,3 +189,56 @@ export const dictionarySignVideos = {
     handshape: '두 팔을 옆구리에 붙이고 편 두 손을 마주 보게 한 뒤, 위아래로 짧고 빠르게 함께 흔든다.',
   },
 };
+
+const sentenceWords = {
+  운전: {
+    headword: '운전',
+    detailUrl: detailPage + '7857',
+    videoUrl: mediaBase + '20191017/628484/MOV000255305_700X466.webm',
+    imageUrl: mediaBase + '20151225/234262/IMG000229102_700X466.jpg',
+    handshape: '두 주먹을 가볍게 쥐어 가슴 앞으로 올리고 좌우로 두 번 돌린다.',
+  },
+  천천히: {
+    headword: '천천히',
+    detailUrl: detailPage + '9928',
+    videoUrl: mediaBase + '20191029/632479/MOV000257966_700X466.webm',
+    imageUrl: mediaBase + '20151229/236789/IMG000232364_700X466.jpg',
+    handshape: '왼손을 손등이 위로 향하게 펴고, 그 위에 모로 세운 오른손을 천천히 바깥쪽으로 내민다.',
+  },
+  빨리: {
+    headword: '빨리',
+    detailUrl: detailPage + '12442',
+    videoUrl: mediaBase + '20191014/627300/MOV000248334_700X466.webm',
+    imageUrl: mediaBase + '20151214/227513/IMG000220416_700X466.jpg',
+    handshape: '오른손 1·5지를 위로 펴고, 손을 빠르게 올리면서 두 손가락 끝을 맞댄다.',
+  },
+  시간: {
+    headword: '시간',
+    detailUrl: detailPage + '11301',
+    videoUrl: mediaBase + '20200812/728378/MOV000246426_700X466.webm',
+    imageUrl: mediaBase + '20151209/224950/IMG000217529_700X466.jpg',
+    handshape: '왼손을 모로 세워 손끝을 밖으로 향하게 한다. 오른손 1·5지를 벌려 펴고, 5지 끝을 왼 손바닥에 댄 뒤 1지를 밖으로 돌린다.',
+  },
+  급하다: {
+    headword: '급하다',
+    detailUrl: detailPage + '23958',
+    videoUrl: mediaBase + '20191015/627523/MOV000249452_700X466.webm',
+    imageUrl: mediaBase + '20151222/232350/IMG000226552_700X466.jpg',
+    handshape: '왼 손바닥을 오른쪽으로 향하게 세운 뒤, 반쯤 구부린 오른손 검지 끝으로 왼 손바닥을 두 번 두드린다.',
+  },
+  약속: {
+    headword: '약속',
+    detailUrl: detailPage + '12710',
+    videoUrl: mediaBase + '20191015/627703/MOV000250441_700X466.webm',
+    imageUrl: mediaBase + '20151217/229658/IMG000223119_700X466.jpg',
+    handshape: '두 주먹에서 각각 4지를 펴고, 두 손가락을 구부려 서로 건다.',
+  },
+};
+
+export const dictionarySentenceVideos = {
+  SEN0009: [sentenceWords.운전, sentenceWords.천천히],
+  SEN0011: [sentenceWords.운전, sentenceWords.빨리],
+  SEN0012: [dictionarySignVideos.WORD1345, sentenceWords.빨리],
+  SEN0013: [sentenceWords.시간, sentenceWords.급하다],
+  SEN0017: [sentenceWords.약속, { ...sentenceWords.천천히, headword: '늦다' }],
+};

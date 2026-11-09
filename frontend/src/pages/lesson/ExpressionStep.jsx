@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SignEvaluation } from '../practice/Practice.jsx';
 import { referenceVideoUrl } from '../../lib/lessonEvaluation.js';
 
-import { dictionarySignSource, dictionarySignVideos } from '../../data/dictionarySignVideos.js';
+import { dictionarySentenceVideos, dictionarySignSource, dictionarySignVideos } from '../../data/dictionarySignVideos.js';
 
 /*
  * [한국수어사전 콘텐츠 이용 안내]
@@ -21,18 +21,50 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [repeat, setRepeat] = useState(false);
-  const dictionaryVideo = dictionarySignVideos[expression.contentId]
+  const [clipIndex, setClipIndex] = useState(0);
+  const resumePlayback = useRef(false);
+  const clips = dictionarySentenceVideos[expression.contentId];
+  const dictionaryVideo = clips?.[clipIndex] ?? dictionarySignVideos[expression.contentId]
     ?? (levelId === 'beginner' ? dictionarySignVideos[expression.word] : undefined);
   const url = dictionaryVideo?.videoUrl ?? referenceVideoUrl(expression, VIDEO_BASE);
+  useEffect(() => {
+    if (!resumePlayback.current || videoError || !videoRef.current) return;
+    resumePlayback.current = false;
+    void videoRef.current.play().catch(() => setPlaying(false));
+  }, [clipIndex, videoError]);
+
+  function moveToClip(nextIndex, play) {
+    resumePlayback.current = play;
+    setShowHandshape(false);
+    setClipIndex(nextIndex);
+  }
+
+  function finishClip() {
+    if (clips && clipIndex < clips.length - 1) {
+      moveToClip(clipIndex + 1, true);
+      return false;
+    }
+    onWatched();
+    return true;
+  }
+
   function togglePlayback() {
     const video = videoRef.current;
+    if (clips && video.ended && clipIndex === clips.length - 1) {
+      moveToClip(0, true);
+      return;
+    }
     if (video.paused) void video.play().catch(() => setPlaying(false));
     else video.pause();
   }
 
   function finishPlayback(event) {
     setPlaying(false);
-    onWatched();
+    if (!finishClip()) return;
+    if (repeat && clips) {
+      moveToClip(0, true);
+      return;
+    }
     // Native looping suppresses the ended event used to record progress.
     if (repeat) {
       const video = event.currentTarget;
@@ -44,9 +76,12 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   return <div className="expression-card">
     <div className="expression-info"><p className="expression-label">{phase === 'video' ? '영상' : '평가'} {index + 1} / {total}</p><h2>{expression.word}</h2><p className="expression-description">{expression.description}</p></div>
     {phase === 'video' ? <>
+      {clips && <p className="lesson-progress-text">
+        구성 단어 {clipIndex + 1} / {clips.length} · <strong>{dictionaryVideo.headword}</strong>
+      </p>}
       {url && !videoError ? <>
-        <video ref={videoRef} className="reference-video" controls playsInline preload="metadata"
-        aria-label={`${expression.word} 기준 수어 영상`} src={url}
+        <video key={clipIndex} ref={videoRef} className="reference-video" controls playsInline preload="metadata"
+        aria-label={`${clips ? dictionaryVideo.headword : expression.word} 기준 수어 영상`} src={url}
         onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
           onEnded={finishPlayback} onError={() => { setPlaying(false); setVideoError(true); }} />
         <div className="reference-video-controls">
@@ -93,7 +128,10 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
           <p>출처: {dictionarySignSource.name}</p>
           <p>라이선스: <a href={dictionarySignSource.licenseUrl}>{dictionarySignSource.license}</a></p>
         </div>
-        {videoError && !watched && <button type="button" className="outline-button" onClick={onWatched}>시청 완료 표시</button>}
+        {videoError && (!watched || clips) && <button type="button" className="outline-button" onClick={() => {
+          if (clips && clipIndex < clips.length - 1) setVideoError(false);
+          finishClip();
+        }}>원본 시청 완료</button>}
       </>}
       <p className="lesson-progress-text">{watched ? '시청 완료 · 다시 볼 수 있어요.' : dictionaryVideo && videoError
         ? '원본 페이지에서 시청한 뒤 시청 완료를 표시해 주세요.'
