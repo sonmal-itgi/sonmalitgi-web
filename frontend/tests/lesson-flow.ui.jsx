@@ -8,9 +8,10 @@ const { save, recordReview, sessions } = vi.hoisted(() => ({ save: vi.fn(), reco
 vi.mock('../src/lib/supabase.js', () => ({ progressService: { saveCombined: save }, reviewService: { record: recordReview } }));
 vi.mock('../src/data/curriculum.js', async (original) => {
   const data = await original();
-  // Test-only media and class IDs exercise all 12 steps without filling real missing data.
+  // Test-only media and class IDs fill the two steps outside the dictionary mapping.
   const lessons = structuredClone(data.lessons);
   lessons[1].expressions.forEach((expression, index) => {
+    if (index < 10) return;
     expression.videoUrl = `/test-only/${index}.mp4`;
     expression.contentId ||= `TEST_ONLY_${index}`;
   });
@@ -49,10 +50,26 @@ function renderLesson(unit = 1, query = '') {
   </MemoryRouter>);
 }
 
+function confirmDictionaryVideo(originNo) {
+  const link = screen.getByRole('link', { name: '원본 수어 영상 보기 (새 탭)' });
+  expect(link.getAttribute('href')).toBe(`https://sldict.korean.go.kr/front/sign/signContentsView.do?origin_no=${originNo}`);
+  expect(link.getAttribute('target')).toBe('_blank');
+  expect(screen.getByText('출처: 국립국어원 한국수어사전')).toBeTruthy();
+  expect(screen.getByRole('link', { name: 'CC BY-NC-ND 2.0 대한민국' })).toBeTruthy();
+}
+
 async function watchVideos(container) {
+  const origins = [12573, 11057, 11311, 12528, 11055, 12841, 12674, 11419, 11315, 10919];
   for (let index = 0; index < 12; index++) {
     expect(screen.queryByTestId('evaluation')).toBeNull();
-    fireEvent.ended(container.querySelector('video'));
+    if (index < origins.length) {
+      confirmDictionaryVideo(origins[index]);
+      expect(container.querySelector('video')).toBeNull();
+      const mark = screen.queryByRole('button', { name: '시청 완료 표시' });
+      if (mark) fireEvent.click(mark);
+    } else {
+      fireEvent.ended(container.querySelector('video'));
+    }
     fireEvent.click(screen.getByRole('button', { name: index === 11 ? '평가로 이동' : '다음 영상' }));
   }
 }
@@ -82,7 +99,7 @@ describe('유닛 전체 영상 후 표현별 평가', () => {
     const { container } = renderLesson();
     await screen.findByRole('heading', { name: '숫자 기초' });
     expect(screen.getByRole('button', { name: '이전 영상' }).disabled).toBe(true);
-    fireEvent.ended(container.querySelector('video'));
+    fireEvent.click(screen.getByRole('button', { name: '시청 완료 표시' }));
     fireEvent.click(screen.getByRole('button', { name: '다음 영상' }));
     fireEvent.click(screen.getByRole('button', { name: '이전 영상' }));
     expect(screen.getByText('시청 완료 · 다시 볼 수 있어요.')).toBeTruthy();
@@ -181,9 +198,9 @@ it('진행률은 화면 위치가 아닌 시청·통과 완료 수로 계산하�
   fireEvent.click(screen.getByRole('button', { name: '다음 영상' }));
   expect(percent()).toBe(0);
   fireEvent.click(screen.getByRole('button', { name: '이전 영상' }));
-  fireEvent.ended(container.querySelector('video'));
+  fireEvent.click(screen.getByRole('button', { name: '시청 완료 표시' }));
   expect(percent()).toBe(4);
-  fireEvent.ended(container.querySelector('video'));
+  expect(screen.queryByRole('button', { name: '시청 완료 표시' })).toBeNull();
   expect(percent()).toBe(4);
   await watchVideos(container);
   expect(percent()).toBe(50);
@@ -228,9 +245,9 @@ it('영상 시청 50%에서 다시 접속하면 첫 수어 평가부터 이어�
 it('영상 일부를 시청했으면 아직 시청하지 않은 첫 영상으로 이어진다', async () => {
   save.mockResolvedValueOnce({ total_expressions: 12,
     watched_expression_indices: [0, 1, 3], passed_expression_indices: [] });
-  const { container } = renderLesson();
+  renderLesson();
   await screen.findByRole('heading', { name: '숫자 기초' });
-  expect(container.querySelector('video').getAttribute('src')).toBe('/test-only/2.mp4');
+  confirmDictionaryVideo(11311);
   expect(screen.getByRole('heading', { name: '3' })).toBeTruthy();
 });
 
@@ -246,16 +263,16 @@ it('완료한 유닛은 다시 학습할 때 첫 영상부터 열린다', async 
   const all = Array.from({ length: 12 }, (_, i) => i);
   save.mockResolvedValueOnce({ total_expressions: 12,
     watched_expression_indices: all, passed_expression_indices: all });
-  const { container } = renderLesson();
+  renderLesson();
   await screen.findByRole('heading', { name: '숫자 기초' });
-  expect(container.querySelector('video').getAttribute('src')).toBe('/test-only/0.mp4');
+  confirmDictionaryVideo(12573);
   expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('100');
 });
 
 it('기록이 50%여도 오답노트에서 지정한 영상은 그대로 연다', async () => {
   save.mockResolvedValueOnce({ total_expressions: 12,
     watched_expression_indices: Array.from({ length: 12 }, (_, i) => i), passed_expression_indices: [] });
-  const { container } = renderLesson(1, '?expression=5&phase=video&review=1');
+  renderLesson(1, '?expression=5&phase=video&review=1');
   await screen.findByRole('heading', { name: '숫자 기초' });
-  expect(container.querySelector('video').getAttribute('src')).toBe('/test-only/5.mp4');
+  confirmDictionaryVideo(12841);
 });

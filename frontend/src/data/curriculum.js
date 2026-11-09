@@ -5,7 +5,6 @@ const expressions = {
     {
       "word": "1",
       "contentId": "FS0801",
-      "videoUrl": "/videos/FS0801.mp4",
       "description": "숫자 1 표현을 연습해요."
     },
     {
