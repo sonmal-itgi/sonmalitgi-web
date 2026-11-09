@@ -1,17 +1,59 @@
 # 손말잇기
 
-- [WebSocket 기반 준실시간 AI 평가 실행 안내](docs/ai-level2.md)
-- [중급 손 전용 모델 연결 계약과 설정](docs/word-hands-integration.md)
-- [회원 인증 및 학습 진도 설정](README_SUPABASE.md)
+**한국수어를 영상으로 익히고, 웹캠으로 따라 하며 연습하는 학습 서비스**입니다.
 
-AI 연습 화면은 `/practice`에 있습니다. 기본 서버는 통신 확인용 데모이며 실제 수어 인식 모델은 별도로 연결해야 합니다.
+숫자와 인사처럼 일상에서 자주 쓰는 표현부터 방향 안내와 택시 이용 문장까지 단계별로 배울 수 있습니다. AI 평가가 연결된 표현은 웹캠으로 따라 한 뒤 결과와 피드백을 확인할 수 있습니다.
 
-## MediaPipe Web 설정
+[손말잇기 시작하기](https://frontend-production-3003.up.railway.app/)
 
-`frontend/src/lib/mediapipe.js`에서 Hand Landmarker를 VIDEO 모드로 실행합니다. WASM은 JS와 동일한 1.2.2 버전을 사용합니다. `VITE_MEDIAPIPE_MODEL_URL`로 직접 호스팅하는 `.task` 파일을 지정할 수 있습니다. 추출과 화면 표시는 서버 ready 후 ACK 간격으로 실행됩니다. MediaPipe 추론은 현재 메인 스레드에서 실행하므로 저사양 기기는 표시가 끊길 수 있습니다.
+## 어떻게 학습하나요?
 
-`input_mode`를 생략한 기존 클라이언트는 JPEG 모드로 처리합니다. 랜드마크 모드에는 `predict_landmarks`를 구현한 어댑터가 필요하며 RGB 전용 모델은 명시적으로 거부합니다. 데모 모델은 랜드마크 수신만 점검하고 PASS를 반환하지 않습니다.
+1. **유닛 선택** — 초급, 중급, 고급 중 원하는 수준과 주제를 고릅니다.
+2. **영상으로 익히기** — 학습 화면에서 기준 영상을 재생합니다. 한국수어사전 자료가 연결된 표현은 수형 사진과 설명도 펼쳐 볼 수 있습니다.
+3. **웹캠으로 따라 하기** — 유닛의 영상을 본 뒤 표현별로 연습하고 AI 평가 결과를 확인합니다.
+4. **복습하기** — 마이페이지에서 최근 학습을 이어가거나, 오답노트에서 다시 연습할 표현을 고릅니다.
 
-참고: [MediaPipe Hand Landmarker Web 공식 문서](https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker/web_js).
+## 무엇을 배우나요?
 
-양손 전용 모델(`numHands: 2`)을 사용하며 몸·얼굴 모델은 실행하지 않습니다. 좌표 JSON에는 `left_hand`와 `right_hand`만 포함합니다. 미러링하지 않은 영상의 손 분류 라벨을 반전해 사용자 기준 왼손/오른손으로 매핑합니다. 서버는 배포 전환 중 기존 `mediapipe-holistic-v1`도 수신할 수 있습니다.
+| 단계 | 유닛 | 학습 내용 |
+| --- | --- | --- |
+| 초급 | 1. 숫자 기초 | 숫자 1~12 |
+| 초급 | 2. 숫자 응용 | 1명~10명처럼 사람 수 세기 |
+| 중급 | 3. 인사·기본 표현 | 감사, 죄송, 부탁, 좋다, 알다 |
+| 중급 | 4. 방향·이동 | 왼쪽, 오른쪽, 가다, 오다, 걷다, 달리다 |
+| 고급 | 5. 이동·속도·시간 문장 | 운전과 이동 속도, 시간과 약속 |
+| 고급 | 6. 택시 이용·요금 문장 | 기본요금, 금액 확인, 심야 추가요금 |
+
+기준 영상과 AI 평가 지원 범위는 표현마다 다릅니다. 한국수어사전 영상은 유닛 1의 숫자 1~12, 유닛 2의 ‘2명’, 유닛 3의 다섯 표현에 연결되어 있습니다.
+
+## 서비스 구성
+
+| 구성 | 역할 |
+| --- | --- |
+| React · Vite | 학습 화면, 영상 재생, 웹캠 연습 UI |
+| MediaPipe | 브라우저에서 양손 랜드마크 추출 |
+| FastAPI · WebSocket | 촬영 중 랜드마크를 받아 수어 동작 평가와 피드백 반환 |
+| Supabase | 회원 인증, 학습 진도와 오답노트 저장 |
+| Railway | 서비스 배포 |
+
+## 개발 환경
+
+| 작업 | 문서 |
+| --- | --- |
+| 프런트엔드 실행과 테스트 | [프런트엔드 개발 안내](frontend/README.md) |
+| 인증과 학습 기록 설정 | [Supabase 설정](README_SUPABASE.md) |
+| AI 평가 서버 실행과 통신 방식 | [WebSocket 평가 안내](docs/ai-level2.md) |
+| 중급 모델 연결 | [양손 랜드마크 모델 연결](docs/word-hands-integration.md) |
+
+<details>
+<summary>MediaPipe와 평가 서버 연동 참고</summary>
+
+브라우저는 `frontend/src/lib/mediapipe.js`에서 Hand Landmarker를 VIDEO 모드로 실행합니다. JS와 WASM은 모두 1.2.2를 사용하며, `VITE_MEDIAPIPE_MODEL_URL`로 자체 호스팅한 `.task` 파일을 지정할 수 있습니다. 메인 스레드에서 양손 좌표를 추출해 서버 준비 응답 이후 ACK 간격에 맞춰 전송합니다. 좌표에는 `left_hand`와 `right_hand`가 포함되며, 미러링하지 않은 영상의 손 분류 라벨은 사용자 기준으로 반전합니다.
+
+`/practice`에서 평가를 연습할 수 있습니다. 로컬 기본 데모는 통신을 점검하며 실제 판정에는 인식 모델을 연결해야 합니다. 기존 클라이언트가 `input_mode`를 생략하면 JPEG 모드로 동작합니다. 랜드마크 모드에는 `predict_landmarks` 어댑터가 필요하며, 서버는 전환기 호환을 위해 기존 `mediapipe-holistic-v1` 입력도 수신할 수 있습니다.
+
+</details>
+
+## 학습 자료 출처
+
+일부 영상과 수형 자료는 국립국어원 한국수어사전을 참조합니다. 각 학습 화면에 원본 항목과 라이선스를 표시합니다. [한국수어사전](https://sldict.korean.go.kr/front/main/main.do)
