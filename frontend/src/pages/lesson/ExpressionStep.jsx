@@ -16,6 +16,7 @@ import { numberSignSource, numberSignVideos } from '../../data/numberSignVideos.
 const VIDEO_BASE = import.meta.env.VITE_SIGN_VIDEO_BASE_URL || '';
 
 export default function ExpressionStep({ levelId, expression, index, total, phase, watched, result, onWatched, onAttemptStart, onFinal }) {
+  const [handshapeView, setHandshapeView] = useState(null);
   const [videoError, setVideoError] = useState(false);
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState(false);
@@ -64,22 +65,22 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
           {videoError && <button className="outline-button" onClick={() => setVideoError(false)}>영상 다시 불러오기</button>}
         </div></div>}
       {dictionaryVideo && <>
-        <details className="dictionary-handshape">
-          <summary>수형 사진·설명 보기</summary>
-          <img src={dictionaryVideo.imageUrl} alt={`${dictionaryVideo.headword} 수형`} loading="lazy" />
-          <p>{dictionaryVideo.handshape}</p>
-        </details>
+        <div className="dictionary-handshape">
+          <div className="reference-video-controls">
+            <button type="button" className="outline-button" aria-pressed={handshapeView === 'photo'}
+              onClick={() => setHandshapeView('photo')}>수형 사진 보기</button>
+            <button type="button" className="outline-button" aria-pressed={handshapeView === 'description'}
+              onClick={() => setHandshapeView('description')}>수형 설명 보기</button>
+          </div>
+          {handshapeView === 'photo' && <img src={dictionaryVideo.imageUrl} alt={`${dictionaryVideo.headword} 수형`} />}
+          {handshapeView === 'description' && <p>{dictionaryVideo.handshape}</p>}
+        </div>
         <div className="lesson-progress-text dictionary-video-credit">
           <a className="outline-button dictionary-video-link" href={dictionaryVideo.detailUrl} target="_blank" rel="noopener noreferrer">
             원본 수어 영상 보기 (새 탭)
           </a>
           <p>출처: {numberSignSource.name}</p>
-          <p>라이선스: <a href={numberSignSource.licenseUrl}>{numberSignSource.license}</a> · <a href={numberSignSource.policyUrl}>사전 저작권 정책</a></p>
-          <ul>
-            <li>저작자표시(BY): 저작자 및 원본 출처 명시</li>
-            <li>비영리(NC): 영리 목적 사용 금지</li>
-            <li>변경금지(ND): 원본 영상의 수정 및 편집 금지</li>
-          </ul>
+          <p>라이선스: <a href={numberSignSource.licenseUrl}>{numberSignSource.license}</a></p>
         </div>
         {videoError && !watched && <button type="button" className="outline-button" onClick={onWatched}>시청 완료 표시</button>}
       </>}

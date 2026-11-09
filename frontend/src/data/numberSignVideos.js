@@ -11,7 +11,6 @@ export const numberSignSource = {
   name: '국립국어원 한국수어사전',
   license: 'CC BY-NC-ND 2.0 대한민국',
   licenseUrl: 'https://creativecommons.org/licenses/by-nc-nd/2.0/kr/',
-  policyUrl: 'https://sldict.korean.go.kr/front/main/copyRightPolicy.do',
 };
 
 const detailPage = 'https://sldict.korean.go.kr/front/sign/signContentsView.do?origin_no=';

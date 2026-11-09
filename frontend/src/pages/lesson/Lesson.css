@@ -59,8 +59,6 @@
 .dictionary-video-link { display:inline-flex; align-items:center; justify-content:center; margin-top:10px; text-decoration:none; }
 .dictionary-video-credit { margin:12px 0; color:#64756b; }
 .dictionary-video-credit p { margin:0; }
-.dictionary-video-credit ul { margin:4px 0 0; padding-inline-start:20px; }
 .dictionary-video-credit a { color:#397252; text-decoration:underline; }
 .dictionary-handshape { margin-top:12px; color:#397252; }
-.dictionary-handshape summary { cursor:pointer; font-weight:600; }
-.dictionary-handshape img { display:block; max-width:100%; height:auto; margin-top:12px; }
+.dictionary-handshape img { display:block; width:280px; max-width:100%; height:auto; margin-top:12px; }
