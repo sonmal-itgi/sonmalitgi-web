@@ -103,4 +103,11 @@ export const numberSignVideos = {
     imageUrl: mediaBase + '20151225/234362/IMG000229221_700X466.jpg',
     handshape: '오른 주먹의 1지를 굽히고 2지를 펴서 바닥이 밖으로 향하게 세운다.',
   },
+  FS0823: {
+    headword: '두 사람',
+    detailUrl: detailPage + '2259',
+    videoUrl: mediaBase + '20220801/1005046/MOV000359774_700X466.webm',
+    imageUrl: mediaBase + '20151125/216176/IMG000207276_700X466.jpg',
+    handshape: '왼 주먹에서 1·2지를 펴고 손바닥을 오른쪽으로 향하게 세운다. 그 오른쪽 아래에서 오른 주먹의 4·5지를 펴 세운 뒤 손목을 좌우로 가볍게 두 번 돌린다.',
+  },
 };
