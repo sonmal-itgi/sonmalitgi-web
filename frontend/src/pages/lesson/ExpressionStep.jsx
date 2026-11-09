@@ -43,13 +43,13 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
     <div className="expression-info"><p className="expression-label">{phase === 'video' ? '영상' : '평가'} {index + 1} / {total}</p><h2>{expression.word}</h2><p className="expression-description">{expression.description}</p></div>
     {phase === 'video' ? <>
       {dictionaryVideo ? <>
-        <div className="sign-video"><div className="video-placeholder">
-          <p>{dictionaryVideo.headword}</p>
+        <iframe className="dictionary-video-frame" src={dictionaryVideo.detailUrl}
+          title={`${dictionaryVideo.headword} 한국수어사전 원본 페이지`}
+          sandbox="allow-scripts allow-same-origin" allowFullScreen />
+        <div className="lesson-progress-text dictionary-video-credit">
           <a className="outline-button dictionary-video-link" href={dictionaryVideo.detailUrl} target="_blank" rel="noopener noreferrer">
             원본 수어 영상 보기 (새 탭)
           </a>
-        </div></div>
-        <div className="lesson-progress-text dictionary-video-credit">
           <p>출처: {numberSignSource.name}</p>
           <p>라이선스: <a href={numberSignSource.licenseUrl}>{numberSignSource.license}</a> · <a href={numberSignSource.policyUrl}>사전 저작권 정책</a></p>
           <ul>
@@ -81,7 +81,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
           {videoError && <button className="outline-button" onClick={() => setVideoError(false)}>영상 다시 불러오기</button>}
         </div></div>}
       <p className="lesson-progress-text">{watched ? '시청 완료 · 다시 볼 수 있어요.' : dictionaryVideo
-        ? '새 탭에서 영상을 끝까지 본 뒤, 이 화면에서 시청 완료를 표시해 주세요.'
+        ? '영상을 끝까지 본 뒤 시청 완료를 표시해 주세요.'
         : '영상이 끝나면 시청 완료로 표시돼요.'}</p>
     </> : <SignEvaluation embedded evaluationKind={levelId === 'intermediate' ? 'word' : undefined} word={expression.word} targetId={expression.contentId ?? null}
       initialResult={result} onAttemptStart={onAttemptStart} onFinal={onFinal} />}

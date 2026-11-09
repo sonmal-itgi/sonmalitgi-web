@@ -54,6 +54,8 @@ function confirmDictionaryVideo(originNo) {
   const link = screen.getByRole('link', { name: '원본 수어 영상 보기 (새 탭)' });
   expect(link.getAttribute('href')).toBe(`https://sldict.korean.go.kr/front/sign/signContentsView.do?origin_no=${originNo}`);
   expect(link.getAttribute('target')).toBe('_blank');
+  const frame = screen.getByTitle(/한국수어사전 원본 페이지/);
+  expect(frame.getAttribute('src')).toBe(link.getAttribute('href'));
   expect(screen.getByText('출처: 국립국어원 한국수어사전')).toBeTruthy();
   expect(screen.getByRole('link', { name: 'CC BY-NC-ND 2.0 대한민국' })).toBeTruthy();
 }
