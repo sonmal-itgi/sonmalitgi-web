@@ -74,8 +74,10 @@
 .handshape-panel img { display:block; width:280px; max-width:100%; height:auto; border-radius:6px; }
 .handshape-panel p { margin:8px 0 0; }
 
-.expression-picker { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 20px; }
+.expression-picker { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 8px; }
 .expression-picker button { min-width:44px; min-height:44px; padding:6px 12px; border:1px solid #dce5dd; border-radius:8px; background:white; color:#405549; font:inherit; font-size:13px; cursor:pointer; overflow-wrap:anywhere; }
 .expression-picker button:hover:not(:disabled):not([aria-current]) { background:#edf3ea; }
 .expression-picker button[aria-current] { background:#397252; color:white; border-color:#397252; font-weight:700; }
 .expression-picker button:focus-visible { outline:2px solid #397252; outline-offset:2px; }
+.expression-status { display:inline-flex; gap:4px; margin-inline-start:6px; font-size:11px; white-space:nowrap; }
+.expression-status-key { display:flex; flex-wrap:wrap; gap:12px; margin:0 0 16px; color:#506759; font-size:12px; }

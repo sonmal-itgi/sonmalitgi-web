@@ -127,11 +127,17 @@ function LessonSession({ lesson, listPath, params }) {
       {lesson.expressions.map((expression, expressionIndex) => (
         <button key={expressionIndex} type="button" disabled={pending}
           aria-current={index === expressionIndex ? 'true' : undefined}
+          aria-label={`${expression.word}, ${watched[expressionIndex] ? '시청 완료' : '미시청'}, ${passed[expressionIndex] ? '평가 통과' : '평가 미통과'}`}
           onClick={() => setStep((phase === 'video' ? 0 : total) + expressionIndex)}>
           {expression.word}
+          {(watched[expressionIndex] || passed[expressionIndex]) && <span className="expression-status" aria-hidden="true">
+            {watched[expressionIndex] && <span title="시청 완료">▶</span>}
+            {passed[expressionIndex] && <span title="평가 통과">✓</span>}
+          </span>}
         </button>
       ))}
     </nav>
+    <p className="expression-status-key"><span>▶ 시청 완료</span><span>✓ 평가 통과</span></p>
     <div className="lesson-progress">
       <div className="lesson-progress-summary"><strong>전체 진행률 <span>{percent}%</span></strong><span>시청 완료 {watchedCount}개 · 평가 통과 {passedCount}개</span></div>
       <div className="progress-background" role="progressbar" aria-label="시청과 평가 통합 진행률" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}><div className="progress-fill" style={{ width: `${percent}%` }} /></div>
