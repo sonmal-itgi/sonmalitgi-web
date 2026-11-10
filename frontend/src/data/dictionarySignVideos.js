@@ -233,6 +233,69 @@ const sentenceWords = {
     imageUrl: mediaBase + '20151217/229658/IMG000223119_700X466.jpg',
     handshape: '두 주먹에서 각각 4지를 펴고, 두 손가락을 구부려 서로 건다.',
   },
+  택시: {
+    headword: '택시',
+    detailUrl: detailPage + '120',
+    videoUrl: mediaBase + '20200819/731449/MOV000234643_700X466.webm',
+    imageUrl: mediaBase + '20210203/808846/IMG000358314_700X466.jpg',
+    handshape: '오른 주먹의 5지를 펴서 1지 끝 안쪽에 대고 세운 뒤 앞뒤로 흔든다.',
+  },
+  기본: {
+    headword: '기본',
+    detailUrl: detailPage + '3679',
+    videoUrl: mediaBase + '20220727/1001878/MOV000359455_700X466.webm',
+    imageUrl: mediaBase + '20151215/228362/IMG000221474_700X466.jpg',
+    handshape: '왼 주먹의 손등을 밖으로 향하게 하고 팔을 세운다. 왼 팔꿈치 아래에 오른 주먹의 손등을 댄 뒤 오른손을 편다.',
+  },
+  돈: {
+    headword: '돈',
+    detailUrl: detailPage + '2374',
+    videoUrl: mediaBase + '20191014/627340/MOV000252603_700X466.webm',
+    imageUrl: mediaBase + '20151204/221975/IMG000214007_700X466.jpg',
+    handshape: '오른손 1·5지 끝을 맞대 원을 만들고 살짝 힘을 주어 앞으로 내민다.',
+  },
+  얼마: {
+    headword: '얼마',
+    detailUrl: detailPage + '7806',
+    videoUrl: mediaBase + '20191101/633180/MOV000255265_700X466.webm',
+    imageUrl: mediaBase + '20190722/603383/IMG000355709_700X466.jpg',
+    handshape: '오른 손바닥을 위로 향하게 펴고 손가락을 5·1·2·3·4지 순으로 접는다.',
+  },
+  맞다: {
+    headword: '맞다',
+    detailUrl: detailPage + '1768',
+    videoUrl: mediaBase + '20191004/624338/MOV000241968_700X466.webm',
+    imageUrl: mediaBase + '20151130/219201/IMG000210844_700X466.jpg',
+    handshape: '오른손의 1·5지는 이마 쪽으로, 왼손의 1·5지는 턱 쪽으로 향하게 편다. 두 손을 함께 내밀면서 각 손의 두 손가락 끝을 맞댄다.',
+  },
+  자정: {
+    headword: '밤 12시(자정)',
+    detailUrl: detailPage + '7772',
+    videoUrl: mediaBase + '20200824/734960/MOV000255809_700X466.webm',
+    imageUrl: mediaBase + '20151226/234744/IMG000229717_700X466.jpg',
+    handshape: '두 손바닥을 밖으로 향하게 세워 가운데서 교차한다. 이어 오른 주먹의 2지를 펴고 1지를 구부려 1지 옆면을 이마 가운데에 댄다.',
+  },
+  후: {
+    headword: '후',
+    detailUrl: detailPage + '4542',
+    videoUrl: mediaBase + '20191028/632022/MOV000254138_700X466.webm',
+    imageUrl: mediaBase + '20151215/228137/IMG000221200_700X466.jpg',
+    handshape: '편 왼손의 손등은 밖으로, 손끝은 오른쪽으로 향하게 한다. 오른 손바닥을 밖으로, 손끝을 위로 향하게 해 왼 손등에 오른 손등을 댄 뒤 밖으로 내민다.',
+  },
+  추가: {
+    headword: '추가',
+    detailUrl: detailPage + '2104',
+    videoUrl: mediaBase + '20191004/624363/MOV000240627_700X466.webm',
+    imageUrl: mediaBase + '20151127/217618/IMG000208962_700X466.jpg',
+    handshape: '두 주먹의 1·5지를 펴 1지가 위에 오도록 살짝 구부린다. 오른손을 왼손 5지 아래에 댔다가 왼손 1지 위에 올린다.',
+  },
+  되다: {
+    headword: '되다',
+    detailUrl: detailPage + '6798',
+    videoUrl: mediaBase + '20191015/627596/MOV000250635_700X466.webm',
+    imageUrl: mediaBase + '20171007/466878/IMG000354308_700X466.jpg',
+    handshape: '오른쪽 어깨 앞에서 오른 손바닥을 밖으로 향하게 세운 뒤 손등이 밖으로 향하도록 손목을 돌린다.',
+  },
 };
 
 export const dictionarySentenceVideos = {
@@ -241,4 +304,14 @@ export const dictionarySentenceVideos = {
   SEN0012: [dictionarySignVideos.WORD1345, sentenceWords.빨리],
   SEN0013: [sentenceWords.시간, sentenceWords.급하다],
   SEN0017: [sentenceWords.약속, { ...sentenceWords.천천히, headword: '늦다' }],
+  SEN0037: [sentenceWords.택시, sentenceWords.기본],
+  SEN0038: [sentenceWords.택시, sentenceWords.기본, sentenceWords.돈, sentenceWords.얼마],
+  SEN0041: [sentenceWords.돈, sentenceWords.얼마, sentenceWords.맞다],
+  SEN0043: [sentenceWords.자정, sentenceWords.후, sentenceWords.돈, sentenceWords.추가],
+  SEN0047: [sentenceWords.택시, sentenceWords.돈, sentenceWords.되다],
+};
+
+export const unavailableSentenceWords = {
+  SEN0037: '오천 원',
+  SEN0041: '확인',
 };

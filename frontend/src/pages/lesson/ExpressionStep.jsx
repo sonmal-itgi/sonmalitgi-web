@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { SignEvaluation } from '../practice/Practice.jsx';
 import { referenceVideoUrl } from '../../lib/lessonEvaluation.js';
 
-import { dictionarySentenceVideos, dictionarySignSource, dictionarySignVideos } from '../../data/dictionarySignVideos.js';
+import { dictionarySentenceVideos, dictionarySignSource, dictionarySignVideos, unavailableSentenceWords } from '../../data/dictionarySignVideos.js';
 
 /*
  * [한국수어사전 콘텐츠 이용 안내]
@@ -24,6 +24,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   const [clipIndex, setClipIndex] = useState(0);
   const resumePlayback = useRef(false);
   const clips = dictionarySentenceVideos[expression.contentId];
+  const unavailableWord = unavailableSentenceWords[expression.contentId];
   const dictionaryVideo = clips?.[clipIndex] ?? dictionarySignVideos[expression.contentId]
     ?? (levelId === 'beginner' ? dictionarySignVideos[expression.word] : undefined);
   const url = dictionaryVideo?.videoUrl ?? referenceVideoUrl(expression, VIDEO_BASE);
@@ -76,6 +77,9 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   return <div className="expression-card">
     <div className="expression-info"><p className="expression-label">{phase === 'video' ? '영상' : '평가'} {index + 1} / {total}</p><h2>{expression.word}</h2><p className="expression-description">{expression.description}</p></div>
     {phase === 'video' ? <>
+      {unavailableWord && <p className="evaluation-notice">
+        ‘{unavailableWord}’ 영상은 준비 중입니다. 연결된 구성 단어만 재생됩니다.
+      </p>}
       {clips && <p className="lesson-progress-text">
         구성 단어 {clipIndex + 1} / {clips.length} · <strong>{dictionaryVideo.headword}</strong>
       </p>}
@@ -133,7 +137,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
           finishClip();
         }}>원본 시청 완료</button>}
       </>}
-      <p className="lesson-progress-text">{watched ? '시청 완료 · 다시 볼 수 있어요.' : dictionaryVideo && videoError
+      <p className="lesson-progress-text">{watched ? (unavailableWord ? '제공된 단어 시청 완료 · 다시 볼 수 있어요.' : '시청 완료 · 다시 볼 수 있어요.') : dictionaryVideo && videoError
         ? '원본 페이지에서 시청한 뒤 시청 완료를 표시해 주세요.'
         : '영상이 끝나면 시청 완료로 표시돼요.'}</p>
     </> : <SignEvaluation embedded evaluationKind={levelId === 'intermediate' ? 'word' : undefined} word={expression.word} targetId={expression.contentId ?? null}
