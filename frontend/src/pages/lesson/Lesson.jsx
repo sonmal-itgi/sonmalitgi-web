@@ -118,8 +118,10 @@ function LessonSession({ lesson, listPath, params }) {
     <button className="lesson-back" disabled={pending} onClick={leave}>{listPath === '/review' ? '← 오답노트' : '← 유닛 목록'}</button>
     <div className="lesson-header"><span>UNIT {unitId}</span><h1>{lesson.title}</h1><p>{lesson.description}</p></div>
     <ol className="expression-stages" aria-label="유닛 학습 순서">
-      <li aria-current={phase === 'video' ? 'step' : undefined}>1. 영상 전체 시청 ({total}개)</li>
-      <li aria-current={phase === 'evaluation' ? 'step' : undefined}>2. 표현별 평가 ({total}개)</li>
+      <li><button type="button" aria-current={phase === 'video' ? 'step' : undefined}
+        disabled={pending} onClick={() => setStep(index)}>1. 영상 전체 시청 ({total}개)</button></li>
+      <li><button type="button" aria-current={phase === 'evaluation' ? 'step' : undefined}
+        disabled={pending} onClick={() => setStep(total + index)}>2. 표현별 평가 ({total}개)</button></li>
     </ol>
     <div className="lesson-progress">
       <div className="lesson-progress-summary"><strong>전체 진행률 <span>{percent}%</span></strong><span>시청 완료 {watchedCount}개 · 평가 통과 {passedCount}개</span></div>
