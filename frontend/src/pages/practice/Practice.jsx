@@ -76,7 +76,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
       const landmarker = await createLandmarker();
       if (s.closed) { landmarker.close(); return; }
       s.landmarker = landmarker;
-      const ws = new WebSocket(evaluationKind === 'word' ? WORD_WS_URL : WS_URL);
+      const ws = new WebSocket(evaluationKind ? WORD_WS_URL : WS_URL);
       s.ws = ws;
       s.watchdog = setTimeout(() => {
         cleanup(s);
@@ -153,7 +153,10 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
   return <section className={`ai-practice${embedded ? " ai-practice-embedded" : ""}`} aria-label="수어 평가">
     <h2>{word ? `‘${word}’ 수어 평가` : "한국수어 준실시간 평가"}</h2>
     {evaluationKind === 'word' && <p className="notice">중급은 양손 좌표를 사용하는 단어 모델로 평가합니다. 모델 준비 상태와 지원 단어에 따라 평가 가능 여부가 안내됩니다.</p>}
-    <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 30초 촬영합니다.</p>
+    {evaluationKind === 'sentence' ? <>
+      <p>문장을 처음부터 끝까지 표현한 뒤 종료 버튼을 누르세요. 최대 30초까지 촬영할 수 있어요.</p>
+      <p className="notice">실험 모델의 인식 결과는 연습용이며 통과 기록에 반영되지 않아요. 학습 데이터 출처는 <a href="https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=103" target="_blank" rel="noreferrer">AI Hub 수어 영상</a>입니다.</p>
+    </> : <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 30초 촬영합니다.</p>}
     {targetId === undefined
       ? <label>목표 수어 ID <input value={target} maxLength={64} disabled={active} onChange={e => setTarget(e.target.value)} /></label>
       : <p>현재 표현: {word} · {target || "수어 ID 연결 예정"}</p>}
@@ -177,7 +180,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     </section>
     {mode === 'demo' && <p className="notice">통신 테스트 모드 · 실제 수어 인식 모델이 연결되지 않았습니다.</p>}
     {result && <section aria-live="polite">
-      <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result}</h2>
+      <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result === 'EXPERIMENTAL' ? '연습 결과' : result.result}</h2>
       <p>{result.feedback}</p>
       <p>예측 ID: {result.predicted_id || '없음'} · 모델 점수: {result.confidence?.toFixed(3)}</p>
     </section>}

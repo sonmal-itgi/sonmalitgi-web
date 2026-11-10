@@ -13,6 +13,7 @@ import { dictionarySentenceVideos, dictionarySignSource, dictionarySignVideos, u
  * 주의: 코드 주석은 개발자용 안내이며, 실제 웹페이지에도 이용자가 확인할 수 있는 출처 및 라이선스 정보를 표시해야 합니다.
  */
 
+const UNIT5_MODEL_IDS = new Set(['SEN0009', 'SEN0011', 'SEN0012', 'SEN0013', 'SEN0017']);
 const VIDEO_BASE = import.meta.env.VITE_SIGN_VIDEO_BASE_URL || '';
 
 export default function ExpressionStep({ levelId, expression, index, total, phase, watched, result, onWatched, onAttemptStart, onFinal }) {
@@ -23,6 +24,8 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   const [repeat, setRepeat] = useState(false);
   const [clipIndex, setClipIndex] = useState(0);
   const resumePlayback = useRef(false);
+  const evaluationKind = UNIT5_MODEL_IDS.has(expression.contentId)
+    ? 'sentence' : levelId === 'intermediate' ? 'word' : undefined;
   const clips = dictionarySentenceVideos[expression.contentId];
   const unavailableWord = unavailableSentenceWords[expression.contentId];
   const dictionaryVideo = clips?.[clipIndex] ?? dictionarySignVideos[expression.contentId]
@@ -140,7 +143,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
       <p className="lesson-progress-text">{watched ? (unavailableWord ? '제공된 단어 시청 완료 · 다시 볼 수 있어요.' : '시청 완료 · 다시 볼 수 있어요.') : dictionaryVideo && videoError
         ? '원본 페이지에서 시청한 뒤 시청 완료를 표시해 주세요.'
         : '영상이 끝나면 시청 완료로 표시돼요.'}</p>
-    </> : <SignEvaluation embedded evaluationKind={levelId === 'intermediate' ? 'word' : undefined} word={expression.word} targetId={expression.contentId ?? null}
+    </> : <SignEvaluation embedded evaluationKind={evaluationKind} word={expression.word} targetId={expression.contentId ?? null}
       initialResult={result} onAttemptStart={onAttemptStart} onFinal={onFinal} />}
   </div>;
 }
