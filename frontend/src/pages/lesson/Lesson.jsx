@@ -123,6 +123,15 @@ function LessonSession({ lesson, listPath, params }) {
       <li><button type="button" aria-current={phase === 'evaluation' ? 'step' : undefined}
         disabled={pending} onClick={() => setStep(total + index)}>2. 표현별 평가 ({total}개)</button></li>
     </ol>
+    <nav className="expression-picker" aria-label="표현 선택">
+      {lesson.expressions.map((expression, expressionIndex) => (
+        <button key={expressionIndex} type="button" disabled={pending}
+          aria-current={index === expressionIndex ? 'true' : undefined}
+          onClick={() => setStep((phase === 'video' ? 0 : total) + expressionIndex)}>
+          {expression.word}
+        </button>
+      ))}
+    </nav>
     <div className="lesson-progress">
       <div className="lesson-progress-summary"><strong>전체 진행률 <span>{percent}%</span></strong><span>시청 완료 {watchedCount}개 · 평가 통과 {passedCount}개</span></div>
       <div className="progress-background" role="progressbar" aria-label="시청과 평가 통합 진행률" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}><div className="progress-fill" style={{ width: `${percent}%` }} /></div>
