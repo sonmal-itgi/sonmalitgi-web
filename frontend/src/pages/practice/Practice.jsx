@@ -45,6 +45,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     }
     s.stopping = true;
     clearTimeout(s.timer);
+    clearTimeout(s.watchdog);
     s.stream?.getTracks().forEach(track => track.stop());
     s.ws.send(JSON.stringify({ type: 'stop' }));
     setStatus('최종 결과를 기다립니다.');
@@ -56,7 +57,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
 
   async function start() {
     if (session.current) return;
-    const s = { closed: false, stopping: false, awaiting: false, ready: false };
+    const s = { closed: false, stopping: false, awaiting: false, ready: false, lastSentAt: -Infinity };
     session.current = s;
     onAttemptStart?.();
     setActive(true);
@@ -82,13 +83,11 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
         cleanup(s);
         setStatus('서버 연결 시간이 초과됐습니다.');
       }, 10000);
-      const capture = async () => {
-        if (s.closed || s.stopping || s.awaiting || ws.readyState !== WebSocket.OPEN) return;
+      const capture = () => {
+        if (s.closed || s.stopping || ws.readyState !== WebSocket.OPEN) return;
         const v = video.current;
-        if (!v?.videoWidth) { s.timer = setTimeout(capture, 125); return; }
-        if (v.readyState < 2 || s.lastVideoTime === v.currentTime || ws.bufferedAmount > 150000) {
-          s.timer = setTimeout(capture, 125); return;
-        }
+        s.timer = setTimeout(capture, 33);
+        if (!v?.videoWidth || v.readyState < 2 || s.lastVideoTime === v.currentTime) return;
         try {
           const timestamp = performance.now();
           const detection = s.landmarker.detectForVideo(v, timestamp);
@@ -97,6 +96,8 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
           frame.image_height = v.videoHeight;
           s.lastVideoTime = v.currentTime;
           drawLandmarks(overlay.current, v, frame);
+          if (s.awaiting || ws.bufferedAmount > 150000 || timestamp - s.lastSentAt < 125) return;
+          s.lastSentAt = timestamp;
           setLandmarks(frame);
           s.awaiting = true;
           ws.send(JSON.stringify(frame));
@@ -125,9 +126,8 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
           s.deadline = setTimeout(stop, 29000);
           capture();
         } else if (msg.type === 'ack') {
-          clearTimeout(s.watchdog);
+          if (!s.stopping) clearTimeout(s.watchdog);
           s.awaiting = false;
-          if (!s.stopping) s.timer = setTimeout(capture, 125);
         } else if (msg.type === 'prediction' || msg.type === 'final') {
           setResult(msg);
           if (msg.type === 'final') {
