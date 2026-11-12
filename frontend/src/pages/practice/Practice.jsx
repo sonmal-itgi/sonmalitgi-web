@@ -154,8 +154,8 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     <h2>{word ? `‘${word}’ 수어 평가` : "한국수어 준실시간 평가"}</h2>
     {evaluationKind === 'word' && <p className="notice">중급은 양손 좌표를 사용하는 단어 모델로 평가합니다. 모델 준비 상태와 지원 단어에 따라 평가 가능 여부가 안내됩니다.</p>}
     {evaluationKind === 'sentence' ? <>
-      <p>문장을 처음부터 끝까지 표현한 뒤 종료 버튼을 누르세요. 최대 30초까지 촬영할 수 있어요.</p>
-      <p className="notice">실험 모델의 인식 결과는 연습용이며 통과 기록에 반영되지 않아요. 학습 데이터 출처는 <a href="https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=103" target="_blank" rel="noreferrer">AI Hub 수어 영상</a>입니다.</p>
+      <p>문장을 처음부터 끝까지 표현하세요. 목표 문장이 확인되면 자동으로 통과합니다.</p>
+      <p className="notice">학습 데이터 출처는 <a href="https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=103" target="_blank" rel="noreferrer">AI Hub 수어 영상</a>입니다.</p>
     </> : <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 30초 촬영합니다.</p>}
     {targetId === undefined
       ? <label>목표 수어 ID <input value={target} maxLength={64} disabled={active} onChange={e => setTarget(e.target.value)} /></label>
@@ -168,7 +168,12 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     {landmarks && <p>검출된 점 · 왼손 {landmarks.left_hand.length} · 오른손 {landmarks.right_hand.length}</p>}
     <div className="buttons">
       <button onClick={start} disabled={active || !target.trim()}>평가 시작</button>
-      <button onClick={stop} disabled={!active}>종료 및 최종 평가</button>
+      {evaluationKind === 'sentence'
+        ? <button onClick={() => {
+          cleanup(session.current);
+          setStatus('평가를 취소했습니다.');
+        }} disabled={!active}>평가 취소</button>
+        : <button onClick={stop} disabled={!active}>종료 및 최종 평가</button>}
     </div>
     <p role="status">{status}</p>
     <section className="landmark-json" aria-label="랜드마크 좌표 JSON">
