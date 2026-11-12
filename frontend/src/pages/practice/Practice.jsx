@@ -1,9 +1,14 @@
 import { createLandmarker, landmarkFrame, drawLandmarks } from '../../lib/mediapipe';
 import { useEffect, useRef, useState } from 'react';
 import './Practice.css';
+import { lessons } from '../../data/curriculum';
 
 const WORD_WS_URL = import.meta.env.VITE_WORD_AI_WS_URL || 'ws://localhost:8000/ws/v1/word/evaluate';
 const WS_URL = import.meta.env.VITE_AI_WS_URL || 'ws://localhost:8000/ws/v1/evaluate';
+
+const expressionById = new Map(Object.values(lessons).flatMap(({ expressions }) =>
+  expressions.filter(({ contentId }) => contentId).map(({ contentId, word }) => [contentId, word]),
+));
 
 export function SignEvaluation({ evaluationKind, targetId, word, embedded = false, initialResult = null, onAttemptStart, onFinal }) {
   const video = useRef(null);
@@ -150,6 +155,8 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     }
   }
 
+  const predictedWord = expressionById.get(result?.predicted_id);
+
   return <section className={`ai-practice${embedded ? " ai-practice-embedded" : ""}`} aria-label="수어 평가">
     <h2>{word ? `‘${word}’ 수어 평가` : "한국수어 준실시간 평가"}</h2>
     {evaluationKind === 'word' && <p className="notice">중급은 양손 좌표를 사용하는 단어 모델로 평가합니다. 모델 준비 상태와 지원 단어에 따라 평가 가능 여부가 안내됩니다.</p>}
@@ -170,7 +177,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
         {result ? <>
           <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result === 'EXPERIMENTAL' ? '연습 결과' : result.result}</h2>
           <p>{result.feedback}</p>
-          <p>예측 ID: {result.predicted_id || '없음'} · 모델 점수: {result.confidence?.toFixed(3)}</p>
+          <p>예측: {predictedWord ? `${predictedWord} (${result.predicted_id})` : result.predicted_id || '없음'} · 모델 점수: {result.confidence?.toFixed(3)}</p>
         </> : <p>평가를 시작하면 이곳에 인식 결과가 표시됩니다.</p>}
       </section>
     </div>
