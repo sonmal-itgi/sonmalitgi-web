@@ -161,9 +161,18 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
       ? <label>목표 수어 ID <input value={target} maxLength={64} disabled={active} onChange={e => setTarget(e.target.value)} /></label>
       : <p>현재 표현: {word} · {target || "수어 ID 연결 예정"}</p>}
     {targetId === null && <p className="notice">이 표현의 수어 ID가 아직 연결되지 않아 평가를 시작할 수 없습니다.</p>}
-    <div className="landmark-preview">
-      <video ref={video} autoPlay muted playsInline />
-      <canvas ref={overlay} aria-hidden="true" />
+    <div className="evaluation-layout">
+      <div className="landmark-preview">
+        <video ref={video} autoPlay muted playsInline />
+        <canvas ref={overlay} aria-hidden="true" />
+      </div>
+      <section className="evaluation-result" aria-live="polite">
+        {result ? <>
+          <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result === 'EXPERIMENTAL' ? '연습 결과' : result.result}</h2>
+          <p>{result.feedback}</p>
+          <p>예측 ID: {result.predicted_id || '없음'} · 모델 점수: {result.confidence?.toFixed(3)}</p>
+        </> : <p>평가를 시작하면 이곳에 인식 결과가 표시됩니다.</p>}
+      </section>
     </div>
     {landmarks && <p>검출된 점 · 왼손 {landmarks.left_hand.length} · 오른손 {landmarks.right_hand.length}</p>}
     <div className="buttons">
@@ -184,11 +193,6 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
         : <p>평가를 시작하면 추출한 좌표가 여기에 표시됩니다.</p>}
     </section>
     {mode === 'demo' && <p className="notice">통신 테스트 모드 · 실제 수어 인식 모델이 연결되지 않았습니다.</p>}
-    {result && <section aria-live="polite">
-      <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result === 'EXPERIMENTAL' ? '연습 결과' : result.result}</h2>
-      <p>{result.feedback}</p>
-      <p>예측 ID: {result.predicted_id || '없음'} · 모델 점수: {result.confidence?.toFixed(3)}</p>
-    </section>}
   </section>;
 }
 

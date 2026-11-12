@@ -32,3 +32,20 @@
 .landmark-json h3 { margin: 0 0 8px; font-size: 16px; }
 .landmark-json pre { box-sizing: border-box; max-height: 360px; max-width: 100%; overflow: auto; padding: 16px; margin: 12px 0 0; border-radius: 8px; background: #172b22; color: #d8f3e3; font-size: 12px; line-height: 1.6; text-align: left; }
 .landmark-json code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+.evaluation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.evaluation-layout .landmark-preview { margin: 0; }
+.evaluation-result { min-width: 0; overflow-wrap: anywhere; }
+.evaluation-result h2 { margin-top: 0; }
+.evaluation-result p:last-child { margin-bottom: 0; }
+
+@media (max-width: 640px) {
+  .evaluation-layout { grid-template-columns: minmax(0, 1fr); }
+}
