@@ -177,6 +177,9 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
         {result ? <>
           <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result === 'EXPERIMENTAL' ? '연습 결과' : result.result}</h2>
           <p>{result.feedback}</p>
+          {result.recognized_words?.length > 0 && (
+            <p>인식한 순서 · {result.recognized_words.join(' → ')}</p>
+          )}
           <p>예측: {predictedWord ? `${predictedWord} (${result.predicted_id})` : result.predicted_id || '없음'} · 모델 점수: {result.confidence?.toFixed(3)}</p>
         </> : <p>평가를 시작하면 이곳에 인식 결과가 표시됩니다.</p>}
       </section>
