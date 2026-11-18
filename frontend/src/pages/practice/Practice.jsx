@@ -15,6 +15,8 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
   const overlay = useRef(null);
   const [landmarks, setLandmarks] = useState(null);
   const session = useRef(null);
+  const measurementLog = useRef(null);
+  const [measurements, setMeasurements] = useState(null);
   const [active, setActive] = useState(false);
   const [manualTarget, setTarget] = useState('FS0824');
   const target = targetId === undefined ? manualTarget : (targetId || '');
@@ -25,6 +27,9 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
   function cleanup(s) {
     if (!s || s.closed) return;
     s.closed = true;
+    if (measurementLog.current && !measurementLog.current.finished_at) {
+      measurementLog.current.finished_at = new Date().toISOString();
+    }
     s.landmarker?.close();
     overlay.current?.getContext('2d')?.clearRect(0, 0, overlay.current.width, overlay.current.height);
     clearTimeout(s.timer);
@@ -67,6 +72,13 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     onAttemptStart?.();
     setActive(true);
     setResult(null);
+    setMeasurements(null);
+    measurementLog.current = {
+      started_at: new Date().toISOString(),
+      target_id: target,
+      target_word: word || expressionById.get(target) || target,
+      events: [],
+    };
     setLandmarks(null);
     setMode(null);
     setStatus('카메라와 양손 인식 모델 준비 중…');
@@ -123,6 +135,11 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
         let msg;
         try { msg = JSON.parse(event.data); }
         catch { cleanup(s); setStatus('서버 응답 형식 오류'); return; }
+        if (msg.metrics) setMeasurements(previous => ({ ...previous, ...msg.metrics }));
+        if (['ready', 'ack', 'prediction', 'final', 'error'].includes(msg.type)) {
+          // Record timing and classifications. Landmark arrays remain outside this log.
+          measurementLog.current?.events.push({ received_at: new Date().toISOString(), ...msg });
+        }
         if (msg.type === 'ready') {
           clearTimeout(s.watchdog);
           s.ready = true;
@@ -153,6 +170,18 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     } catch (error) {
       if (!s.closed) { cleanup(s); setStatus(`카메라 또는 MediaPipe 준비 실패: ${error.message}`); }
     }
+  }
+
+  function downloadMeasurements() {
+    const log = measurementLog.current;
+    if (!log) return;
+    const blob = new Blob([JSON.stringify(log, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `손말잇기-웹캠평가-${log.target_id}-${log.started_at.replaceAll(':', '-')}.json`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   const predictedWord = expressionById.get(result?.predicted_id);
@@ -195,6 +224,19 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
         : <button onClick={stop} disabled={!active}>종료 및 최종 평가</button>}
     </div>
     <p role="status">{status}</p>
+    <details className="evaluation-measurements">
+      <summary>웹캠 평가 측정 기록</summary>
+      <p>수신 속도는 서버 도착 기준이며, 판정 구간은 촬영 좌표의 시간 기준입니다.</p>
+      {measurements ? <>
+        <p>최근 수신 속도 · {measurements.received_fps ?? '측정 중'} fps</p>
+        <p>평균 수신 속도 · {measurements.average_received_fps ?? '측정 중'} fps · 받은 프레임 {measurements.frame_count}개</p>
+        <p>최근 판정 구간 · {measurements.window_seconds ?? '측정 중'}초 · {measurements.window_frames ?? '—'}프레임</p>
+        <p>최근 예측 · {expressionById.get(measurements.raw_predicted_id) || measurements.raw_predicted_id || '대기 중'} · 점수 {measurements.raw_confidence?.toFixed(3) ?? '—'}</p>
+        <p>추론 {measurements.inference_ms ?? '—'}ms · 서버 대기 {measurements.queue_ms ?? '—'}ms</p>
+        <p>통과 시간 · {measurements.pass_seconds == null ? '통과 대기 중' : `${measurements.pass_seconds}초`}</p>
+      </> : <p>평가를 시작하면 측정됩니다.</p>}
+      <button onClick={downloadMeasurements} disabled={active || !measurementLog.current}>측정 기록 다운로드</button>
+    </details>
     <section className="landmark-json" aria-label="랜드마크 좌표 JSON">
       <h3>랜드마크 좌표 JSON</h3>
       <p>서버로 보내는 최신 프레임입니다. 촬영 중 자동으로 갱신되며 종료 후에도 마지막 좌표가 남습니다.</p>
