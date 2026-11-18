@@ -67,7 +67,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
 
   async function start() {
     if (session.current) return;
-    const s = { closed: false, stopping: false, awaiting: false, ready: false, lastSentAt: -Infinity };
+    const s = { closed: false, stopping: false, inFlight: 0, ready: false, lastSentAt: -Infinity };
     session.current = s;
     onAttemptStart?.();
     setActive(true);
@@ -113,10 +113,10 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
           frame.image_height = v.videoHeight;
           s.lastVideoTime = v.currentTime;
           drawLandmarks(overlay.current, v, frame);
-          if (s.awaiting || ws.bufferedAmount > 150000 || timestamp - s.lastSentAt < 125) return;
+          if (s.inFlight >= 2 || ws.bufferedAmount > 150000 || timestamp - s.lastSentAt < 125) return;
           s.lastSentAt = timestamp;
           setLandmarks(frame);
-          s.awaiting = true;
+          s.inFlight += 1;
           ws.send(JSON.stringify(frame));
         } catch (error) {
           cleanup(s); setStatus(`랜드마크 추출 실패: ${error.message}`); return;
@@ -148,8 +148,8 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
           s.deadline = setTimeout(stop, 29000);
           capture();
         } else if (msg.type === 'ack') {
-          if (!s.stopping) clearTimeout(s.watchdog);
-          s.awaiting = false;
+          s.inFlight = Math.max(0, s.inFlight - 1);
+          if (!s.stopping && s.inFlight === 0) clearTimeout(s.watchdog);
         } else if (msg.type === 'prediction' || msg.type === 'final') {
           setResult(msg);
           if (msg.type === 'final') {
