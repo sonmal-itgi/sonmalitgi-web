@@ -17,6 +17,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
   const session = useRef(null);
   const measurementLog = useRef(null);
   const [measurements, setMeasurements] = useState(null);
+  const [includeLandmarks, setIncludeLandmarks] = useState(false);
   const [active, setActive] = useState(false);
   const [manualTarget, setTarget] = useState('FS0824');
   const target = targetId === undefined ? manualTarget : (targetId || '');
@@ -78,6 +79,8 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
       target_id: target,
       target_word: word || expressionById.get(target) || target,
       events: [],
+      include_landmarks: includeLandmarks,
+      ...(includeLandmarks ? { frames: [] } : {}),
     };
     setLandmarks(null);
     setMode(null);
@@ -118,6 +121,9 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
           setLandmarks(frame);
           s.inFlight += 1;
           ws.send(JSON.stringify(frame));
+          if (measurementLog.current?.include_landmarks) {
+            measurementLog.current.frames.push(frame);
+          }
         } catch (error) {
           cleanup(s); setStatus(`랜드마크 추출 실패: ${error.message}`); return;
         }
@@ -227,6 +233,12 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     <details className="evaluation-measurements">
       <summary>웹캠 평가 측정 기록</summary>
       <p>수신 속도는 서버 도착 기준이며, 판정 구간은 촬영 좌표의 시간 기준입니다.</p>
+      <label>
+        <input type="checkbox" checked={includeLandmarks} disabled={active}
+          onChange={event => setIncludeLandmarks(event.target.checked)} />
+        측정 파일에 손 좌표 포함
+      </label>
+      <p>원인 분석을 위해 서버에 보낸 손 좌표를 내려받는 JSON 파일에 함께 저장합니다.</p>
       {measurements ? <>
         <p>최근 수신 속도 · {measurements.received_fps ?? '측정 중'} fps</p>
         <p>평균 수신 속도 · {measurements.average_received_fps ?? '측정 중'} fps · 받은 프레임 {measurements.frame_count}개</p>
