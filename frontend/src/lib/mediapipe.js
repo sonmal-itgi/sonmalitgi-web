@@ -26,10 +26,10 @@ export function landmarkFrame(result, timestamp) {
   for (let i = 0; i < (result.landmarks?.length || 0); i++) {
     const label = result.handedness[i]?.[0];
     if (!label) continue;
-    // The hand model assumes selfie (mirrored) input. Our video input is raw;
-    // swap the labels to report the user's anatomical left/right hand.
-    const key = label.categoryName === 'Left' ? 'right_hand'
-      : label.categoryName === 'Right' ? 'left_hand' : null;
+    // Keep Tasks HandLandmarker handedness. CSS mirrors only the preview,
+    // so coordinates and hand labels retain the camera input convention.
+    const key = label.categoryName === 'Left' ? 'left_hand'
+      : label.categoryName === 'Right' ? 'right_hand' : null;
     if (!key || label.score <= scores[key]) continue;
     scores[key] = label.score;
     frame[key] = result.landmarks[i].map(({ x, y, z }) => ({ x, y, z }));
