@@ -87,8 +87,11 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
         구성 단어 {clipIndex + 1} / {clips.length} · <strong>{dictionaryVideo.headword}</strong>
       </p>}
       {url && !videoError ? <>
-        <video key={clipIndex} ref={videoRef} className="reference-video" controls playsInline preload="metadata"
-        aria-label={`${clips ? dictionaryVideo.headword : expression.word} 기준 수어 영상`} src={url}
+        <p className="mirror-mode-notice" id="reference-video-mirror-notice">
+          거울 모드 영상입니다. 화면에 보이는 동작 그대로 따라 해 주세요.
+        </p>
+        <video key={clipIndex} ref={videoRef} className="reference-video reference-video-mirrored" controls playsInline preload="metadata"
+        aria-label={`${clips ? dictionaryVideo.headword : expression.word} 거울 모드 기준 수어 영상`} aria-describedby="reference-video-mirror-notice" src={url}
         onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
           onEnded={finishPlayback} onError={() => { setPlaying(false); setVideoError(true); }} />
         <div className="reference-video-controls">
