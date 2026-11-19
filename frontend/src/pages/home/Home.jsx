@@ -34,7 +34,7 @@ export default function Home() {
     <header className="home-header">
       <div className="home-header-inner">
         <Link className="home-logo" to="/" aria-label="손말잇기 홈"><img src="/sonmalitgi-icon.png" width="38" height="38" alt="" /><span>손말잇기</span></Link>
-        <nav className="home-nav" aria-label="메인 메뉴"><a href="#learning-path">학습 단계</a><a href="#how-to-learn">학습 방법</a></nav>
+        <nav className="home-nav" aria-label="메인 메뉴"><a href="#learning-path">학습 단계</a><a href="#how-to-learn">학습 방법</a><Link to="/dictionary">수어 사전</Link></nav>
         <div className="home-header-actions">
           {profile ? <MemberControls /> : session ? <Link className="home-header-start" to="/level">내 학습 <Arrow /></Link> : <>
             <Link className="home-login" to="/login">로그인</Link><Link className="home-header-start" to="/signup">함께 시작하기 <Arrow /></Link>

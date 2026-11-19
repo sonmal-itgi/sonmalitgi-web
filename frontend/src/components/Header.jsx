@@ -22,7 +22,7 @@ export function MemberControls() {
 
 export default function Header() {
   return <>
-    <header className="member-header"><Link to="/" className="member-logo"><img src="/sonmalitgi-icon.png" alt="" /> 손말잇기</Link><nav className="member-study-tabs" aria-label="학습 메뉴"><NavLink to="/level">학습</NavLink><NavLink to="/review">오답노트</NavLink></nav><MemberControls /></header>
+    <header className="member-header"><Link to="/" className="member-logo"><img src="/sonmalitgi-icon.png" alt="" /> 손말잇기</Link><nav className="member-study-tabs" aria-label="학습 메뉴"><NavLink to="/level">학습</NavLink><NavLink to="/dictionary">수어 사전</NavLink><NavLink to="/review">오답노트</NavLink></nav><MemberControls /></header>
     <Outlet />
   </>;
 }
