@@ -22,6 +22,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [repeat, setRepeat] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
   const [clipIndex, setClipIndex] = useState(0);
   const resumePlayback = useRef(false);
   const evaluationKind = UNIT5_MODEL_IDS.has(expression.contentId)
@@ -36,6 +37,10 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
     resumePlayback.current = false;
     void videoRef.current.play().catch(() => setPlaying(false));
   }, [clipIndex, videoError]);
+
+  useEffect(() => {
+    if (videoRef.current) videoRef.current.playbackRate = playbackRate;
+  }, [playbackRate, clipIndex, url, videoError, phase]);
 
   function moveToClip(nextIndex, play) {
     resumePlayback.current = play;
@@ -92,6 +97,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
         </p>
         <video key={clipIndex} ref={videoRef} className="reference-video reference-video-mirrored" controls playsInline preload="metadata"
         aria-label={`${clips ? dictionaryVideo.headword : expression.word} 거울 모드 기준 수어 영상`} aria-describedby="reference-video-mirror-notice" src={url}
+        onLoadedMetadata={event => { event.currentTarget.playbackRate = playbackRate; }}
         onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
           onEnded={finishPlayback} onError={() => { setPlaying(false); setVideoError(true); }} />
         <div className="reference-video-controls">
@@ -103,6 +109,14 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
           </button>
           <button type="button" className="outline-button" aria-label="반복 재생" aria-pressed={repeat}
             onClick={() => setRepeat(value => !value)}>반복 재생 {repeat ? 'ON' : 'OFF'}</button>
+          <div className="reference-video-speeds" role="group" aria-label="재생 속도">
+            {[0.5, 0.75, 1].map(rate => (
+              <button key={rate} type="button" className="outline-button"
+                aria-pressed={playbackRate === rate} onClick={() => setPlaybackRate(rate)}>
+                {rate}배속
+              </button>
+            ))}
+          </div>
         </div>
       </>
         : <div className="sign-video"><div className="video-placeholder"><span className="video-placeholder-icon" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m10 9 5 3-5 3Z" /></svg></span>

@@ -97,3 +97,5 @@
 
 .reference-video-mirrored { transform: scaleX(-1); }
 .reference-video-mirrored::-webkit-media-controls-panel { transform: scaleX(-1); }
+
+.reference-video-speeds { display: flex; flex-wrap: wrap; gap: 6px; }
