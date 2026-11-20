@@ -49,3 +49,9 @@
 @media (max-width: 640px) {
   .evaluation-layout { grid-template-columns: minmax(0, 1fr); }
 }
+
+.recognition-progress { margin-block: 1rem; }
+.recognition-progress p { margin-bottom: .5rem; }
+.recognition-progress strong { color: #367653; font-variant-numeric: tabular-nums; }
+.recognition-progress progress { width: 100%; height: .65rem; accent-color: #63966c; }
+.recognition-progress small { display: block; margin-top: .5rem; color: #64766b; }

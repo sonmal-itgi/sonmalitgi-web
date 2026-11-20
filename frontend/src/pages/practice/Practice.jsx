@@ -196,7 +196,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     <h2>{word ? `‘${word}’ 수어 평가` : "한국수어 준실시간 평가"}</h2>
     {evaluationKind === 'word' && <p className="notice">중급은 양손 좌표를 사용하는 단어 모델로 평가합니다. 모델 준비 상태와 지원 단어에 따라 평가 가능 여부가 안내됩니다.</p>}
     {evaluationKind === 'sentence' ? <>
-      <p>문장을 처음부터 끝까지 표현하세요. 목표 문장이 확인되면 자동으로 통과합니다.</p>
+      <p>문장을 처음부터 끝까지 표현하세요. 목표 수어가 3회 연속 인식되면 자동으로 통과합니다. 동작을 세 번 반복할 필요는 없습니다.</p>
       <p className="notice">학습 데이터 출처는 <a href="https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=103" target="_blank" rel="noreferrer">AI Hub 수어 영상</a>입니다.</p>
     </> : <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 30초 촬영합니다.</p>}
     {targetId === undefined
@@ -211,6 +211,13 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
       <section className="evaluation-result" aria-live="polite">
         {result ? <>
           <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result === 'EXPERIMENTAL' ? '연습 결과' : result.result}</h2>
+          {evaluationKind === 'sentence' && Number.isInteger(result.stable_count) && result.stable_required > 0 && (
+            <div className="recognition-progress">
+              <p>{expressionById.get(result.stable_target) || result.stable_target || '목표 수어'} · 연속 인식 <strong>{result.stable_count}/{result.stable_required}</strong></p>
+              <progress aria-label="목표 수어 연속 인식" value={result.stable_count} max={result.stable_required} />
+              <small>인식이 끊기거나 다른 수어가 인식되면 다시 시작해요.</small>
+            </div>
+          )}
           <p>{result.feedback}</p>
           {result.recognized_words?.length > 0 && (
             <p>인식한 순서 · {result.recognized_words.join(' → ')}</p>
