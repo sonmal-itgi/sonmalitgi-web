@@ -25,6 +25,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   const [playbackRate, setPlaybackRate] = useState(1);
   const [clipIndex, setClipIndex] = useState(0);
   const resumePlayback = useRef(false);
+  const completedClips = useRef(new Set());
   const evaluationKind = UNIT5_MODEL_IDS.has(expression.contentId)
     ? 'sentence' : levelId === 'intermediate' ? 'word' : undefined;
   const clips = dictionarySentenceVideos[expression.contentId];
@@ -44,17 +45,24 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
   }, [playbackRate, clipIndex, url, videoError, phase]);
 
   function moveToClip(nextIndex, play) {
+    if (!clips || nextIndex < 0 || nextIndex >= clips.length) return;
     resumePlayback.current = play;
+    setVideoError(false);
+    setPlaying(false);
     setShowHandshape(false);
     setClipIndex(nextIndex);
   }
 
   function finishClip() {
+    if (clips) {
+      const newlyCompleted = !completedClips.current.has(clipIndex);
+      completedClips.current.add(clipIndex);
+      if (newlyCompleted && completedClips.current.size === clips.length) onWatched();
+    } else onWatched();
     if (clips && clipIndex < clips.length - 1) {
       moveToClip(clipIndex + 1, true);
       return false;
     }
-    onWatched();
     return true;
   }
 
@@ -90,9 +98,19 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
       {unavailableWord && <p className="evaluation-notice">
         ‘{unavailableWord}’ 영상은 준비 중입니다. 연결된 구성 단어만 재생됩니다.
       </p>}
-      {clips && <p className="lesson-progress-text">
-        구성 단어 {clipIndex + 1} / {clips.length} · <strong>{dictionaryVideo.headword}</strong>
-      </p>}
+      {clips && <nav className="clip-navigation" aria-label="문장 구성 단어 영상">
+        <button type="button" className="clip-arrow" aria-label="이전 단어 영상"
+          disabled={clipIndex === 0} onClick={() => moveToClip(clipIndex - 1, playing)}>
+          <span aria-hidden="true">‹</span>
+        </button>
+        <p className="lesson-progress-text" aria-live="polite" aria-atomic="true">
+          구성 단어 {clipIndex + 1} / {clips.length} · <strong>{dictionaryVideo.headword}</strong>
+        </p>
+        <button type="button" className="clip-arrow" aria-label="다음 단어 영상"
+          disabled={clipIndex === clips.length - 1} onClick={() => moveToClip(clipIndex + 1, playing)}>
+          <span aria-hidden="true">›</span>
+        </button>
+      </nav>}
       {url && !videoError ? <>
         <p className="mirror-mode-notice" id="reference-video-mirror-notice">
           거울 모드 영상입니다. 화면에 보이는 동작 그대로 따라 해 주세요.
@@ -161,7 +179,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
       </>}
       <p className="lesson-progress-text">{watched ? (unavailableWord ? '제공된 단어 시청 완료 · 다시 볼 수 있어요.' : '시청 완료 · 다시 볼 수 있어요.') : dictionaryVideo && videoError
         ? '원본 페이지에서 시청한 뒤 시청 완료를 표시해 주세요.'
-        : '영상이 끝나면 시청 완료로 표시돼요.'}</p>
+        : clips ? '모든 구성 단어 영상을 끝까지 보면 시청 완료로 표시돼요.' : '영상이 끝나면 시청 완료로 표시돼요.'}</p>
     </> : <SignEvaluation embedded evaluationKind={evaluationKind} word={expression.word} targetId={expression.contentId ?? null}
       initialResult={result} onAttemptStart={onAttemptStart} onFinal={onFinal} />}
   </div>;

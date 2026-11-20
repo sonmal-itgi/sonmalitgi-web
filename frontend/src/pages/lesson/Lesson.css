@@ -99,3 +99,12 @@
 .reference-video-mirrored::-webkit-media-controls-panel { transform: scaleX(-1); }
 
 .reference-video-speeds { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.clip-navigation { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:16px 0; padding:10px 12px; border:1px solid #dce5dd; border-radius:12px; background:#f5f8f5; }
+.clip-navigation .lesson-progress-text { margin:0; text-align:center; color:#52695b; overflow-wrap:anywhere; }
+.clip-arrow { display:grid; place-items:center; flex:0 0 44px; width:44px; height:44px; padding:0; border:1px solid #dce5dd; border-radius:50%; background:white; color:#397252; cursor:pointer; }
+.clip-arrow span { font-size:30px; line-height:1; margin-top:-3px; }
+.clip-arrow:hover:not(:disabled) { background:#e4f2e8; border-color:#a8c3af; }
+.clip-arrow:disabled { opacity:.35; cursor:default; }
+.clip-arrow:focus-visible { outline:3px solid #63956b; outline-offset:3px; }
+@media(max-width:480px) { .clip-navigation { gap:8px; padding:8px; } .clip-navigation .lesson-progress-text { font-size:12px; } }
