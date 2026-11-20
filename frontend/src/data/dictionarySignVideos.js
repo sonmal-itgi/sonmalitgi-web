@@ -193,7 +193,6 @@ export const dictionarySignVideos = {
 const sentenceWords = {
   운전: {
     headword: '운전',
-    modelNotice: '운전 표현 차이 안내: 현재 사전 영상은 두 주먹으로 핸들을 돌리는 표현이며, AI Hub 모델이 학습한 운전 수형과 다릅니다. 이 영상을 따라 해도 AI 평가에서 인식되지 않을 수 있습니다. 학습 동작과 일치하는 국립국어원 영상은 아직 확인하지 못했습니다.',
     detailUrl: detailPage + '7857',
     videoUrl: mediaBase + '20191017/628484/MOV000255305_700X466.webm',
     imageUrl: mediaBase + '20151225/234262/IMG000229102_700X466.jpg',
