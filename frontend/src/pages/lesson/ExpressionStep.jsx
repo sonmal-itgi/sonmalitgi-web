@@ -29,6 +29,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
     ? 'sentence' : levelId === 'intermediate' ? 'word' : undefined;
   const clips = dictionarySentenceVideos[expression.contentId];
   const unavailableWord = unavailableSentenceWords[expression.contentId];
+  const modelNotice = clips?.find(clip => clip.modelNotice)?.modelNotice;
   const dictionaryVideo = clips?.[clipIndex] ?? dictionarySignVideos[expression.contentId]
     ?? (levelId === 'beginner' ? dictionarySignVideos[expression.word] : undefined);
   const url = dictionaryVideo?.videoUrl ?? referenceVideoUrl(expression, VIDEO_BASE);
@@ -84,6 +85,7 @@ export default function ExpressionStep({ levelId, expression, index, total, phas
 
   return <div className="expression-card">
     <div className="expression-info"><p className="expression-label">{phase === 'video' ? '영상' : '평가'} {index + 1} / {total}</p><h2>{expression.word}</h2><p className="expression-description">{expression.description}</p></div>
+    {modelNotice && <p className="evaluation-notice" role="note">{modelNotice}</p>}
     {phase === 'video' ? <>
       {unavailableWord && <p className="evaluation-notice">
         ‘{unavailableWord}’ 영상은 준비 중입니다. 연결된 구성 단어만 재생됩니다.
