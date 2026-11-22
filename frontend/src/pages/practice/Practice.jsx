@@ -1,5 +1,6 @@
+import { createLiveLandmarker, clearStaleOverlay } from '../../lib/live-landmarker';
 import { createCaptureFeedback } from '../../lib/capture-feedback';
-import { createLandmarker, landmarkFrame, drawLandmarks } from '../../lib/mediapipe';
+import { landmarkFrame, drawLandmarks } from '../../lib/mediapipe';
 import { useEffect, useRef, useState } from 'react';
 import './Practice.css';
 import { lessons } from '../../data/curriculum';
@@ -100,7 +101,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
       video.current.srcObject = stream;
       await video.current.play();
       if (s.closed) return;
-      const landmarker = await createLandmarker();
+      const landmarker = await createLiveLandmarker();
       if (s.closed) { landmarker.close(); return; }
       s.landmarker = landmarker;
       const ws = new WebSocket(evaluationKind ? WORD_WS_URL : WS_URL);
@@ -109,19 +110,24 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
         cleanup(s);
         setStatus('서버 연결 시간이 초과됐습니다.');
       }, 10000);
-      const capture = () => {
+      const capture = async () => {
         if (s.closed || s.stopping || ws.readyState !== WebSocket.OPEN) return;
+        clearStaleOverlay(overlay.current, s.lastDrawnAt ?? -Infinity, performance.now());
         const v = video.current;
         s.timer = setTimeout(capture, 33);
         if (!v?.videoWidth || v.readyState < 2 || s.lastVideoTime === v.currentTime) return;
         try {
           const timestamp = performance.now();
-          const detection = s.landmarker.detectForVideo(v, timestamp);
+          s.lastVideoTime = v.currentTime;
+          const detection = await s.landmarker.detectForVideo(v, timestamp);
+          if (s.closed || s.stopping || !detection) return;
           const frame = landmarkFrame(detection, timestamp);
           frame.image_width = v.videoWidth;
           frame.image_height = v.videoHeight;
-          s.lastVideoTime = v.currentTime;
-          drawLandmarks(overlay.current, v, frame);
+          if (performance.now() - timestamp <= 200) {
+            drawLandmarks(overlay.current, v, frame);
+            s.lastDrawnAt = timestamp;
+          }
           const guidance = s.captureFeedback(frame, s.needsBothHands, timestamp);
           if ((guidance?.id || null) !== s.feedbackId) {
             s.feedbackId = guidance?.id || null;

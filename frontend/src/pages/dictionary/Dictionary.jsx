@@ -1,5 +1,6 @@
+import { createLiveLandmarker, clearStaleOverlay } from '../../lib/live-landmarker';
 import { useEffect, useRef, useState } from 'react';
-import { createLandmarker, landmarkFrame, drawLandmarks } from '../../lib/mediapipe';
+import { landmarkFrame, drawLandmarks } from '../../lib/mediapipe';
 import { lessons } from '../../data/curriculum';
 import './Dictionary.css';
 
@@ -67,21 +68,27 @@ export default function Dictionary() {
       video.current.srcObject = stream;
       await video.current.play();
       if (s.closed) return;
-      const landmarker = await createLandmarker();
+      const landmarker = await createLiveLandmarker();
       if (s.closed) { landmarker.close(); return; }
       s.landmarker = landmarker;
       const ws = s.ws = new WebSocket(endpoint);
       watch();
-      const capture = () => {
+      const capture = async () => {
         if (s.closed) return;
         s.timer = setTimeout(capture, 33);
+        clearStaleOverlay(overlay.current, s.lastDrawnAt ?? -Infinity, performance.now());
         const v = video.current;
         if (!v?.videoWidth || v.readyState < 2 || s.lastVideoTime === v.currentTime) return;
         try {
           const now = performance.now();
-          const frame = landmarkFrame(landmarker.detectForVideo(v, now), now);
           s.lastVideoTime = v.currentTime;
-          drawLandmarks(overlay.current, v, frame);
+          const detection = await landmarker.detectForVideo(v, now);
+          if (s.closed || !detection) return;
+          const frame = landmarkFrame(detection, now);
+          if (performance.now() - now <= 200) {
+            drawLandmarks(overlay.current, v, frame);
+            s.lastDrawnAt = now;
+          }
           if (s.inFlight >= 2 || ws.bufferedAmount > 150000 || now - s.lastSent < 125 || ws.readyState !== WebSocket.OPEN) return;
           frame.image_width = v.videoWidth; frame.image_height = v.videoHeight;
           s.lastSent = now; s.inFlight++;

@@ -1,3 +1,4 @@
+vi.mock('../src/lib/live-landmarker', () => ({ createLiveLandmarker: vi.fn(async () => ({ close: vi.fn() })), clearStaleOverlay: vi.fn() }));
 import { afterEach, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Dictionary from '../src/pages/dictionary/Dictionary.jsx';
