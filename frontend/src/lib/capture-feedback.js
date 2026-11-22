@@ -1,3 +1,4 @@
+import { handshapeIssue } from './handshape-feedback.js';
 // 촬영 상태 안내 전용. 수형의 정오나 수어 의미를 판단하지 않는다.
 // 검증된 양손 기준은 직접 촬영한 두 주먹 ‘운전’ 구간에만 적용한다.
 export function captureIssue(frame, needsBothHands = false) {
@@ -19,7 +20,7 @@ export function captureIssue(frame, needsBothHands = false) {
 export function createCaptureFeedback() {
   let candidate = null, since = 0, previousTime = null, visible = null;
   return (frame, needsBothHands, now) => {
-    const issue = captureIssue(frame, needsBothHands);
+    const issue = captureIssue(frame, needsBothHands) || handshapeIssue(frame, needsBothHands);
     const key = issue?.id || null;
     // 프레임 공백을 관측한 시간으로 계산하지 않는다.
     if (previousTime === null || now - previousTime > 500 || now < previousTime || key !== candidate) {
