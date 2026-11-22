@@ -1,3 +1,4 @@
+import { createCaptureFeedback } from '../../lib/capture-feedback';
 import { createLandmarker, landmarkFrame, drawLandmarks } from '../../lib/mediapipe';
 import { useEffect, useRef, useState } from 'react';
 import './Practice.css';
@@ -14,6 +15,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
   const video = useRef(null);
   const overlay = useRef(null);
   const [landmarks, setLandmarks] = useState(null);
+  const [captureFeedback, setCaptureFeedback] = useState(null);
   const session = useRef(null);
   const measurementLog = useRef(null);
   const [measurements, setMeasurements] = useState(null);
@@ -42,6 +44,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
       session.current = null;
       if (video.current) video.current.srcObject = null;
       setActive(false);
+      setCaptureFeedback(null);
     }
   }
   useEffect(() => () => cleanup(session.current), []);
@@ -69,7 +72,10 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
   async function start() {
     if (session.current) return;
     const s = { closed: false, stopping: false, inFlight: 0, ready: false, lastSentAt: -Infinity };
+    s.captureFeedback = createCaptureFeedback();
+    s.needsBothHands = evaluationKind === 'sentence' && ['SEN0009', 'SEN0011'].includes(target);
     session.current = s;
+    setCaptureFeedback(null);
     onAttemptStart?.();
     setActive(true);
     setResult(null);
@@ -116,6 +122,11 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
           frame.image_height = v.videoHeight;
           s.lastVideoTime = v.currentTime;
           drawLandmarks(overlay.current, v, frame);
+          const guidance = s.captureFeedback(frame, s.needsBothHands, timestamp);
+          if ((guidance?.id || null) !== s.feedbackId) {
+            s.feedbackId = guidance?.id || null;
+            setCaptureFeedback(guidance);
+          }
           if (s.inFlight >= 2 || ws.bufferedAmount > 150000 || timestamp - s.lastSentAt < 125) return;
           s.lastSentAt = timestamp;
           setLandmarks(frame);
@@ -158,6 +169,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
           if (!s.stopping && s.inFlight === 0) clearTimeout(s.watchdog);
         } else if (msg.type === 'prediction' || msg.type === 'final') {
           setResult(msg);
+          if (msg.recognized_words?.includes('운전')) s.needsBothHands = false;
           if (msg.type === 'final') {
             setStatus('평가 완료');
             // Spring Boot integration: send only a server-verifiable evaluation receipt.
@@ -209,6 +221,11 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
         <canvas ref={overlay} aria-hidden="true" />
       </div>
       <section className="evaluation-result" aria-live="polite">
+        {active && <aside className="capture-feedback" role="status">
+          <strong>촬영 안내</strong>
+          <p>{captureFeedback?.message || '손 전체가 카메라에 보이도록 표현해 주세요.'}</p>
+          <small>손 검출과 화면 위치를 확인하는 안내입니다.</small>
+        </aside>}
         {result ? <>
           <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result === 'EXPERIMENTAL' ? '연습 결과' : result.result}</h2>
           {evaluationKind === 'sentence' && Number.isInteger(result.stable_count) && result.stable_required > 0 && (
