@@ -228,9 +228,9 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
       </div>
       <section className="evaluation-result" aria-live="polite">
         {active && <aside className="capture-feedback" role="status">
-          <strong>촬영 안내</strong>
+          <strong>실시간 피드백</strong>
           <p>{captureFeedback?.message || '손 전체가 카메라에 보이도록 표현해 주세요.'}</p>
-          <small>손 검출과 화면 위치를 확인하는 안내입니다.</small>
+          <small>손 검출·화면 위치와 운전 구간의 주먹 모양을 확인합니다. 수형 안내는 참고용입니다.</small>
         </aside>}
         {result ? <>
           <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result === 'EXPERIMENTAL' ? '연습 결과' : result.result}</h2>
