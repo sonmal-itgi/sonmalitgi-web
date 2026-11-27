@@ -219,15 +219,15 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
 
   return <section className={`ai-practice${embedded ? " ai-practice-embedded" : ""}`} aria-label="수어 평가">
     <h2>{word ? `‘${word}’ 수어 평가` : "한국수어 준실시간 평가"}</h2>
-    {evaluationKind === 'word' && <p className="notice">중급은 상체와 양손 좌표를 사용하는 단어 모델로 평가합니다. 어깨와 양팔이 보이도록 해 주세요. 모델 준비 상태와 지원 단어에 따라 평가 가능 여부가 안내됩니다.</p>}
+    {evaluationKind === 'word' && <p className="notice">어깨와 양손이 화면에 보이도록 해 주세요.</p>}
     {evaluationKind === 'sentence' ? <>
       <p>문장을 처음부터 끝까지 표현하세요. 목표 수어가 3회 연속 인식되면 자동으로 통과합니다. 동작을 세 번 반복할 필요는 없습니다.</p>
       <p className="notice">학습 데이터 출처는 <a href="https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=103" target="_blank" rel="noreferrer">AI Hub 수어 영상</a>입니다.</p>
-    </> : <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 {evaluationKind === 'word' ? 90 : 30}초 촬영합니다.</p>}
-    {evaluationKind === 'word' && <p>중급 모든 표현은 같은 방식으로 평가합니다. 정답을 1회 인정받은 뒤 ‘다음 동작 시작’을 눌러 다시 표현하세요. 양손을 내려 자동 준비가 완료된 경우에는 바로 이어서 표현할 수 있습니다. 총 3회 인정되면 통과합니다.</p>}
+    </> : evaluationKind !== 'word' && <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 30초 촬영합니다.</p>}
+    {evaluationKind === 'word' && <p>3회 인정되면 통과해요. 한 번 인정되면 ‘다음 동작 시작’을 눌러 주세요. (최대 90초)</p>}
     {targetId === undefined
       ? <label>목표 수어 ID <input value={target} maxLength={64} disabled={active} onChange={e => setTarget(e.target.value)} /></label>
-      : <p>현재 표현: {word} · {target || "수어 ID 연결 예정"}</p>}
+      : evaluationKind !== 'word' && <p>현재 표현: {word} · {target || "수어 ID 연결 예정"}</p>}
     {targetId === null && <p className="notice">이 표현의 수어 ID가 아직 연결되지 않아 평가를 시작할 수 없습니다.</p>}
     <div className="evaluation-layout">
       <div className="landmark-preview">
