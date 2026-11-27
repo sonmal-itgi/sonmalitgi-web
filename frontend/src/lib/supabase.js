@@ -8,7 +8,7 @@ const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VIT
 export const isSupabaseConfigured = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/.test(url)
   && (key.startsWith('sb_publishable_') || key.startsWith('eyJ'));
 export const supabase = isSupabaseConfigured ? createClient(url, key) : null;
-export const authService = createAuthService(supabase, { url, key });
+export const authService = createAuthService(supabase);
 
 export const progressService = createProgressService(supabase);
 

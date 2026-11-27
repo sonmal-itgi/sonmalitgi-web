@@ -51,5 +51,3 @@
 
 @media(max-width:640px) { .auth-card input { font-size:16px; } }
 
-.auth-card .kakao-login-button { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; border: 0; border-radius: 10px; background: #fee500; color: #191919; font: inherit; font-weight: 600; cursor: pointer; }
-.auth-card .kakao-login-button:disabled { opacity: .55; cursor: default; }

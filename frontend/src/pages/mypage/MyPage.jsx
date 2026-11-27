@@ -45,7 +45,7 @@ function PasswordForm() {
 }
 
 export default function MyPage() {
-  const { profile, session } = useAuth();
+  const { profile } = useAuth();
   const { records, loading, error, reload } = useLearningProgress();
   const byUnit = Object.fromEntries(records.map((r) => [r.unit_id, r]));
   const recent = records.find((r) => lessons[r.unit_id]);
@@ -88,6 +88,6 @@ export default function MyPage() {
         </section>)}</div>
       </>}
     </section>
-    {session?.user.app_metadata?.provider === 'kakao' && !session?.user.app_metadata?.providers?.includes('email') ? <section className="mypage-card"><p>카카오로 로그인한 계정입니다.</p></section> : <PasswordForm />}
+    <PasswordForm />
   </main>;
 }
