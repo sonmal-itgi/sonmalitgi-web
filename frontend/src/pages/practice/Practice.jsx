@@ -218,6 +218,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
       <p>문장을 처음부터 끝까지 표현하세요. 목표 수어가 3회 연속 인식되면 자동으로 통과합니다. 동작을 세 번 반복할 필요는 없습니다.</p>
       <p className="notice">학습 데이터 출처는 <a href="https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=103" target="_blank" rel="noreferrer">AI Hub 수어 영상</a>입니다.</p>
     </> : <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 30초 촬영합니다.</p>}
+    {evaluationKind === 'word' && <p>정답 인식 3회를 누적하면 자동 통과합니다. 연속으로 인식될 필요는 없으며, 새 평가를 시작하면 횟수가 초기화됩니다.</p>}
     {targetId === undefined
       ? <label>목표 수어 ID <input value={target} maxLength={64} disabled={active} onChange={e => setTarget(e.target.value)} /></label>
       : <p>현재 표현: {word} · {target || "수어 ID 연결 예정"}</p>}
@@ -228,13 +229,13 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
         <canvas ref={overlay} aria-hidden="true" />
       </div>
       <section className="evaluation-result" aria-live="polite">
-        {active && <aside className="capture-feedback" role="status">
+        {active && evaluationKind !== 'word' && <aside className="capture-feedback" role="status">
           <strong>실시간 피드백</strong>
           <p>{captureFeedback?.message || '손 전체가 카메라에 보이도록 표현해 주세요.'}</p>
           <small>손 검출·화면 위치와 운전 구간의 주먹 모양을 확인합니다. 수형 안내는 참고용입니다.</small>
         </aside>}
         {result ? <>
-          <h2>{result.type === 'final' ? '최종' : '진행 중'}: {result.result === 'EXPERIMENTAL' ? '연습 결과' : result.result}</h2>
+          <h2>{evaluationKind === 'word' ? (result.result === 'PASS' ? '학습 완료' : '학습 진행') : `${result.type === 'final' ? '최종' : '진행 중'}: ${result.result === 'EXPERIMENTAL' ? '연습 결과' : result.result}`}</h2>
           {evaluationKind === 'sentence' && Number.isInteger(result.stable_count) && result.stable_required > 0 && (
             <div className="recognition-progress">
               <p>{expressionById.get(result.stable_target) || result.stable_target || '목표 수어'} · 연속 인식 <strong>{result.stable_count}/{result.stable_required}</strong></p>
@@ -242,18 +243,27 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
               <small>인식이 끊기거나 다른 수어가 인식되면 다시 시작해요.</small>
             </div>
           )}
-          <p>{result.feedback}</p>
-          {result.recognized_words?.length > 0 && (
+          {evaluationKind === 'word' && <div className="recognition-progress">
+            <p>누적 인식 <strong>{result.success_count ?? 0}/{result.success_required ?? 3}</strong></p>
+            <progress aria-label="목표 수어 누적 인식" value={result.success_count ?? 0} max={result.success_required ?? 3} />
+            <small>올바르게 인식된 새 동작 구간을 3회 모으면 통과해요. 중간에 끊겨도 횟수는 유지돼요.</small>
+          </div>}
+          {evaluationKind !== 'word' && <p>{result.feedback}</p>}
+          {evaluationKind !== 'word' && result.recognized_words?.length > 0 && (
             <p>인식한 순서 · {result.recognized_words.join(' → ')}</p>
           )}
-          <p>예측: {predictedWord ? `${predictedWord} (${result.predicted_id})` : result.predicted_id || '없음'} · 모델 점수: {result.confidence?.toFixed(3)}</p>
-        </> : <p>평가를 시작하면 이곳에 인식 결과가 표시됩니다.</p>}
+          {evaluationKind !== 'word' && <p>예측: {predictedWord ? `${predictedWord} (${result.predicted_id})` : result.predicted_id || '없음'} · 모델 점수: {result.confidence?.toFixed(3)}</p>}
+        </> : evaluationKind === 'word' ? <div className="recognition-progress">
+          <p>누적 인식 <strong>0/3</strong></p>
+          <progress aria-label="목표 수어 누적 인식" value={0} max={3} />
+          <small>정답 인식 횟수를 누적해요. 평가 시작을 눌러 주세요.</small>
+        </div> : <p>평가를 시작하면 이곳에 인식 결과가 표시됩니다.</p>}
       </section>
     </div>
-    {landmarks && <p>검출된 점 · 왼손 {landmarks.left_hand.length} · 오른손 {landmarks.right_hand.length}</p>}
+    {evaluationKind !== 'word' && landmarks && <p>검출된 점 · 왼손 {landmarks.left_hand.length} · 오른손 {landmarks.right_hand.length}</p>}
     <div className="buttons">
       <button onClick={start} disabled={active || !target.trim()}>평가 시작</button>
-      {evaluationKind === 'sentence'
+      {(evaluationKind === 'sentence' || evaluationKind === 'word')
         ? <button onClick={() => {
           cleanup(session.current);
           setStatus('평가를 취소했습니다.');

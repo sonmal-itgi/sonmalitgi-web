@@ -13,3 +13,10 @@ it('supports older results without progress metadata', () => {
   render(<SignEvaluation evaluationKind="sentence" targetId="SEN0009" initialResult={{ result: 'RETRY', confidence: .8 }} />);
   expect(screen.queryByRole('progressbar')).toBeNull();
 });
+it('shows cumulative middle progress and hides correction and prediction feedback', () => {
+  render(<SignEvaluation evaluationKind="word" targetId="WORD1290" initialResult={{ result: 'RETRY', success_count: 2, success_required: 3, count_mode: 'cumulative', feedback: '손을 더 펴세요', predicted_id: 'WORD1191', confidence: .99 }} />);
+  expect(screen.getByText('2/3')).toBeTruthy();
+  expect(screen.getByRole('progressbar', {name:'목표 수어 누적 인식'}).value).toBe(2);
+  expect(screen.queryByText('손을 더 펴세요')).toBeNull();
+  expect(screen.queryByText(/모델 점수:/)).toBeNull();
+});
