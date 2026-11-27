@@ -59,3 +59,6 @@
 .capture-feedback { padding: 1rem; margin-bottom: 1rem; border: 1px solid #d7e4d9; border-radius: 12px; background: #f3f7ef; color: #345640; }
 .capture-feedback p { margin: .5rem 0; }
 .capture-feedback small { color: #64766b; }
+
+.evaluation-summary { margin-top: 1rem; padding-top: .75rem; border-top: 1px solid #d7e4d9; }
+.evaluation-summary small { display: block; margin-top: .75rem; color: #64766b; }

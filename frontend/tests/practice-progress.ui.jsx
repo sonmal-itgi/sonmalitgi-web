@@ -33,3 +33,9 @@ it.each(['WORD1290','WORD1201','WORD1589','WORD1191','WORD1185','WORD1342','WORD
   expect(button.disabled).toBe(true);
   expect(screen.getByText('1/3')).toBeTruthy();
 });
+it.each(['PASS','FAIL'])('shows a final middle result and export for %s', result => {
+ render(<SignEvaluation evaluationKind="word" targetId="WORD1191" word="좋다" initialResult={{type:'final',result,success_count:result==='PASS'?2:1,success_required:2,evaluation_seconds:result==='PASS'?8:20,termination_reason:result==='PASS'?'passed':'time_limit',finished_at:'2026-11-27T13:00:00Z'}} />);
+ expect(screen.getByRole('heading',{name:`평가 결과 · ${result==='PASS'?'통과':'실패'}`})).toBeTruthy();
+ expect(screen.getByRole('button',{name:'평가 결과 CSV 저장'})).toBeTruthy();
+ expect(screen.getByText(result==='PASS'?'종료 사유 · 2회 인정 완료':'종료 사유 · 제한 시간 내 2회 미달')).toBeTruthy();
+});
