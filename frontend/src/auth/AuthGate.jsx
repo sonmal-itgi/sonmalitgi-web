@@ -1,3 +1,4 @@
+import { authReturnPath } from '../lib/auth.js';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from './context.js';
@@ -27,7 +28,6 @@ export function GuestOnly() {
   const { session, loading, error } = useAuth();
   const location = useLocation();
   if (loading || error) return <AuthStatus />;
-  const from = location.state?.from;
-  const destination = typeof from === 'string' && /^\/(level|learn|lesson|mypage|review)(\/|\?|$)/.test(from) ? from : '/level';
+  const destination = authReturnPath(location.state?.from || new URLSearchParams(location.search).get('next'));
   return session ? <Navigate to={destination} replace /> : <Outlet />;
 }

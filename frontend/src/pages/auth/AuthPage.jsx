@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/context.js';
 import { authService } from '../../lib/supabase.js';
@@ -11,7 +11,25 @@ export default function AuthPage({ signup = false }) {
   const [values, setValues] = useState({ name: '', username: '', password: '' });
   const [confirmation, setConfirmation] = useState('');
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(() =>
+    new URLSearchParams(location.search).has('error') || new URLSearchParams(location.hash.slice(1)).has('error')
+      ? '카카오 로그인이 취소되었거나 완료되지 않았습니다. 다시 시도해주세요.' : '');
+  const [kakaoReady, setKakaoReady] = useState(false);
+  useEffect(() => {
+    let active = true;
+    if (configured) authService.kakaoAvailable().then(
+      ready => { if (active) setKakaoReady(ready); },
+      () => { if (active) setKakaoReady(false); },
+    );
+    return () => { active = false; };
+  }, [configured]);
+  async function kakaoLogin() {
+    if (pending || !kakaoReady) return;
+    setError(''); setPending(true);
+    try {
+      await authService.loginWithKakao({origin:window.location.origin, next:location.state?.from || new URLSearchParams(location.search).get('next')});
+    } catch (e) { setError(e.message); setPending(false); }
+  }
   function update(event) { setValues({ ...values, [event.target.name]: event.target.value }); }
   async function submit(event) {
     event.preventDefault();
@@ -58,6 +76,11 @@ export default function AuthPage({ signup = false }) {
       {error && <p className="auth-error" role="alert">{error}</p>}
       <button type="submit" className="main-button full">{pending ? '처리 중…' : signup ? '회원가입' : '로그인'}</button>
     </fieldset></form>
+    <div className="auth-divider"><span>간편 로그인</span></div>
+    <button type="button" className="kakao-login-button full" disabled={pending || !configured || !kakaoReady} onClick={kakaoLogin}>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 3C6.5 3 2 6.4 2 10.6c0 2.7 1.8 5.1 4.6 6.4L5.5 21l4.6-3a14 14 0 0 0 1.9.2c5.5 0 10-3.4 10-7.6S17.5 3 12 3Z" /></svg>
+      {kakaoReady ? '카카오로 로그인' : '카카오 로그인 준비 중'}
+    </button>
     {!signup && <div className="auth-divider"><span>처음이신가요?</span></div>}
     <button type="button" disabled={pending} className={signup ? 'text-button' : 'outline-button full'} onClick={() => navigate(signup ? '/login' : '/signup', { state: location.state })}>
       {signup ? '이미 계정이 있으신가요? 로그인' : '회원가입하기'}

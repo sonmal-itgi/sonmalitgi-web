@@ -50,3 +50,6 @@
 @media(max-width:640px) { .auth-page { padding:0; display:block; background:white; } .auth-layout { display:block; border:0; border-radius:0; } .auth-story { padding:22px 24px; } .auth-brand { font-size:18px; } .auth-brand img { width:30px; height:30px; } .auth-story-copy { margin-top:25px; } .auth-story .page-eyebrow { margin-bottom:10px; font-size:8px; } .auth-story h2 { font-size:27px; margin:0; } .auth-story-copy p,.auth-story-art,.auth-story-footer { display:none; } .auth-card { padding:68px 24px 36px; } .auth-card h1 { font-size:27px; } .back-button { left:auto; right:24px; top:20px; } .member-header { min-height:72px; padding:14px 20px; gap:12px; } .member-logo { font-size:19px; gap:5px; } .member-logo img { width:30px; height:30px; } .member-controls { gap:10px; font-size:11px; } .member-controls > span:first-child { display:none; } .home-login-button { padding:8px; font-size:11px; } }
 
 @media(max-width:640px) { .auth-card input { font-size:16px; } }
+
+.auth-card .kakao-login-button { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; border: 0; border-radius: 10px; background: #fee500; color: #191919; font: inherit; font-weight: 600; cursor: pointer; }
+.auth-card .kakao-login-button:disabled { opacity: .55; cursor: default; }

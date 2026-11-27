@@ -46,3 +46,24 @@ test('bad credentials and failed automatic login cannot report success', async (
 test('missing configuration fails clearly', async () => {
   await assert.rejects(createAuthService(null).login({ username: 'test_user', password: 'password' }), /연결을 준비 중/);
 });
+
+test('Kakao OAuth redirects to our login and rejects external return paths', async () => {
+  const calls=[];
+  const service=createAuthService({auth:{async signInWithOAuth(value){calls.push(value);return {data:{url:'https://auth.example/authorize'}};}}});
+  await service.loginWithKakao({origin:'https://sonmal.example',next:'https://evil.example'});
+  assert.equal(calls[0].provider,'kakao');
+  assert.equal(calls[0].options.redirectTo,'https://sonmal.example/login?next=%2Flevel');
+  assert.equal(calls[0].options.scopes,'profile_nickname');
+  await service.loginWithKakao({origin:'https://sonmal.example',next:'/dictionary'});
+  assert.equal(new URL(calls[1].options.redirectTo).searchParams.get('next'),'/dictionary');
+});
+
+test('Kakao availability uses only public project settings', async () => {
+  const service=createAuthService({}, {url:'https://example.supabase.co',key:'public-key',fetcher:async(url,options)=>{
+    assert.equal(url,'https://example.supabase.co/auth/v1/settings');
+    assert.deepEqual(options.headers,{apikey:'public-key'});
+    return {ok:true,json:async()=>({external:{kakao:true}})};
+  }});
+  assert.equal(await service.kakaoAvailable(),true);
+  assert.equal(await createAuthService(null).kakaoAvailable(),false);
+});

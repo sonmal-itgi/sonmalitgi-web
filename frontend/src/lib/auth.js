@@ -1,3 +1,8 @@
+export function authReturnPath(value) {
+  return typeof value === 'string' && /^\/(level|learn|lesson|mypage|review|dictionary)(\/|\?|$)/.test(value)
+    && !/[\\\u0000-\u001f]/.test(value) ? value : '/level';
+}
+
 export const USERNAME_PATTERN = /^[a-z0-9_]{4,20}$/;
 export const AUTH_DOMAIN = 'accounts.sonmalitgi.invalid';
 
@@ -33,7 +38,7 @@ export function authErrorMessage(error) {
   return '요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.';
 }
 
-export function createAuthService(client) {
+export function createAuthService(client, { url, key, fetcher = globalThis.fetch } = {}) {
   function requireClient() {
     if (!client) throw new Error('회원 서비스 연결을 준비 중입니다. 잠시 후 다시 이용해주세요.');
     return client;
@@ -64,6 +69,24 @@ export function createAuthService(client) {
       });
       if (error) throw new Error(authErrorMessage(error));
       if (!data.session) throw new Error('로그인 정보를 확인할 수 없습니다. 다시 시도해주세요.');
+      return data;
+    },
+    async kakaoAvailable() {
+      if (!client || !url || !key) return false;
+      const response = await fetcher(`${url.replace(/\/$/, '')}/auth/v1/settings`, { headers: { apikey: key } });
+      if (!response.ok) throw new Error('카카오 로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해주세요.');
+      const settings = await response.json();
+      return settings.external?.kakao === true;
+    },
+    async loginWithKakao({ origin, next }) {
+      const base = new URL(origin);
+      if (!['https:', 'http:'].includes(base.protocol)) throw new Error('로그인 주소를 확인해주세요.');
+      const redirect = new URL('/login', base.origin);
+      redirect.searchParams.set('next', authReturnPath(next));
+      const { data, error } = await requireClient().auth.signInWithOAuth({
+        provider: 'kakao', options: { redirectTo: redirect.href, scopes: 'profile_nickname' },
+      });
+      if (error) throw new Error('카카오 로그인을 시작하지 못했습니다. 잠시 후 다시 시도해주세요.');
       return data;
     },
     async logout() {
