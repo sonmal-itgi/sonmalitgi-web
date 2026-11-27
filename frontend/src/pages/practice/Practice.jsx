@@ -224,7 +224,9 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `손말잇기-평가결과-${target}-${result.attempt_id || Date.now()}.csv`;
+    const lesson = Object.values(lessons).find(unit => unit.expressions.some(expression => expression.contentId === target));
+    const expressionName = (word || expressionById.get(target) || target).replace(/[<>:"/\\|?*\u0000-\u001F]/g, '_');
+    link.download = `${lesson ? `유닛${lesson.id}` : '손말잇기'}_${expressionName}_평가결과.csv`;
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
