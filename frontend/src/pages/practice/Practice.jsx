@@ -169,7 +169,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
           s.ready = true;
           setMode(msg.model_mode);
           setStatus('수어를 표현하세요. 양손을 카메라에 보여 주세요. 손 좌표를 분석합니다.');
-          s.deadline = setTimeout(stop, 29000);
+          s.deadline = setTimeout(stop, evaluationKind === 'word' ? 89000 : 29000);
           capture();
         } else if (msg.type === 'ack') {
           s.inFlight = Math.max(0, s.inFlight - 1);
@@ -217,8 +217,8 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     {evaluationKind === 'sentence' ? <>
       <p>문장을 처음부터 끝까지 표현하세요. 목표 수어가 3회 연속 인식되면 자동으로 통과합니다. 동작을 세 번 반복할 필요는 없습니다.</p>
       <p className="notice">학습 데이터 출처는 <a href="https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=103" target="_blank" rel="noreferrer">AI Hub 수어 영상</a>입니다.</p>
-    </> : <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 30초 촬영합니다.</p>}
-    {evaluationKind === 'word' && <p>정답 인식 3회를 누적하면 자동 통과합니다. 연속으로 인식될 필요는 없으며, 새 평가를 시작하면 횟수가 초기화됩니다.</p>}
+    </> : <p>최근 동작 구간을 반복 분석합니다. 한 번에 최대 {evaluationKind === 'word' ? 90 : 30}초 촬영합니다.</p>}
+    {evaluationKind === 'word' && <p>정답 동작을 3회 수행하면 통과합니다. 한 번 인정되면 양손을 잠시 내려 주세요. 다음 동작 준비가 표시되면 다시 표현하세요.</p>}
     {targetId === undefined
       ? <label>목표 수어 ID <input value={target} maxLength={64} disabled={active} onChange={e => setTarget(e.target.value)} /></label>
       : <p>현재 표현: {word} · {target || "수어 ID 연결 예정"}</p>}
@@ -246,7 +246,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
           {evaluationKind === 'word' && <div className="recognition-progress">
             <p>누적 인식 <strong>{result.success_count ?? 0}/{result.success_required ?? 3}</strong></p>
             <progress aria-label="목표 수어 누적 인식" value={result.success_count ?? 0} max={result.success_required ?? 3} />
-            <small>올바르게 인식된 새 동작 구간을 3회 모으면 통과해요. 중간에 끊겨도 횟수는 유지돼요.</small>
+            <small>{result.waiting_for_reset ? '1회 인정됐어요. 양손을 잠시 내려 다음 동작을 준비해 주세요.' : result.result === 'PASS' ? '3회 수행을 완료했어요.' : '다음 동작을 표현하세요. 누적 횟수는 유지돼요.'}</small>
           </div>}
           {evaluationKind !== 'word' && <p>{result.feedback}</p>}
           {evaluationKind !== 'word' && result.recognized_words?.length > 0 && (
