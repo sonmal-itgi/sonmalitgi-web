@@ -25,3 +25,11 @@ it('asks middle learners to lower hands after a counted performance', () => {
   expect(screen.getByText('1/3')).toBeTruthy();
   expect(screen.getByText('양손을 잠시 내려 주세요. 준비 상태가 안 바뀌면 ‘다음 동작 시작’을 눌러 주세요.')).toBeTruthy();
 });
+it.each(['WORD1290','WORD1201','WORD1589','WORD1191','WORD1185','WORD1342','WORD1343','WORD1345','WORD1149','WORD1295','WORD1274'])('shows the same next-performance button for intermediate %s', targetId => {
+  render(<SignEvaluation evaluationKind="word" targetId={targetId} initialResult={{result:'RETRY',success_count:1,success_required:3,waiting_for_reset:true}} />);
+  const button=screen.getByRole('button',{name:'다음 동작 시작'});
+  expect(button).toBeTruthy();
+  // 평가를 시작하지 않았거나 이전 결과를 조회 중이면 활성화하지 않는다.
+  expect(button.disabled).toBe(true);
+  expect(screen.getByText('1/3')).toBeTruthy();
+});
