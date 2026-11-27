@@ -23,6 +23,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
   const [measurements, setMeasurements] = useState(null);
   const [includeLandmarks, setIncludeLandmarks] = useState(false);
   const [active, setActive] = useState(false);
+  const [preparingNext, setPreparingNext] = useState(false);
   const [manualTarget, setTarget] = useState('FS0824');
   const target = targetId === undefined ? manualTarget : (targetId || '');
   const [status, setStatus] = useState(initialResult ? '이 표현의 이전 평가 결과입니다. 다시 평가할 수 있어요.' : '시작하면 카메라와 서버에 연결합니다.');
@@ -46,6 +47,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
       session.current = null;
       if (video.current) video.current.srcObject = null;
       setActive(false);
+      setPreparingNext(false);
       setCaptureFeedback(null);
     }
   }
@@ -80,6 +82,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     setCaptureFeedback(null);
     onAttemptStart?.();
     setActive(true);
+    setPreparingNext(false);
     setResult(null);
     setMeasurements(null);
     measurementLog.current = {
@@ -174,6 +177,9 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
         } else if (msg.type === 'ack') {
           s.inFlight = Math.max(0, s.inFlight - 1);
           if (!s.stopping && s.inFlight === 0) clearTimeout(s.watchdog);
+        } else if (msg.type === 'repetition_ready') {
+          setResult(msg);
+          setPreparingNext(false);
         } else if (msg.type === 'prediction' || msg.type === 'final') {
           setResult(msg);
           if (msg.recognized_words?.includes('운전')) s.needsBothHands = false;
@@ -246,7 +252,7 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
           {evaluationKind === 'word' && <div className="recognition-progress">
             <p>누적 인식 <strong>{result.success_count ?? 0}/{result.success_required ?? 3}</strong></p>
             <progress aria-label="목표 수어 누적 인식" value={result.success_count ?? 0} max={result.success_required ?? 3} />
-            <small>{result.waiting_for_reset ? '1회 인정됐어요. 양손을 잠시 내려 다음 동작을 준비해 주세요.' : result.result === 'PASS' ? '3회 수행을 완료했어요.' : '다음 동작을 표현하세요. 누적 횟수는 유지돼요.'}</small>
+            <small>{result.waiting_for_reset ? '양손을 잠시 내려 주세요. 준비 상태가 안 바뀌면 ‘다음 동작 시작’을 눌러 주세요.' : result.result === 'PASS' ? '3회 수행을 완료했어요.' : '다음 동작을 표현하세요. 누적 횟수는 유지돼요.'}</small>
           </div>}
           {evaluationKind !== 'word' && <p>{result.feedback}</p>}
           {evaluationKind !== 'word' && result.recognized_words?.length > 0 && (
@@ -263,6 +269,14 @@ export function SignEvaluation({ evaluationKind, targetId, word, embedded = fals
     {evaluationKind !== 'word' && landmarks && <p>검출된 점 · 왼손 {landmarks.left_hand.length} · 오른손 {landmarks.right_hand.length}</p>}
     <div className="buttons">
       <button onClick={start} disabled={active || !target.trim()}>평가 시작</button>
+      {evaluationKind === 'word' && active && result?.waiting_for_reset && <button
+        disabled={preparingNext}
+        onClick={() => {
+          const s = session.current;
+          if (!s || s.closed || !s.ready || s.ws?.readyState !== WebSocket.OPEN) return;
+          setPreparingNext(true);
+          s.ws.send(JSON.stringify({ type: 'next_repetition' }));
+        }}>{preparingNext ? '준비 중…' : '다음 동작 시작'}</button>}
       {(evaluationKind === 'sentence' || evaluationKind === 'word')
         ? <button onClick={() => {
           cleanup(session.current);

@@ -23,5 +23,5 @@ it('shows cumulative middle progress and hides correction and prediction feedbac
 it('asks middle learners to lower hands after a counted performance', () => {
   render(<SignEvaluation evaluationKind="word" targetId="WORD1191" initialResult={{ result:'RETRY', success_count:1, success_required:3, waiting_for_reset:true }} />);
   expect(screen.getByText('1/3')).toBeTruthy();
-  expect(screen.getByText('1회 인정됐어요. 양손을 잠시 내려 다음 동작을 준비해 주세요.')).toBeTruthy();
+  expect(screen.getByText('양손을 잠시 내려 주세요. 준비 상태가 안 바뀌면 ‘다음 동작 시작’을 눌러 주세요.')).toBeTruthy();
 });
