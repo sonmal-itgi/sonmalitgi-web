@@ -1,5 +1,5 @@
 // 처리 중에는 새 프레임을 버린다. 추론 큐와 메인 스레드 동기 추론을 만들지 않는다.
-export async function createLiveLandmarker() {
+export async function createLiveLandmarker({ body = false } = {}) {
   const worker = new Worker(new URL('./landmark.worker.js', import.meta.url));
   let closed = false, busy = false, pending = null;
   let resolveReady, rejectReady;
@@ -19,7 +19,7 @@ export async function createLiveLandmarker() {
   };
   worker.onerror = event => fail(new Error(event.message || '손 검출 Worker 오류'));
   const timeout = setTimeout(() => fail(new Error('손 검출 모델 준비 시간이 초과됐습니다.')), 30000);
-  worker.postMessage({ type: 'init', modelUrl: import.meta.env?.VITE_MEDIAPIPE_MODEL_URL || 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task' });
+  worker.postMessage({ type: 'init', body, modelUrl: import.meta.env?.VITE_MEDIAPIPE_MODEL_URL || 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task' });
   try { await ready; }
   catch (error) { worker.terminate(); throw error; }
   finally { clearTimeout(timeout); }

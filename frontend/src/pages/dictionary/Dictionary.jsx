@@ -4,8 +4,10 @@ import { landmarkFrame, drawLandmarks } from '../../lib/mediapipe';
 import { lessons } from '../../data/curriculum';
 import './Dictionary.css';
 
-const endpoint = new URL(import.meta.env.VITE_WORD_AI_WS_URL || 'ws://localhost:8000/ws/v1/word/evaluate');
-endpoint.pathname = '/ws/v1/dictionary/recognize';
+const wordEndpoint = new URL(import.meta.env.VITE_WORD_AI_WS_URL || 'ws://localhost:8000/ws/v1/word/evaluate');
+wordEndpoint.pathname = '/ws/v1/dictionary/recognize';
+const intermediateEndpoint = new URL(import.meta.env.VITE_INTERMEDIATE_AI_WS_URL || wordEndpoint);
+intermediateEndpoint.pathname = '/ws/v1/dictionary/recognize';
 const names = new Map(Object.values(lessons).flatMap(({ expressions }) =>
   expressions.map(({ contentId, word }) => [contentId, word])));
 const scopes = {
@@ -68,10 +70,10 @@ export default function Dictionary() {
       video.current.srcObject = stream;
       await video.current.play();
       if (s.closed) return;
-      const landmarker = await createLiveLandmarker();
+      const landmarker = await createLiveLandmarker({ body: scope === 'intermediate' });
       if (s.closed) { landmarker.close(); return; }
       s.landmarker = landmarker;
-      const ws = s.ws = new WebSocket(endpoint);
+      const ws = s.ws = new WebSocket(scope === 'intermediate' ? intermediateEndpoint : wordEndpoint);
       watch();
       const capture = async () => {
         if (s.closed) return;

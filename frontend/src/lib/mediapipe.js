@@ -23,15 +23,29 @@ export function landmarkFrame(result, timestamp) {
     left_hand: [], right_hand: [],
   };
   const scores = { left_hand: -1, right_hand: -1 };
+  let bodySides;
+  if (Array.isArray(result.poseLandmarks)) {
+    frame.schema = 'mediapipe-body-hands-v1';
+    frame.pose = (result.poseLandmarks[0] || []).map(({x,y,z,visibility})=>({x,y,z,visibility:visibility ?? 0}));
+    if (frame.pose.length === 33 && result.landmarks?.length) {
+      const aspect = (result.imageWidth || 1)/(result.imageHeight || 1);
+      const distance = (hand,index) => Math.hypot((hand[0].x-frame.pose[index].x)*aspect, hand[0].y-frame.pose[index].y);
+      const hands=result.landmarks.slice(0,2);
+      if(hands.length===1) bodySides=[distance(hands[0],15)<=distance(hands[0],16)?'left_hand':'right_hand'];
+      else bodySides=distance(hands[0],15)+distance(hands[1],16)<=distance(hands[0],16)+distance(hands[1],15)
+        ? ['left_hand','right_hand']:['right_hand','left_hand'];
+    }
+  }
   for (let i = 0; i < (result.landmarks?.length || 0); i++) {
     const label = result.handedness[i]?.[0];
-    if (!label) continue;
+    if (!label && !bodySides?.[i]) continue;
     // Keep Tasks HandLandmarker handedness. CSS mirrors only the preview,
     // so coordinates and hand labels retain the camera input convention.
-    const key = label.categoryName === 'Left' ? 'left_hand'
-      : label.categoryName === 'Right' ? 'right_hand' : null;
-    if (!key || label.score <= scores[key]) continue;
-    scores[key] = label.score;
+    const key = bodySides?.[i] || (label?.categoryName === 'Left' ? 'left_hand'
+      : label?.categoryName === 'Right' ? 'right_hand' : null);
+    const score = label?.score ?? 1;
+    if (!key || score <= scores[key]) continue;
+    scores[key] = score;
     frame[key] = result.landmarks[i].map(({ x, y, z }) => ({ x, y, z }));
   }
   return frame;
